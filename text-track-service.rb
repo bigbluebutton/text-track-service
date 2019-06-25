@@ -54,9 +54,9 @@ def start_service
   dataFile = File.open("out.json","r")
   data = JSON.load(dataFile)
   if data["service"] == "google"
-    GoogleWorker.perform_async(data)
+    WM::AudioWorker.perform_async(data)
   elsif data["service"] == "ibm"
-    IbmWorker.perform_async(data)
+    WM::AudioWorker.perform_async(data)
   else
     puts "no such service found..."
   end

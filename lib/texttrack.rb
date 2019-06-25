@@ -12,8 +12,7 @@ $LOAD_PATH << path
 
 require 'texttrack/util'
 #require 'speech2text'
-require 'texttrack/google_worker'
-require 'texttrack/ibm_worker'
+require 'texttrack/wm'
 
 module TextTrack
   def self.logger=(log)
