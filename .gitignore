@@ -1,0 +1,7 @@
+*.json
+bbb-accessibility-183f2b339bfb.json
+test/
+*_BACKUP_21934.rb
+info.json
+out.json
+*.vtt
