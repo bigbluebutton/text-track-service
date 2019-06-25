@@ -1,3 +1,6 @@
+config/credentials.yaml
+start-text-track-service-worker.sh
+start-text-track-service.sh
 *.json
 bbb-accessibility-183f2b339bfb.json
 test/

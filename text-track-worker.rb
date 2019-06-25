@@ -1,3 +1,10 @@
-require "faktory"
+require 'logger'
+require './lib/texttrack'
 
-system("FAKTORY_PROVIDER=FAKTORY_URL FAKTORY_URL=tcp://:7832525986eee2f7@localhost:7419 bundle exec faktory-worker -r ./lib/texttrack/google_worker.rb")
+#log_dir = "/var/log/text-track-service"
+log_dir = "samples"
+logger = Logger.new(STDOUT)
+#logger = Logger.new("#{log_dir}/text-track-worker.log", 'daily', 14)
+logger.level = Logger::INFO
+
+TextTrack.logger = logger

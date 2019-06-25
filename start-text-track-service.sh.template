@@ -1,0 +1,3 @@
+#!/bin/bash
+cd /usr/local/bigbluebutton/text-track-service
+FAKTORY_PROVIDER=FAKTORY_URL FAKTORY_URL=tcp://:FAKTORY_PASSWORD@localhost:7419 bundle exec ./text-track-service.rb
