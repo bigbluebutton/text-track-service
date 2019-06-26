@@ -7,8 +7,6 @@ require 'logger'
 require './lib/texttrack'
 require 'speech_to_text'
 
-
-
 #log_dir = "/var/log/text-track-service"
 logger = Logger.new(STDOUT)
 #logger = Logger.new("#{log_dir}/text-track-service.log", 'daily', 14)
@@ -22,7 +20,8 @@ def set_parameters(*params)
            :published_file_path => "#{params[1]}",
            :recordID => "#{params[2]}",
            :auth_key => "#{params[3]}",
-           :status => "success",
+           :status => "success"
+           :message => "successfully created json file",
            :google_bucket_name => ("#{params[4]}" if "#{params[0]}" == "google")}.delete_if{ |k,v| v.nil?
   }
   else
@@ -36,7 +35,7 @@ end
 
 
 def create_json(data)
-  file = File.open("out.json","w")
+  file = File.open("#{data[:recordID]}.json","w")
     file.puts "{"
     file.puts "\"service\" : \"#{data[:service]}\","
     file.puts "\"published_file_path\" : \"#{data[:published_file_path]}\","
@@ -50,13 +49,13 @@ def create_json(data)
   file.close
 end
 
-def start_service
-  dataFile = File.open("out.json","r")
+def start_service(recordID)
+  dataFile = File.open("#{recordID}.json","r")
   data = JSON.load(dataFile)
   if data["service"] == "google"
-    WM::AudioWorker.perform_async(data)
+    GoogleWorker.perform_async(data)
   elsif data["service"] == "ibm"
-    WM::AudioWorker.perform_async(data)
+    IbmWorker.perform_async(data)
   else
     puts "no such service found..."
   end
@@ -72,4 +71,4 @@ else
 end
 create_json(data)
 
-start_service
+start_service(data[:recordID])
