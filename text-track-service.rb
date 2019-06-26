@@ -7,6 +7,8 @@ require 'logger'
 require './lib/texttrack'
 require 'speech_to_text'
 
+
+
 #log_dir = "/var/log/text-track-service"
 logger = Logger.new(STDOUT)
 #logger = Logger.new("#{log_dir}/text-track-service.log", 'daily', 14)
