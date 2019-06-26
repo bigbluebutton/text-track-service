@@ -7,6 +7,8 @@ require 'logger'
 require './lib/texttrack'
 require 'speech_to_text'
 
+
+
 #log_dir = "/var/log/text-track-service"
 logger = Logger.new(STDOUT)
 #logger = Logger.new("#{log_dir}/text-track-service.log", 'daily', 14)
@@ -20,8 +22,8 @@ def set_parameters(*params)
            :published_file_path => "#{params[1]}",
            :recordID => "#{params[2]}",
            :auth_key => "#{params[3]}",
-           :status => "success"
-           :message => "successfully created json file",
+           :status => "success",
+           :message => "json file created successfully",
            :google_bucket_name => ("#{params[4]}" if "#{params[0]}" == "google")}.delete_if{ |k,v| v.nil?
   }
   else
@@ -53,9 +55,9 @@ def start_service(recordID)
   dataFile = File.open("#{recordID}.json","r")
   data = JSON.load(dataFile)
   if data["service"] == "google"
-    GoogleWorker.perform_async(data)
+    WM::AudioWorker.perform_async(data)
   elsif data["service"] == "ibm"
-    IbmWorker.perform_async(data)
+    WM::AudioWorker.perform_async(data)
   else
     puts "no such service found..."
   end
