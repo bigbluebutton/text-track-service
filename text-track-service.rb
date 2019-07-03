@@ -6,7 +6,7 @@ require 'time'
 require 'logger'
 require './lib/texttrack'
 require 'speech_to_text'
-
+require "./app"
 
 
 #log_dir = "/var/log/text-track-service"

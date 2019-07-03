@@ -1,4 +1,15 @@
 require "sinatra"
+require "active_record"
+require "sqlite3"
+require "sequel"
+
+ActiveRecord::Base.establish_connection(
+  :adapter => "sqlite3",
+  :database => "transcriptionProgress.sqlite3"
+)
+
+class Progress < ActiveRecord::Base
+end
 
 get "/" do
    erb :index
