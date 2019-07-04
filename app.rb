@@ -29,3 +29,19 @@ get "/service/:service" do
        puts "No such service found"
    end
 end
+
+get "/progress/:recordID" do
+        
+    if Progress.exists?(recordID: "#{params[:recordID]}")
+        u = Progress.find_by(recordID: params[:recordID])
+        puts "Recording with id:#{u.recordID} currently has a progress: #{u.progress} last updated at #{u.updated_at}"
+        
+        #for view not needed
+        "Recording with id:#{u.recordID} currently has a progress: #{u.progress} last updated at #{u.updated_at}"
+    else
+        puts "A recording with this id: #{params[:recordID]} does not exist"
+        
+        #for view not needed
+        "A recording with this id: #{params[:recordID]} does not exist"
+    end
+end
