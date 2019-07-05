@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/parthikmodi/speech_to_text.git
+  revision: 2406555d6d94139194d567228f3b257ca4a02df1
+  specs:
+    speech_to_text (0.1.1)
+      google-cloud-speech (= 0.35.0)
+      google-cloud-storage (= 1.18.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -110,9 +118,6 @@ GEM
     sinatra-activerecord (2.0.13)
       activerecord (>= 3.2)
       sinatra (>= 1.0)
-    speech_to_text (0.1.0)
-      google-cloud-speech (= 0.35.0)
-      google-cloud-storage (= 1.18.2)
     sqlite3 (1.4.1)
     thread_safe (0.3.6)
     tilt (2.0.9)
@@ -132,7 +137,7 @@ DEPENDENCIES
   sequel
   sinatra
   sinatra-activerecord
-  speech_to_text
+  speech_to_text!
   sqlite3
 
 BUNDLED WITH
