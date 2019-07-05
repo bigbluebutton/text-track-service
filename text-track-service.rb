@@ -93,9 +93,7 @@ end
 def start_service(recordID)
   dataFile = File.open("#{recordID}.json","r")
   data = JSON.load(dataFile)
-  if data["service"] == "google"
-    WM::AudioWorker.perform_async(data)
-  elsif data["service"] == "ibm"
+  if data["service"] == "google" || data["service"] == "ibm" || data["service"] == "deepspeech" || data["service"] == "speechmatics"
     WM::AudioWorker.perform_async(data)
   else
     puts "no such service found..."

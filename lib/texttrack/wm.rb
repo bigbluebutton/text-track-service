@@ -90,7 +90,7 @@ module WM
               
               u = Progress.find(id)
               u.update(progress: "finished audio & started #{u.service} transcription process")
-             SpeechToText::MozillaDeepspeechS2T.mozilla_speech_to_text(data["published_file_path"],data["recordID"],data["model_path"])
+             SpeechToText::MozillaDeepspeechS2T.mozilla_speech_to_text(data["published_file_path"],data["recordID"],data["deepspeech_model_path"])
               
               u.update(progress: "done with #{u.service}")
           
@@ -106,7 +106,7 @@ module WM
               
               u = Progress.find(id)
               u.update(progress: "finished audio & started #{u.service} transcription process")
-             SpeechToText::SpeechmaticsS2T.speechmatics_speech_to_text(data["published_file_path"],data["recordID"],data["user_id"],data["auth_key"])
+             SpeechToText::SpeechmaticsS2T.speechmatics_speech_to_text(data["published_file_path"],data["recordID"],data["userID"],data["auth_key"])
               
               u.update(progress: "done with #{u.service}")
           
