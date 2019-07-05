@@ -36,3 +36,9 @@ sudo dpkg -i <filename.deb>
 4)Make an http request to either /service/google or /service/ibm to trigger each service. (can also use the view by going to "/" and selecting a service)
 ...
 ```
+
+# Instructions for progress updates
+```
+1) make a request to /progress for all updates
+2) make a request to /progress/:recordID for updates of a specific recording
+```
