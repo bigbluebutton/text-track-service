@@ -1,5 +1,3 @@
-# README
-
 # test-track-service
 Service to generate text tracks for BigBlueButton recordings
 
@@ -43,11 +41,4 @@ sudo dpkg -i <filename.deb>
 ```
 1) make a request to /progress for all updates
 2) make a request to /progress/:recordID for updates of a specific recording
-```
-
-# Rails
-```
-moved all ruby files in ruby_files folder
-moved test folder to root as test2 since rails has its own test folder
-databse name is development.sqlite3 table name is captions
 ```

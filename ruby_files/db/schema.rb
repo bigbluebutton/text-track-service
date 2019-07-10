@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_09_150627) do
+ActiveRecord::Schema.define(version: 2019_07_04_151656) do
 
-  create_table "captions", force: :cascade do |t|
+  create_table "progresses", force: :cascade do |t|
     t.string "recordID"
-    t.string "service"
     t.string "progress"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "service"
   end
 
 end

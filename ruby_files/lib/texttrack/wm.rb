@@ -7,7 +7,8 @@ require "google/cloud/speech"
 require "google/cloud/storage"
 require "speech_to_text"
 require "sqlite3"
-require_relative "../../app"
+ENV['RAILS_ENV'] = "development"
+require_relative "../../../config/environment"
 
 module WM
     
@@ -17,16 +18,16 @@ module WM
 
       def perform(data)
           
-          if Progress.exists?(recordID: "#{data["recordID"]}")
-              u = Progress.find_by(recordID: "#{data["recordID"]}")
+          if Caption.exists?(recordID: "#{data["recordID"]}")
+              u = Caption.find_by(recordID: "#{data["recordID"]}")
               u.update(progress: "Started audio conversion", service: "#{data["service"]}")
           else
-              Progress.create(recordID: "#{data["recordID"]}", progress: "Started audio conversion", service: "#{data["service"]}")
+              Caption.create(recordID: "#{data["recordID"]}", progress: "Started audio conversion", service: "#{data["service"]}")
           end
           
           #Progress.find_by(recordID: "#{data["recordID"]}").first_or_create(recordID: "#{data["recordID"]}").update(progress: 'Started audio conversion')
           
-          u = Progress.find_by(recordID: "#{data["recordID"]}")
+          u = Caption.find_by(recordID: "#{data["recordID"]}")
           #Progress.create(recordID: "#{data["recordID"]}", progress: "audio conversion started")
           
           SpeechToText::Util.video_to_audio(data["published_file_path"],data["recordID"],data["service"]);
@@ -54,7 +55,7 @@ module WM
           #if(data["service"] === "google")
 
              #google_speech_to_text 
-              u = Progress.find(id)
+              u = Caption.find(id)
               u.update(progress: "finished audio & started #{u.service} transcription process")
               
               SpeechToText::GoogleS2T.google_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"],data["google_bucket_name"])
@@ -72,7 +73,7 @@ module WM
       def perform(data, id)
           
               
-              u = Progress.find(id)
+              u = Caption.find(id)
               u.update(progress: "finished audio & started #{u.service} transcription process")
              SpeechToText::IbmWatsonS2T.ibm_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"])
               
@@ -88,7 +89,7 @@ module WM
       def perform(data, id)
           
               
-              u = Progress.find(id)
+              u = Caption.find(id)
               u.update(progress: "finished audio & started #{u.service} transcription process")
              SpeechToText::MozillaDeepspeechS2T.mozilla_speech_to_text(data["published_file_path"],data["recordID"],data["deepspeech_model_path"])
               
@@ -104,7 +105,7 @@ module WM
       def perform(data, id)
           
               
-              u = Progress.find(id)
+              u = Caption.find(id)
               u.update(progress: "finished audio & started #{u.service} transcription process")
              SpeechToText::SpeechmaticsS2T.speechmatics_speech_to_text(data["published_file_path"],data["recordID"],data["userID"],data["auth_key"])
               
