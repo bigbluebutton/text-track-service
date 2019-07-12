@@ -10,7 +10,7 @@ class CaptionsController < ApplicationController
         puts "#{@service} #{@recordID}"
         
        if(params[:service] === "google")
-            system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put api key here> <put google bucket name here>")
+            system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put api key here> <put google bucket name>")
        elsif(params[:service] === "ibm")
            system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put api key here>")
        elsif(params[:service] === "deepspeech")
