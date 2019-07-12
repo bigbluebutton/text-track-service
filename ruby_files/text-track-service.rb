@@ -66,7 +66,7 @@ end
 
 
 def create_json(data)
-  file = File.open("#{data[:recordID]}.json","w")
+  file = File.open("#{data[:published_file_path]}/#{data[:recordID]}/#{data[:recordID]}.json","w")
     file.puts "{"
     file.puts "\"service\" : \"#{data[:service]}\","
     file.puts "\"published_file_path\" : \"#{data[:published_file_path]}\","
@@ -90,8 +90,8 @@ def create_json(data)
   file.close
 end
 
-def start_service(recordID)
-  dataFile = File.open("#{recordID}.json","r")
+def start_service(published_files,recordID)
+  dataFile = File.open("#{published_files}/#{recordID}/#{recordID}.json","r")
   data = JSON.load(dataFile)
   if data["service"] == "google" || data["service"] == "ibm" || data["service"] == "deepspeech" || data["service"] == "speechmatics"
     WM::AudioWorker.perform_async(data)
@@ -107,4 +107,4 @@ data = set_parameters(ARGV)
 print ARGV
 create_json(data)
 
-start_service(data[:recordID])
+start_service(data[:published_file_path],data[:recordID])

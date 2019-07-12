@@ -33,10 +33,10 @@ module WM
           SpeechToText::Util.video_to_audio(data["published_file_path"],data["recordID"],data["service"]);
 
           if(data["service"] === "google")
-            ENV['GOOGLE_APPLICATION_CREDENTIALS'] = "#{data["auth_key"]}";
-            WM::GoogleWorker.perform_async(data, u.id);
+            #ENV['GOOGLE_APPLICATION_CREDENTIALS'] = "#{data["auth_key"]}";
+            WM::GoogleWorker_1.perform_async(data, u.id);
           elsif(data["service"] === "ibm") 
-            WM::IbmWorker.perform_async(data, u.id);
+            WM::IbmWorker_1.perform_async(data, u.id);
           elsif(data["service"] === "deepspeech") 
             WM::DeepspeechWorker.perform_async(data, u.id);
           elsif(data["service"] === "speechmatics") 
@@ -47,7 +47,7 @@ module WM
       end
     end
     
-    class GoogleWorker
+    class GoogleWorker_1
       include Faktory::Job
       faktory_options retry: 0
 
@@ -56,17 +56,55 @@ module WM
 
              #google_speech_to_text 
               u = Caption.find(id)
-              u.update(progress: "finished audio & started #{u.service} transcription process")
+              u.update(progress: "finished audio conversion")
               
-              SpeechToText::GoogleS2T.google_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"],data["google_bucket_name"])
+              #SpeechToText::GoogleS2T.google_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"],data["google_bucket_name"])
               
-              u.update(progress: "done with #{u.service}")
+              SpeechToText::GoogleS2T.set_environment(data["auth_key"])
+              SpeechToText::GoogleS2T.google_storage(data["published_file_path"],data["recordID"],data["google_bucket_name"])
+              operation_name = SpeechToText::GoogleS2T.create_job(data["recordID"],data["google_bucket_name"])
+              
+              u.update(progress: "created job with #{u.service}")      
+          
+              #puts params[0].name
+              WM::GoogleWorker_2.perform_async(data, u.id, operation_name);
+              
+              
 
           #end
       end
     end
     
-    class IbmWorker
+    class GoogleWorker_2
+      include Faktory::Job
+      faktory_options retry: 0
+
+      def perform(data, id, operation_name)
+          #if(data["service"] === "google")
+          
+             #google_speech_to_text 
+              u = Caption.find(id)
+              u.update(progress: "waiting on job from #{u.service}")
+              
+              #SpeechToText::GoogleS2T.google_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"],data["google_bucket_name"])
+          
+              callback = SpeechToText::GoogleS2T.check_job(operation_name)
+              myarray = SpeechToText::GoogleS2T.create_array_google(callback["results"])
+          
+              u.update(progress: "writing subtitle file from #{u.service}")
+              SpeechToText::Util.write_to_webvtt(data["published_file_path"],data["recordID"],myarray)
+              
+              SpeechToText::GoogleS2T.delete_google_storage(data["google_bucket_name"], data["recordID"])
+              
+              u.update(progress: "done with #{u.service}")
+          
+              File.delete("#{data["published_file_path"]}/#{data["recordID"]}/#{data["recordID"]}.json")
+
+          #end
+      end
+    end
+    
+    class IbmWorker_1
       include Faktory::Job
       faktory_options retry: 0
 
@@ -74,10 +112,42 @@ module WM
           
               
               u = Caption.find(id)
-              u.update(progress: "finished audio & started #{u.service} transcription process")
-             SpeechToText::IbmWatsonS2T.ibm_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"])
+              u.update(progress: "finished audio conversion")
+             #SpeechToText::IbmWatsonS2T.ibm_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"])
+          
+              job_id = SpeechToText::IbmWatsonS2T.create_job(data["published_file_path"],data["recordID"],data["auth_key"])
               
+              u.update(progress: "created job with #{u.service}")
+              
+              WM::IbmWorker_2.perform_async(data, u.id, job_id);
+      end
+    end
+    
+    class IbmWorker_2
+      include Faktory::Job
+      faktory_options retry: 0
+
+      def perform(data, id, job_id)
+              
+              u = Caption.find(id)
+              u.update(progress: "waiting on job from #{u.service}")
+          
+             #SpeechToText::IbmWatsonS2T.ibm_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"])
+              status = "processing"
+              while(status != "completed")
+                callback = SpeechToText::IbmWatsonS2T.check_job(job_id,data["auth_key"])
+                status = callback["status"]
+                #sleep(30)
+              end
+          
+              myarray = SpeechToText::IbmWatsonS2T.create_array_watson(callback["results"][0])
+          
+              u.update(progress: "writing subtitle file from #{u.service}")
+              SpeechToText::Util.write_to_webvtt(data["published_file_path"],data["recordID"],myarray)
+          
               u.update(progress: "done with #{u.service}")
+          
+              File.delete("#{data["published_file_path"]}/#{data["recordID"]}/#{data["recordID"]}.json")
           
       end
     end
