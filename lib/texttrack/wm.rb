@@ -8,7 +8,7 @@ require "google/cloud/storage"
 require "speech_to_text"
 require "sqlite3"
 ENV['RAILS_ENV'] = "development"
-require_relative "../../../config/environment"
+require "./config/environment"
 
 module WM
     
