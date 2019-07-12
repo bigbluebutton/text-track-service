@@ -7,6 +7,9 @@ ruby '2.6.1'
 gem 'rails', '~> 5.2.3'
 
 gem 'redis', '4.1.2'
+gem 'redis-namespace'
+gem 'redis-rails'
+gem 'redis-rack-cache'
 
 gem "faktory_worker_ruby"
 gem "google-cloud-speech"

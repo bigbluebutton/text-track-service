@@ -1,6 +1,8 @@
+
 class CaptionsController < ApplicationController
     def index
         puts "Hello World!"
+        $redis.lpush("foo", "bar")
     end
     
     def service
