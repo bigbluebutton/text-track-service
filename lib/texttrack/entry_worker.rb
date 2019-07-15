@@ -14,10 +14,12 @@ module WM
 
       default_provider = props["default_provider"]
       recordings_dir = props["recordings_dir"]
+      captions_inbox_dir = props["captions_inbox_dir"]
 
       params = {record_id: record_id, 
         provider: default_provider, 
-        recordings_dir: recordings_dir}
+        recordings_dir: recordings_dir,
+        captions_inbox_dir: captions_inbox_dir}
 
       WM::ToAudioWorker.perform_async(params.to_json)
     end
