@@ -7,6 +7,7 @@ class CaptionsController < ApplicationController
     
   def caption_recording
     record_id = params[:record_id]
+    caption_locale = params[:caption_locale]
          
     # TODO: Need to find how to get the key from settings.yaml
     #props = YAML::load(File.open('settings.yaml'))
@@ -14,11 +15,19 @@ class CaptionsController < ApplicationController
 
     #redis_namespace = props["redis_list_namespace"]       
     #   
-    $redis.lpush("recordings", record_id)
+    caption_job = {record_id: record_id, 
+      caption_locale: caption_locale}
+    $redis.lpush("caption_recordings_job", caption_job.to_json)
   end
     
   def caption_status
     record_id = params[:record_id]
+    caption_locale = params[:caption_locale]
+    caption_job = {record_id: record_id, 
+      caption_locale: caption_locale}
+    
+    # TODO:
+    # pass locale as param
     caption = Caption.where(recordID: record_id)
     tp caption
   end
