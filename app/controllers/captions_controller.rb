@@ -2,7 +2,7 @@
 class CaptionsController < ApplicationController
   def index
     puts "Hello World!"
-    puts $redis.llen("foo")
+    #puts $redis.llen("foo")
   end
     
   def caption_recording
