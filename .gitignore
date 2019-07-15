@@ -1,7 +1,7 @@
 tmp/*
 tmp/cache/bootsnap-load-path-cache
 db/
-log/
+log/*
 credentials.yaml
 config/credentials.yaml
 start-text-track-service-worker.sh

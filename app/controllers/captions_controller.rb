@@ -5,7 +5,7 @@ class CaptionsController < ApplicationController
     puts $redis.llen("foo")
   end
     
-  def service
+  def caption_recording
     record_id = params[:record_id]
          
     # TODO: Need to find how to get the key from settings.yaml
@@ -17,10 +17,10 @@ class CaptionsController < ApplicationController
     $redis.lpush("recordings", record_id)
   end
     
-  def progress_id
-    @recordID = params[:id]
-    @caption = Caption.where(recordID: @recordID)
-    tp @caption
+  def caption_status
+    record_id = params[:record_id]
+    caption = Caption.where(recordID: record_id)
+    tp caption
   end
     
   private
