@@ -19,7 +19,7 @@ module WM
         provider: default_provider, 
         recordings_dir: recordings_dir}
 
-      WM::AudioWorker.perform_async(params.to_json)
+      WM::ToAudioWorker.perform_async(params.to_json)
     end
   end
 end

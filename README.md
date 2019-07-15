@@ -74,6 +74,11 @@ curl http://<ip>:3000
 Open terminal 2
 
 ```
+# Copy example-credentials.yaml to credentials.yaml
+cp example-credentials.yaml credentials.yaml
+
+# Edit credentials.yaml to setup your credentials for the providers.
+
 # Start the service
 ./development/start-service.sh
 ```

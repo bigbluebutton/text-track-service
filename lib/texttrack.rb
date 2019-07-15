@@ -11,8 +11,12 @@ path = File.expand_path(File.join(File.dirname(__FILE__), '../lib'))
 $LOAD_PATH << path
 
 require 'texttrack/util'
-require 'texttrack/wm'
 require 'texttrack/entry_worker'
+require 'texttrack/google_worker'
+require 'texttrack/ibm_worker'
+require 'texttrack/deepspeech_worker'
+require 'texttrack/speechmatics_worker'
+require 'texttrack/to_audio_worker'
 
 module TextTrack
   def self.logger=(log)
