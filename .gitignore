@@ -1,3 +1,7 @@
+tmp/
+db/
+log/
+credentials.yaml
 config/credentials.yaml
 start-text-track-service-worker.sh
 start-text-track-service.sh

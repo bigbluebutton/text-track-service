@@ -11,8 +11,8 @@ path = File.expand_path(File.join(File.dirname(__FILE__), '../lib'))
 $LOAD_PATH << path
 
 require 'texttrack/util'
-#require 'speech2text'
 require 'texttrack/wm'
+require 'texttrack/entry_worker'
 
 module TextTrack
   def self.logger=(log)

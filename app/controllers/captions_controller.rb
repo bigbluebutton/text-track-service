@@ -3,26 +3,19 @@ class CaptionsController < ApplicationController
     def index
         puts "Hello World!"
         $redis.lpush("foo", "bar")
+        puts $redis.llen("foo")
     end
     
     def service
-        @service = params[:service]
-        @recordID = params[:recordID]
-        
-        puts "#{@service} #{@recordID}"
-        
-       if(params[:service] === "google")
-            system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put api key here> <put google bucket name>")
-       elsif(params[:service] === "ibm")
-           system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put api key here>")
-       elsif(params[:service] === "deepspeech")
-           system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put deepspeech model path here>")
-       elsif(params[:service] === "speechmatics")
-           system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put user id here> <put api key here>")
-       else
-           puts "No such service found"
-       end
-        
+      record_id = params[:record_id]
+         
+      # TODO: Need to find how to get the key from settings.yaml
+      #props = YAML::load(File.open('settings.yaml'))
+      #puts "REDIS HOST=#{redis_host} PORT=#{redis_port} PASS=#{redis_password}"
+
+      #redis_namespace = props["redis_list_namespace"]       
+      #   
+      $redis.lpush("recordings", record_id)
     end
     
     def progress

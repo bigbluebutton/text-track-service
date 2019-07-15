@@ -16,30 +16,33 @@ module WM
       include Faktory::Job
       faktory_options retry: 0
 
-      def perform(data)
-          
-          if Caption.exists?(recordID: "#{data["recordID"]}")
-              u = Caption.find_by(recordID: "#{data["recordID"]}")
-              u.update(progress: "Started audio conversion", service: "#{data["service"]}")
+      def perform(param_json)
+          params = JSON.parse(param_json, :symbolize_names => true)
+
+          if Caption.exists?(recordID: "#{params[:record_id]}")
+              u = Caption.find_by(recordID: "#{params[:record_id]}")
+              u.update(progress: "start_audio_conversion", 
+                service: "Do not need provider here.")
           else
-              Caption.create(recordID: "#{data["recordID"]}", progress: "Started audio conversion", service: "#{data["service"]}")
+              Caption.create(recordID: "#{params[:record_id]}", 
+                progress: "started_audio_conversion", 
+                service: "Do not need provider here.")
           end
           
           #Progress.find_by(recordID: "#{data["recordID"]}").first_or_create(recordID: "#{data["recordID"]}").update(progress: 'Started audio conversion')
           
-          u = Caption.find_by(recordID: "#{data["recordID"]}")
+          u = Caption.find_by(recordID: "#{params[:record_id]}")
           #Progress.create(recordID: "#{data["recordID"]}", progress: "audio conversion started")
           
-          SpeechToText::Util.video_to_audio(data["published_file_path"],data["recordID"],data["service"]);
+          SpeechToText::Util.video_to_audio(params[:recordings_dir], params[:provider])
 
-          if(data["service"] === "google")
-            #ENV['GOOGLE_APPLICATION_CREDENTIALS'] = "#{data["auth_key"]}";
+          if(params[:provider] === "google")
             WM::GoogleWorker_1.perform_async(data, u.id);
-          elsif(data["service"] === "ibm") 
+          elsif(params[:provider] === "ibm") 
             WM::IbmWorker_1.perform_async(data, u.id);
-          elsif(data["service"] === "deepspeech") 
+          elsif(params[:provider] === "deepspeech") 
             WM::DeepspeechWorker.perform_async(data, u.id);
-          elsif(data["service"] === "speechmatics") 
+          elsif(params[:provider] === "speechmatics") 
             WM::SpeechmaticsWorker.perform_async(data, u.id);
           end
 

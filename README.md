@@ -3,51 +3,92 @@
 # test-track-service
 Service to generate text tracks for BigBlueButton recordings
 
+Redis
+
+Make sure you have Redis installed.
+
 Install [Faktory](https://github.com/contribsys/faktory/wiki/Installation)
 
 ```
-# Download deb distro for Ubuntu
-sudo dpkg -i <filename.deb>
+wget https://github.com/contribsys/faktory/releases/download/v1.0.1-1/faktory_1.0.1-1_amd64.deb
 
-# After installing, find the password
- sudo cat /etc/faktory/password
-
-# Start the worker passing the password
- FAKTORY_PROVIDER=FAKTORY_URL FAKTORY_URL=tcp://:7832525986eee2f7@localhost:7419 bundle exec faktory-worker -r ./app.rb
+sudo dpkg -i faktory_1.0.1-1_amd64.deb
 
 ```
 
-# Insert all api details in info.json in the following format
-```
-{
-  "google":{
-    "auth_key" : "json_file",
-    "google_bucket_name" : "bucket_name"
-  },
-  "ibm":{
-    "auth_key" : "api_key"
-  }
-}
-```
+Development
+
+You will need to open at least 4 terminal windows: (1) for rails app, 
+(2) for text-track service, (3) for text-track-worker, (4) for commands you issue
+
+Open terminal 1
 
 ```
-1)Make sure your faktory service is running
-2)Make sure faktory workers are running run text-track-worker.rb
-(FAKTORY_PROVIDER=FAKTORY_URL FAKTORY_URL=tcp://:7832525986eee2f7@localhost:7419 bundle exec faktory-worker -r ./google-worker.rb)
-3)run app.rb
-4)Make an http request to either /service/google or /service/ibm to trigger each service. (can also use the view by going to "/" and selecting a service)
-...
+cd development
+
+# Configure start scripts. This will get the Faktory password and set it in start-server.sh
+# and start-worker.sh
+sudo ./setup.sh
+
 ```
 
-# Instructions for progress updates
+Starting the Rails app
+
+Setup Rails
+
 ```
-1) make a request to /progress for all updates
-2) make a request to /progress/:recordID for updates of a specific recording
+sudo apt install build-essential
+sudo apt install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm5 libgdbm-dev
+
+# Needed for rake db:setup
+sudo apt install nodejs
+sudo apt install npm
+
+# setup rbenv
+git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+echo 'eval "$(rbenv init -)"' >> ~/.bashrc
+source ~/.bashrc
+rbenv
+rbenv install 2.6.1
+rbenv local 2.6.1
+ruby -v
+
+gem install bundler
+gem env home
+gem install rails -v 5.2.3
+rbenv rehash
+bundle install
+
+rails db:setup
+
+# Start rails and listen on all interfaces
+rails s -b 0.0.0.0
+
+#To test
+
+curl http://<ip>:3000
+
 ```
 
-# Rails
+Open terminal 2
+
 ```
-moved all ruby files in ruby_files folder
-moved test folder to root as test2 since rails has its own test folder
-databse name is development.sqlite3 table name is captions
+# Start the service
+./development/start-service.sh
+```
+
+Open terminal 3
+
+```
+# Start the worker
+./developemtn/start-worker.sh
+```
+
+Open terminal 4
+
+```
+# Queue up a recording for processing
+
+curl http://<ip>:3000/service/foo
 ```
