@@ -17,6 +17,10 @@ module WM
       u = Caption.find(id)
       u.update(progress: "finished audio conversion")
 
+      # TODO
+      # Need to handle locale here. What if we want to generate caption
+      # for pt-BR, etc. instead of en-US?
+
       job_id = SpeechToText::IbmWatsonS2T.create_job(data["published_file_path"],data["recordID"],data["auth_key"])
               
       u.update(progress: "created job with #{u.service}")

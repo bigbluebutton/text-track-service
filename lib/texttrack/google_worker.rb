@@ -18,7 +18,11 @@ module WM
     def perform(data, id)
       u = Caption.find(id)
       u.update(progress: "finished audio conversion")
-              
+     
+      # TODO
+      # Need to handle locale here. What if we want to generate caption
+      # for pt-BR, etc. instead of en-US?
+
       SpeechToText::GoogleS2T.set_environment(data["auth_key"])
       SpeechToText::GoogleS2T.google_storage(data["published_file_path"],data["recordID"],data["google_bucket_name"])
       operation_name = SpeechToText::GoogleS2T.create_job(data["recordID"],data["google_bucket_name"])
