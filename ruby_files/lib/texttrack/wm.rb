@@ -18,19 +18,26 @@ module WM
 
       def perform(data)
           
-          if Caption.exists?(recordID: "#{data["recordID"]}")
-              u = Caption.find_by(recordID: "#{data["recordID"]}")
-              u.update(progress: "Started audio conversion", service: "#{data["service"]}")
+          if Caption.exists?(record_id: "#{data["recordID"]}")
+              u = Caption.find_by(record_id: "#{data["recordID"]}")
+              u.update(status: "Started audio conversion", service: "#{data["service"]}",caption_locale: "en_US")
           else
-              Caption.create(recordID: "#{data["recordID"]}", progress: "Started audio conversion", service: "#{data["service"]}")
+              Caption.create(record_id: "#{data["recordID"]}", status: "Started audio conversion", service: "#{data["service"]}", caption_locale: "en_US")
           end
           
           #Progress.find_by(recordID: "#{data["recordID"]}").first_or_create(recordID: "#{data["recordID"]}").update(progress: 'Started audio conversion')
           
-          u = Caption.find_by(recordID: "#{data["recordID"]}")
+          u = Caption.find_by(record_id: "#{data["recordID"]}")
           #Progress.create(recordID: "#{data["recordID"]}", progress: "audio conversion started")
           
-          SpeechToText::Util.video_to_audio(data["published_file_path"],data["recordID"],data["service"]);
+         
+          if(u.service == "ibm")
+              SpeechToText::Util.video_to_audio(video_file_path: "#{data["published_file_path"]}/#{data["recordID"]}/video",video_name:"video",video_content_type: "mp4",audio_file_path: "#{data["published_file_path"]}/#{data["recordID"]}",audio_name: "#{data["recordID"]}",audio_content_type: "wav") 
+          elsif(u.service == "google")
+              SpeechToText::Util.video_to_audio(video_file_path: "#{data["published_file_path"]}/#{data["recordID"]}/video",video_name:"video",video_content_type: "mp4",audio_file_path: "#{data["published_file_path"]}/#{data["recordID"]}",audio_name: "#{data["recordID"]}",audio_content_type: "wav")
+          else
+              SpeechToText::Util.video_to_audio(data["published_file_path"],data["recordID"],data["service"]);
+          end
 
           if(data["service"] === "google")
             #ENV['GOOGLE_APPLICATION_CREDENTIALS'] = "#{data["auth_key"]}";
@@ -53,18 +60,16 @@ module WM
 
       def perform(data, id)
           #if(data["service"] === "google")
-
-             #google_speech_to_text 
+ 
               u = Caption.find(id)
-              u.update(progress: "finished audio conversion")
+              u.update(status: "finished audio conversion")
               
-              #SpeechToText::GoogleS2T.google_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"],data["google_bucket_name"])
               
               SpeechToText::GoogleS2T.set_environment(data["auth_key"])
-              SpeechToText::GoogleS2T.google_storage(data["published_file_path"],data["recordID"],data["google_bucket_name"])
-              operation_name = SpeechToText::GoogleS2T.create_job(data["recordID"],data["google_bucket_name"])
+              SpeechToText::GoogleS2T.google_storage("#{data["published_file_path"]}/#{data["recordID"]}","#{data["recordID"]}","wav",data["google_bucket_name"])
+              operation_name = SpeechToText::GoogleS2T.create_job("#{data["recordID"]}","wav",data["google_bucket_name"])
               
-              u.update(progress: "created job with #{u.service}")      
+              u.update(status: "created job with #{u.service}")      
           
               #puts params[0].name
               WM::GoogleWorker_2.perform_async(data, u.id, operation_name);
@@ -84,19 +89,19 @@ module WM
           
              #google_speech_to_text 
               u = Caption.find(id)
-              u.update(progress: "waiting on job from #{u.service}")
+              u.update(status: "waiting on job from #{u.service}")
               
               #SpeechToText::GoogleS2T.google_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"],data["google_bucket_name"])
           
               callback = SpeechToText::GoogleS2T.check_job(operation_name)
               myarray = SpeechToText::GoogleS2T.create_array_google(callback["results"])
           
-              u.update(progress: "writing subtitle file from #{u.service}")
-              SpeechToText::Util.write_to_webvtt(data["published_file_path"],data["recordID"],myarray)
+              u.update(status: "writing subtitle file from #{u.service}")
+              SpeechToText::Util.write_to_webvtt("#{data["published_file_path"]}/#{data["recordID"]}","vttfile_en_US.vtt",myarray)
               
-              SpeechToText::GoogleS2T.delete_google_storage(data["google_bucket_name"], data["recordID"])
+              SpeechToText::GoogleS2T.delete_google_storage(data["google_bucket_name"], "#{data["recordID"]}", "wav")
               
-              u.update(progress: "done with #{u.service}")
+              u.update(status: "done with #{u.service}")
           
               File.delete("#{data["published_file_path"]}/#{data["recordID"]}/#{data["recordID"]}.json")
 
@@ -112,12 +117,14 @@ module WM
           
               
               u = Caption.find(id)
-              u.update(progress: "finished audio conversion")
+              u.update(status: "finished audio conversion")
              #SpeechToText::IbmWatsonS2T.ibm_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"])
-          
-              job_id = SpeechToText::IbmWatsonS2T.create_job(data["published_file_path"],data["recordID"],data["auth_key"])
               
-              u.update(progress: "created job with #{u.service}")
+              job_id = SpeechToText::IbmWatsonS2T.create_job(audio_file_path:"#{data["published_file_path"]}/#{data["recordID"]}",apikey:"#{data["auth_key"]}",audio:"#{data["recordID"]}",content_type:"wav")
+          
+              #job_id = SpeechToText::IbmWatsonS2T.create_job(data["published_file_path"],data["recordID"],data["auth_key"])
+              
+              u.update(status: "created job with #{u.service}")
               
               WM::IbmWorker_2.perform_async(data, u.id, job_id);
       end
@@ -130,22 +137,24 @@ module WM
       def perform(data, id, job_id)
               
               u = Caption.find(id)
-              u.update(progress: "waiting on job from #{u.service}")
+              u.update(status: "waiting on job from #{u.service}")
           
              #SpeechToText::IbmWatsonS2T.ibm_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"])
               status = "processing"
               while(status != "completed")
-                callback = SpeechToText::IbmWatsonS2T.check_job(job_id,data["auth_key"])
+                callback = SpeechToText::IbmWatsonS2T.check_job(job_id,"#{data["auth_key"]}")
+                #callback = SpeechToText::IbmWatsonS2T.check_job(job_id,data["auth_key"])
                 status = callback["status"]
                 #sleep(300)
               end
           
               myarray = SpeechToText::IbmWatsonS2T.create_array_watson(callback["results"][0])
           
-              u.update(progress: "writing subtitle file from #{u.service}")
-              SpeechToText::Util.write_to_webvtt(data["published_file_path"],data["recordID"],myarray)
+              u.update(status: "writing subtitle file from #{u.service}")
+              SpeechToText::Util.write_to_webvtt("#{data["published_file_path"]}/#{data["recordID"]}","vttfile_en_US.vtt",myarray)
+              #SpeechToText::Util.write_to_webvtt(data["published_file_path"],data["recordID"],myarray)
           
-              u.update(progress: "done with #{u.service}")
+              u.update(status: "done with #{u.service}")
           
               File.delete("#{data["published_file_path"]}/#{data["recordID"]}/#{data["recordID"]}.json")
           
@@ -160,10 +169,10 @@ module WM
           
               
               u = Caption.find(id)
-              u.update(progress: "finished audio & started #{u.service} transcription process")
+              u.update(status: "finished audio & started #{u.service} transcription process")
              SpeechToText::MozillaDeepspeechS2T.mozilla_speech_to_text(data["published_file_path"],data["recordID"],data["deepspeech_model_path"])
               
-              u.update(progress: "done with #{u.service}")
+              u.update(status: "done with #{u.service}")
           
       end
     end
@@ -176,10 +185,10 @@ module WM
           
               
               u = Caption.find(id)
-              u.update(progress: "finished audio & started #{u.service} transcription process")
+              u.update(status: "finished audio & started #{u.service} transcription process")
              SpeechToText::SpeechmaticsS2T.speechmatics_speech_to_text(data["published_file_path"],data["recordID"],data["userID"],data["auth_key"])
               
-              u.update(progress: "done with #{u.service}")
+              u.update(status: "done with #{u.service}")
           
       end
     end
