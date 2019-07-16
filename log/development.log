@@ -2871,3 +2871,57 @@ Processing by CaptionsController#progress as HTML
 Completed 204 No Content in 5ms (ActiveRecord: 0.2ms)
 
 
+Started GET "/service/ibm/test2" for ::1 at 2019-07-12 13:05:31 -0400
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/gems/activerecord-5.2.3/lib/active_record/log_subscriber.rb:98
+Processing by CaptionsController#service as HTML
+  Parameters: {"service"=>"ibm", "recordID"=>"test2"}
+Completed 204 No Content in 862ms (ActiveRecord: 0.0ms)
+
+
+  [1m[36mCaption Exists (0.5ms)[0m  [1m[34mSELECT  1 AS one FROM "captions" WHERE "captions"."recordID" = ? LIMIT ?[0m  [["recordID", "test2"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:21
+  [1m[36mCaption Load (0.2ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."recordID" = ? LIMIT ?[0m  [["recordID", "test2"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:22
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:23
+  [1m[36mCaption Update (0.4ms)[0m  [1m[33mUPDATE "captions" SET "progress" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["progress", "Started audio conversion"], ["updated_at", "2019-07-12 17:05:32.596893"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:23
+  [1m[35m (2.2ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:23
+  [1m[36mCaption Load (0.1ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."recordID" = ? LIMIT ?[0m  [["recordID", "test2"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:30
+  [1m[36mCaption Load (0.4ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:114
+  [1m[35m (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:115
+  [1m[36mCaption Update (0.3ms)[0m  [1m[33mUPDATE "captions" SET "progress" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["progress", "finished audio conversion"], ["updated_at", "2019-07-12 17:05:35.572964"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:115
+  [1m[35m (0.9ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:115
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:120
+  [1m[36mCaption Update (0.5ms)[0m  [1m[33mUPDATE "captions" SET "progress" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["progress", "created job with ibm"], ["updated_at", "2019-07-12 17:05:38.600618"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:120
+  [1m[35m (2.0ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:120
+  [1m[36mCaption Load (0.1ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:132
+  [1m[35m (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:133
+  [1m[36mCaption Update (0.3ms)[0m  [1m[33mUPDATE "captions" SET "progress" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["progress", "waiting on job from ibm"], ["updated_at", "2019-07-12 17:05:38.607571"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:133
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:133
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:145
+  [1m[36mCaption Update (0.5ms)[0m  [1m[33mUPDATE "captions" SET "progress" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["progress", "writing subtitle file from ibm"], ["updated_at", "2019-07-12 17:05:55.598647"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:145
+  [1m[35m (1.4ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:145
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:148
+  [1m[36mCaption Update (0.3ms)[0m  [1m[33mUPDATE "captions" SET "progress" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["progress", "done with ibm"], ["updated_at", "2019-07-12 17:05:55.603355"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:148
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:148

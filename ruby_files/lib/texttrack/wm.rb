@@ -137,7 +137,7 @@ module WM
               while(status != "completed")
                 callback = SpeechToText::IbmWatsonS2T.check_job(job_id,data["auth_key"])
                 status = callback["status"]
-                #sleep(30)
+                #sleep(300)
               end
           
               myarray = SpeechToText::IbmWatsonS2T.create_array_watson(callback["results"][0])
