@@ -54,7 +54,7 @@ databse name is development.sqlite3 table name is captions
 ```
 
 # Country codes for languages
-```
+
 |Language|languageCode|Language (English name)|
 |--- |--- |--- |
 |Afrikaans (Suid-Afrika)|af-ZA|Afrikaans (South Africa)|
@@ -178,4 +178,4 @@ databse name is development.sqlite3 table name is captions
 |普通話 (香港)|zh-HK|Chinese, Mandarin (Simplified, Hong Kong)|
 |普通话 (中国大陆)|zh|Chinese, Mandarin (Simplified, China)|
 
-```
+
