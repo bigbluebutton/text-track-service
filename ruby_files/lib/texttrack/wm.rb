@@ -20,9 +20,9 @@ module WM
           
           if Caption.exists?(record_id: "#{data["recordID"]}")
               u = Caption.find_by(record_id: "#{data["recordID"]}")
-              u.update(status: "Started audio conversion", service: "#{data["service"]}",caption_locale: "en_US")
+              u.update(status: "Started audio conversion", service: "#{data["service"]}",caption_locale: "#{data["language_code"]}")
           else
-              Caption.create(record_id: "#{data["recordID"]}", status: "Started audio conversion", service: "#{data["service"]}", caption_locale: "en_US")
+              Caption.create(record_id: "#{data["recordID"]}", status: "Started audio conversion", service: "#{data["service"]}", caption_locale: "#{data["language_code"]}")
           end
           
           #Progress.find_by(recordID: "#{data["recordID"]}").first_or_create(recordID: "#{data["recordID"]}").update(progress: 'Started audio conversion')
@@ -67,11 +67,10 @@ module WM
               
               SpeechToText::GoogleS2T.set_environment(data["auth_key"])
               SpeechToText::GoogleS2T.google_storage("#{data["published_file_path"]}/#{data["recordID"]}","#{data["recordID"]}","wav",data["google_bucket_name"])
-              operation_name = SpeechToText::GoogleS2T.create_job("#{data["recordID"]}","wav",data["google_bucket_name"])
+              operation_name = SpeechToText::GoogleS2T.create_job("#{data["recordID"]}","wav",data["google_bucket_name"], "#{data["language_code"]}")
               
               u.update(status: "created job with #{u.service}")      
           
-              #puts params[0].name
               WM::GoogleWorker_2.perform_async(data, u.id, operation_name);
               
               
@@ -94,10 +93,11 @@ module WM
               #SpeechToText::GoogleS2T.google_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"],data["google_bucket_name"])
           
               callback = SpeechToText::GoogleS2T.check_job(operation_name)
+          
               myarray = SpeechToText::GoogleS2T.create_array_google(callback["results"])
           
               u.update(status: "writing subtitle file from #{u.service}")
-              SpeechToText::Util.write_to_webvtt("#{data["published_file_path"]}/#{data["recordID"]}","vttfile_en_US.vtt",myarray)
+              SpeechToText::Util.write_to_webvtt("#{data["published_file_path"]}/#{data["recordID"]}","vttfile_#{data["language_code"]}.vtt",myarray)
               
               SpeechToText::GoogleS2T.delete_google_storage(data["google_bucket_name"], "#{data["recordID"]}", "wav")
               
@@ -142,8 +142,8 @@ module WM
              #SpeechToText::IbmWatsonS2T.ibm_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"])
               status = "processing"
               while(status != "completed")
-                callback = SpeechToText::IbmWatsonS2T.check_job(job_id,"#{data["auth_key"]}")
-                #callback = SpeechToText::IbmWatsonS2T.check_job(job_id,data["auth_key"])
+                callback = SpeechToText::IbmWatsonS2T.check_job(job_id, data["auth_key"])
+                
                 status = callback["status"]
                 #sleep(300)
               end
@@ -152,7 +152,6 @@ module WM
           
               u.update(status: "writing subtitle file from #{u.service}")
               SpeechToText::Util.write_to_webvtt("#{data["published_file_path"]}/#{data["recordID"]}","vttfile_en_US.vtt",myarray)
-              #SpeechToText::Util.write_to_webvtt(data["published_file_path"],data["recordID"],myarray)
           
               u.update(status: "done with #{u.service}")
           

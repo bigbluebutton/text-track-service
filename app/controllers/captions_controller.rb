@@ -6,11 +6,12 @@ class CaptionsController < ApplicationController
     def service
         @service = params[:service]
         @recordID = params[:recordID]
+        @language = params[:language]
         
         puts "#{@service} #{@recordID}"
         
        if(params[:service] === "google")
-            system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} /D/innovation/text-track-service/test2/bbb-accessibility-183f2b339bfb.json bbb-accessibility")
+            system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} /D/innovation/text-track-service/test2/bbb-accessibility-183f2b339bfb.json bbb-accessibility #{@language}")
        elsif(params[:service] === "ibm")
            system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} hEieEKi5ABhGYY01FYLh7swZcghEw3izdpan3Piqpa5V")
        elsif(params[:service] === "deepspeech")

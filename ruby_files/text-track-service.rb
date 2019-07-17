@@ -25,13 +25,14 @@ def set_parameters(params)
      :message => "successfully created json file for IBM"
      #:google_bucket_name => ("#{params[4]}" if "#{params[0]}" == "google").delete_if{ |k,v| v.nil?}
     }
-  elsif (params[0] == "google" && params.length == 5)
+  elsif (params[0] == "google" && params.length == 6)
     data = {
      :service => "#{params[0]}",
      :published_file_path => "#{params[1]}",
      :recordID => "#{params[2]}",
      :auth_key => "#{params[3]}",
      :google_bucket_name => "#{params[4]}",
+     :language_code => "#{params[5]}",
      :status => "success",
      :message => "successfully created json file for Google"
     }
@@ -71,6 +72,7 @@ def create_json(data)
     file.puts "\"service\" : \"#{data[:service]}\","
     file.puts "\"published_file_path\" : \"#{data[:published_file_path]}\","
     file.puts "\"recordID\" : \"#{data[:recordID]}\","
+    file.puts "\"language_code\" : \"#{data[:language_code]}\","
 
     if data[:service] == "ibm"
       file.puts "\"auth_key\" : \"#{data[:auth_key]}\","
