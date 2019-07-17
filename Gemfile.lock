@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/parthikmodi/speech_to_text.git
-  revision: 045d24866788737e250f019b499dbba9d321b7ed
+  revision: 9f882336bda79041b2571389070c6f84176aa427
   specs:
     speech_to_text (0.1.1)
       google-cloud-speech (= 0.35.0)

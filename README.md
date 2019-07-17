@@ -53,7 +53,22 @@ moved test folder to root as test2 since rails has its own test folder
 databse name is development.sqlite3 table name is captions
 ```
 
-# Country codes for languages
+# Country codes for languages (Ibm)
+
+|Language|Broadband model|Narrowband model|
+|--- |--- |--- |
+|Brazilian Portuguese|pt-BR_BroadbandModel|pt-BR_NarrowbandModel|
+|French|fr-FR_BroadbandModel|fr-FR_NarrowbandModel|
+|German|de-DE_BroadbandModel|de-DE_NarrowbandModel|
+|Japanese|ja-JP_BroadbandModel|ja-JP_NarrowbandModel|
+|Korean|ko-KR_BroadbandModel|ko-KR_NarrowbandModel|
+|Mandarin Chinese|zh-CN_BroadbandModel|zh-CN_NarrowbandModel|
+|Modern Standard Arabic|ar-AR_BroadbandModel|Not supported|
+|Spanish|es-ES_BroadbandModel|es-ES_NarrowbandModel|
+|UK English|en-GB_BroadbandModel|en-GB_NarrowbandModel|
+|US English|en-US_BroadbandModel|en-US_NarrowbandModel|
+
+# Country codes for languages (Google)
 
 |Language|languageCode|Language (English name)|
 |--- |--- |--- |

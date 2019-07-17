@@ -17,7 +17,7 @@ class CaptionsController < ApplicationController
        elsif(params[:service] === "deepspeech")
            system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put deepspeech model path here>")
        elsif(params[:service] === "speechmatics")
-           system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put user id here> <put api key here>")
+           system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} 67998 YzRiYzNhZWYtODk5OC00M2FjLThhYTItNmI0NTdmNTFiZTU4")
        else
            puts "No such service found"
        end
@@ -32,7 +32,7 @@ class CaptionsController < ApplicationController
     
     def progress_id
         @recordID = params[:id]
-        @caption = Caption.where(recordID: @recordID)
+        @caption = Caption.where(record_id: @recordID)
         tp @caption
     end
     

@@ -35,6 +35,8 @@ module WM
               SpeechToText::Util.video_to_audio(video_file_path: "#{data["published_file_path"]}/#{data["recordID"]}/video",video_name:"video",video_content_type: "mp4",audio_file_path: "#{data["published_file_path"]}/#{data["recordID"]}",audio_name: "#{data["recordID"]}",audio_content_type: "wav") 
           elsif(u.service == "google")
               SpeechToText::Util.video_to_audio(video_file_path: "#{data["published_file_path"]}/#{data["recordID"]}/video",video_name:"video",video_content_type: "mp4",audio_file_path: "#{data["published_file_path"]}/#{data["recordID"]}",audio_name: "#{data["recordID"]}",audio_content_type: "wav")
+          elsif(u.service == "speechmatics")
+              SpeechToText::Util.video_to_audio(video_file_path: "#{data["published_file_path"]}/#{data["recordID"]}/video",video_name:"video",video_content_type: "mp4",audio_file_path: "#{data["published_file_path"]}/#{data["recordID"]}",audio_name: "#{data["recordID"]}",audio_content_type: "mp3")
           else
               SpeechToText::Util.video_to_audio(data["published_file_path"],data["recordID"],data["service"]);
           end
@@ -47,7 +49,7 @@ module WM
           elsif(data["service"] === "deepspeech") 
             WM::DeepspeechWorker.perform_async(data, u.id);
           elsif(data["service"] === "speechmatics") 
-            WM::SpeechmaticsWorker.perform_async(data, u.id);
+            WM::SpeechmaticsWorker_1.perform_async(data, u.id);
           end
 
 
@@ -176,7 +178,7 @@ module WM
       end
     end
     
-    class SpeechmaticsWorker
+    class SpeechmaticsWorker_1
       include Faktory::Job
       faktory_options retry: 0
 
@@ -185,9 +187,46 @@ module WM
               
               u = Caption.find(id)
               u.update(status: "finished audio & started #{u.service} transcription process")
-             SpeechToText::SpeechmaticsS2T.speechmatics_speech_to_text(data["published_file_path"],data["recordID"],data["userID"],data["auth_key"])
+             #SpeechToText::SpeechmaticsS2T.speechmatics_speech_to_text(data["published_file_path"],data["recordID"],data["userID"],data["auth_key"])
+             jobID = SpeechToText::SpeechmaticsS2T.create_job("#{data["published_file_path"]}/#{data["recordID"]}",data["recordID"],"mp3",data["userID"],data["auth_key"],"#{data["published_file_path"]}/#{data["recordID"]}/jobID_#{data["userID"]}.json")
               
+              u.update(status: "created job with #{u.service}")
+          
+              WM::SpeechmaticsWorker_2.perform_async(data, u.id, jobID);
+          
+      end
+    end
+    
+    class SpeechmaticsWorker_2
+      include Faktory::Job
+      faktory_options retry: 0
+
+      def perform(data, id, jobID)
+          
+              
+              u = Caption.find(id)
+              u.update(status: "waiting on job from #{u.service}")
+             
+              wait_time = 30
+              while !wait_time.nil?
+                wait_time = SpeechToText::SpeechmaticsS2T.check_job(data["userID"],jobID,data["auth_key"],"#{data["published_file_path"]}/#{data["recordID"]}/jobdetails_#{data["userID"]}.json")
+                sleep(wait_time)
+              end
+          
+              callback = SpeechToText::SpeechmaticsS2T.get_transcription(data["userID"],jobID,data["auth_key"],"#{data["published_file_path"]}/#{data["recordID"]}/transcription_#{data["userID"]}.json")
+          
+              
+              myarray = SpeechToText::SpeechmaticsS2T.create_array_speechmatic(callback)
+                
+             SpeechToText::Util.write_to_webvtt("#{data["published_file_path"]}/#{data["recordID"]}","vttfile_en_US.vtt",myarray)
+              
+          
               u.update(status: "done with #{u.service}")
+              
+              File.delete("#{data["published_file_path"]}/#{data["recordID"]}/jobID_#{data["userID"]}.json")
+              File.delete("#{data["published_file_path"]}/#{data["recordID"]}/jobdetails_#{data["userID"]}.json")
+              File.delete("#{data["published_file_path"]}/#{data["recordID"]}/transcription_#{data["userID"]}.json")
+              File.delete("#{data["published_file_path"]}/#{data["recordID"]}/#{data["recordID"]}.json")
           
       end
     end
