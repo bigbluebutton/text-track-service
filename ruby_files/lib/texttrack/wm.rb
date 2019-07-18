@@ -122,7 +122,7 @@ module WM
               u.update(status: "finished audio conversion")
              #SpeechToText::IbmWatsonS2T.ibm_speech_to_text(data["published_file_path"],data["recordID"],data["auth_key"])
               
-              job_id = SpeechToText::IbmWatsonS2T.create_job(audio_file_path:"#{data["published_file_path"]}/#{data["recordID"]}",apikey:"#{data["auth_key"]}",audio:"#{data["recordID"]}",content_type:"wav")
+              job_id = SpeechToText::IbmWatsonS2T.create_job(audio_file_path:"#{data["published_file_path"]}/#{data["recordID"]}",apikey:"#{data["auth_key"]}",audio:"#{data["recordID"]}",content_type:"wav",language_code: data["language_code"])
           
               #job_id = SpeechToText::IbmWatsonS2T.create_job(data["published_file_path"],data["recordID"],data["auth_key"])
               
@@ -218,7 +218,8 @@ module WM
               
               myarray = SpeechToText::SpeechmaticsS2T.create_array_speechmatic(callback)
                 
-             SpeechToText::Util.write_to_webvtt("#{data["published_file_path"]}/#{data["recordID"]}","vttfile_en_US.vtt",myarray)
+              u.update(status: "writing subtitle file from #{u.service}")
+              SpeechToText::Util.write_to_webvtt("#{data["published_file_path"]}/#{data["recordID"]}","vttfile_en_US.vtt",myarray)
               
           
               u.update(status: "done with #{u.service}")

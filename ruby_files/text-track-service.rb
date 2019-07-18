@@ -15,12 +15,13 @@ TextTrack.logger = logger
 
 def set_parameters(params)
 
-  if (params[0] == "ibm" && params.length == 4)
+  if (params[0] == "ibm" && params.length == 5)
     data = {
      :service => "#{params[0]}",
      :published_file_path => "#{params[1]}",
      :recordID => "#{params[2]}",
      :auth_key => "#{params[3]}",
+     :language_code => "#{params[4]}",
      :status => "success",
      :message => "successfully created json file for IBM"
      #:google_bucket_name => ("#{params[4]}" if "#{params[0]}" == "google").delete_if{ |k,v| v.nil?}
@@ -45,13 +46,14 @@ def set_parameters(params)
      :status => "success",
      :message => "successfully created json file for Google"
     }
-  elsif (params[0] == "speechmatics" && params.length == 5)
+  elsif (params[0] == "speechmatics" && params.length == 6)
       data = {
        :service => "#{params[0]}",
        :published_file_path => "#{params[1]}",
        :recordID => "#{params[2]}",
        :userID => "#{params[3]}",
        :auth_key => "#{params[4]}",
+       :language_code => "#{params[5]}",
        :status => "success",
        :message => "successfully created json file for IBM"
        #:google_bucket_name => ("#{params[4]}" if "#{params[0]}" == "google").delete_if{ |k,v| v.nil?}

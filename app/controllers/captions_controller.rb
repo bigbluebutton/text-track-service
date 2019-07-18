@@ -11,13 +11,13 @@ class CaptionsController < ApplicationController
         puts "#{@service} #{@recordID}"
         
        if(params[:service] === "google")
-            system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} /D/innovation/text-track-service/test2/bbb-accessibility-183f2b339bfb.json bbb-accessibility #{@language}")
+            system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put api key here> <put google bucket name here> #{@language}")
        elsif(params[:service] === "ibm")
-           system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put api key here>")
+           system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put api key here> #{@language}")
        elsif(params[:service] === "deepspeech")
            system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put deepspeech model path here>")
        elsif(params[:service] === "speechmatics")
-           system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} 67998 YzRiYzNhZWYtODk5OC00M2FjLThhYTItNmI0NTdmNTFiZTU4")
+           system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put user id here> <put api key here> #{@language}")
        else
            puts "No such service found"
        end

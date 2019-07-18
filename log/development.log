@@ -6755,3 +6755,132 @@ Completed 204 No Content in 594ms (ActiveRecord: 0.0ms)
   ↳ ruby_files/lib/texttrack/wm.rb:223
   [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
   ↳ ruby_files/lib/texttrack/wm.rb:223
+Started GET "/service/ibm/french/fr-FR" for ::1 at 2019-07-18 09:54:07 -0400
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/gems/activerecord-5.2.3/lib/active_record/log_subscriber.rb:98
+Processing by CaptionsController#service as HTML
+  Parameters: {"service"=>"ibm", "recordID"=>"french", "language"=>"fr-FR"}
+Completed 204 No Content in 8ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/service/ibm/french/fr-FR" for ::1 at 2019-07-18 09:58:19 -0400
+Processing by CaptionsController#service as HTML
+  Parameters: {"service"=>"ibm", "recordID"=>"french", "language"=>"fr-FR"}
+Completed 204 No Content in 657ms (ActiveRecord: 0.0ms)
+
+
+  [1m[36mCaption Exists (1.5ms)[0m  [1m[34mSELECT  1 AS one FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:21
+  [1m[36mCaption Load (0.6ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:22
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:23
+  [1m[36mCaption Update (3.4ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "service" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "Started audio conversion"], ["service", "ibm"], ["updated_at", "2019-07-18 13:58:20.485313"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:23
+  [1m[35m (1.0ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:23
+  [1m[36mCaption Load (0.1ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:30
+  [1m[36mCaption Load (0.1ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:121
+  [1m[35m (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:122
+  [1m[36mCaption Update (0.3ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "finished audio conversion"], ["updated_at", "2019-07-18 13:58:23.045926"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:122
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:122
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:129
+  [1m[36mCaption Update (0.5ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "created job with ibm"], ["updated_at", "2019-07-18 13:58:26.832695"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:129
+  [1m[35m (1.7ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:129
+  [1m[36mCaption Load (0.1ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:141
+  [1m[35m (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:142
+  [1m[36mCaption Update (0.3ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "waiting on job from ibm"], ["updated_at", "2019-07-18 13:58:26.839713"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:142
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:142
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:155
+  [1m[36mCaption Update (0.5ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "writing subtitle file from ibm"], ["updated_at", "2019-07-18 13:58:42.092953"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:155
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:155
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:158
+  [1m[36mCaption Update (0.5ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "done with ibm"], ["updated_at", "2019-07-18 13:58:42.096281"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:158
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:158
+Started GET "/service/ibm/french/fr-FR" for ::1 at 2019-07-18 09:59:28 -0400
+Processing by CaptionsController#service as HTML
+  Parameters: {"service"=>"ibm", "recordID"=>"french", "language"=>"fr-FR"}
+  [1m[36mCaption Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:21
+  [1m[36mCaption Load (0.3ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:22
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:23
+  [1m[36mCaption Update (0.4ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "Started audio conversion"], ["updated_at", "2019-07-18 13:59:29.206524"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:23
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:23
+  [1m[36mCaption Load (0.1ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:30
+Completed 204 No Content in 968ms (ActiveRecord: 0.0ms)
+
+
+  [1m[36mCaption Load (1.0ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:121
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:122
+  [1m[36mCaption Update (0.3ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "finished audio conversion"], ["updated_at", "2019-07-18 13:59:29.558029"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:122
+  [1m[35m (0.7ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:122
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:129
+  [1m[36mCaption Update (0.5ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "created job with ibm"], ["updated_at", "2019-07-18 13:59:30.388424"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:129
+  [1m[35m (1.1ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:129
+  [1m[36mCaption Load (0.3ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:141
+  [1m[35m (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:142
+  [1m[36mCaption Update (0.3ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "waiting on job from ibm"], ["updated_at", "2019-07-18 13:59:30.394495"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:142
+  [1m[35m (0.9ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:142
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:155
+  [1m[36mCaption Update (0.5ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "writing subtitle file from ibm"], ["updated_at", "2019-07-18 13:59:45.290447"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:155
+  [1m[35m (1.4ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:155
+  [1m[35m (0.2ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:158
+  [1m[36mCaption Update (0.4ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "done with ibm"], ["updated_at", "2019-07-18 13:59:45.296011"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:158
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:158
+Started GET "/progress" for ::1 at 2019-07-18 10:01:42 -0400
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/gems/activerecord-5.2.3/lib/active_record/log_subscriber.rb:98
+Processing by CaptionsController#progress as HTML
+  [1m[36mCaption Load (0.2ms)[0m  [1m[34mSELECT "captions".* FROM "captions"[0m
+  ↳ app/controllers/captions_controller.rb:30
+Completed 204 No Content in 13ms (ActiveRecord: 0.7ms)
+
+
+Started GET "/progress/french" for ::1 at 2019-07-18 10:01:55 -0400
+Processing by CaptionsController#progress_id as HTML
+  Parameters: {"id"=>"french"}
+  [1m[36mCaption Load (0.3ms)[0m  [1m[34mSELECT "captions".* FROM "captions" WHERE "captions"."record_id" = ?[0m  [["record_id", "french"]]
+  ↳ app/controllers/captions_controller.rb:36
+Completed 204 No Content in 9ms (ActiveRecord: 0.3ms)
+
+
