@@ -153,7 +153,7 @@ module WM
               myarray = SpeechToText::IbmWatsonS2T.create_array_watson(callback["results"][0])
           
               u.update(status: "writing subtitle file from #{u.service}")
-              SpeechToText::Util.write_to_webvtt("#{data["published_file_path"]}/#{data["recordID"]}","vttfile_en_US.vtt",myarray)
+              SpeechToText::Util.write_to_webvtt("#{data["published_file_path"]}/#{data["recordID"]}","vttfile_#{data["language_code"]}.vtt",myarray)
           
               u.update(status: "done with #{u.service}")
           
@@ -219,7 +219,7 @@ module WM
               myarray = SpeechToText::SpeechmaticsS2T.create_array_speechmatic(callback)
                 
               u.update(status: "writing subtitle file from #{u.service}")
-              SpeechToText::Util.write_to_webvtt("#{data["published_file_path"]}/#{data["recordID"]}","vttfile_en_US.vtt",myarray)
+              SpeechToText::Util.write_to_webvtt("#{data["published_file_path"]}/#{data["recordID"]}","vttfile_#{data["language_code"]}.vtt",myarray)
               
           
               u.update(status: "done with #{u.service}")

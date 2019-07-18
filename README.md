@@ -50,7 +50,7 @@ eg. /service/google/french-test/fr-FR
 ```
 moved all ruby files in ruby_files folder
 moved test folder to root as test2 since rails has its own test folder
-databse name is development.sqlite3 table name is captions
+database name is development.sqlite3 table name is captions
 ```
 
 # Country codes for languages (Ibm)
