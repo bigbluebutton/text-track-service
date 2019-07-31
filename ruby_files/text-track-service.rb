@@ -67,37 +67,8 @@ def set_parameters(params)
   return data
 end
 
-
-def create_json(data)
-  file = File.open("#{data[:published_file_path]}/#{data[:recordID]}/#{data[:recordID]}.json","w")
-    file.puts "{"
-    file.puts "\"service\" : \"#{data[:service]}\","
-    file.puts "\"published_file_path\" : \"#{data[:published_file_path]}\","
-    file.puts "\"recordID\" : \"#{data[:recordID]}\","
-    file.puts "\"language_code\" : \"#{data[:language_code]}\","
-
-    if data[:service] == "ibm"
-      file.puts "\"auth_key\" : \"#{data[:auth_key]}\","
-    elsif data[:service] == "google"
-      file.puts "\"auth_key\" : \"#{data[:auth_key]}\","
-      file.puts "\"google_bucket_name\" : \"#{data[:google_bucket_name]}\","
-    elsif data[:service] == "mozilla_deepspeech"
-      file.puts "\"deepspeech_model_path\" : \"#{data[:deepspeech_model_path]}\","
-    elsif data[:service] == "speechmatics"
-      file.puts "\"auth_key\" : \"#{data[:auth_key]}\","
-      file.puts "\"userID\" : \"#{data[:userID]}\","
-    else
-      file.puts "\"auth_key\" : \"auth_key not found\,"
-    end
-    file.puts "\"message\" : \"#{data[:message]}\""
-    file.puts "}"
-  file.close
-end
-
-def start_service(published_files,recordID)
-  dataFile = File.open("#{published_files}/#{recordID}/#{recordID}.json","r")
-  data = JSON.load(dataFile)
-  if data["service"] == "google" || data["service"] == "ibm" || data["service"] == "deepspeech" || data["service"] == "speechmatics"
+def start_service(data)
+  if data[:service] == "google" || data[:service] == "ibm" || data[:service] == "deepspeech" || data[:service] == "speechmatics"
     WM::AudioWorker.perform_async(data)
   else
     puts "no such service found..."
@@ -109,6 +80,5 @@ end
 
 data = set_parameters(ARGV)
 print ARGV
-create_json(data)
 
-start_service(data[:published_file_path],data[:recordID])
+start_service(data)
