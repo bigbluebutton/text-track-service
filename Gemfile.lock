@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/parthikmodi/speech_to_text.git
-  revision: b621a040fd2163fd255a4366be63fccd5cbaa2bd
+  revision: 8f73e36415a71cde043b837c15255ae6e3760418
   specs:
     speech_to_text (0.1.1)
       google-cloud-speech (= 0.35.0)
@@ -78,7 +78,7 @@ GEM
     ffi (1.11.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    google-api-client (0.30.7)
+    google-api-client (0.30.8)
       addressable (~> 2.5, >= 2.5.1)
       googleauth (>= 0.5, < 0.10.0)
       httpclient (>= 2.8.1, < 3.0)
