@@ -5,10 +5,10 @@ require 'faktory'
 require 'securerandom'
 require "speech_to_text"
 require "sqlite3"
-ENV['RAILS_ENV'] = "development"
-require "./config/environment"
+rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
+require rails_environment_path
 
-module WM        
+module WM
   class DeepspeechWorker
     include Faktory::Job
     faktory_options retry: 0
@@ -21,9 +21,9 @@ module WM
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
       SpeechToText::MozillaDeepspeechS2T.mozilla_speech_to_text(data["published_file_path"],data["recordID"],data["deepspeech_model_path"])
-              
+
       u.update(progress: "done with #{u.service}")
-          
+
     end
   end
 end
