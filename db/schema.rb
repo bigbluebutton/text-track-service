@@ -13,9 +13,11 @@
 ActiveRecord::Schema.define(version: 2019_07_09_150627) do
 
   create_table "captions", force: :cascade do |t|
-    t.string "recordID"
+    t.string "record_id"
     t.string "service"
-    t.string "progress"
+    t.string "status"
+    t.string "caption_locale"
+    t.string "error"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
