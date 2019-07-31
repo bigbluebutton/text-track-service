@@ -24,8 +24,15 @@ module WM
       # for pt-BR, etc. instead of en-US?
 
       SpeechToText::GoogleS2T.set_environment(data["auth_key"])
-      SpeechToText::GoogleS2T.google_storage(data["published_file_path"],data["recordID"],data["google_bucket_name"])
-      operation_name = SpeechToText::GoogleS2T.create_job(data["recordID"],data["google_bucket_name"])
+      SpeechToText::GoogleS2T.google_storage(
+        data["published_file_path"],
+        data["recordID"],
+        data["google_bucket_name"]
+      )
+      operation_name = SpeechToText::GoogleS2T.create_job(
+        data["recordID"],
+        data["google_bucket_name"]
+      )
 
       u.update(progress: "created job with #{u.service}")
 
@@ -45,9 +52,16 @@ module WM
       myarray = SpeechToText::GoogleS2T.create_array_google(callback["results"])
 
       u.update(progress: "writing subtitle file from #{u.service}")
-      SpeechToText::Util.write_to_webvtt(data["published_file_path"],data["recordID"],myarray)
+      SpeechToText::Util.write_to_webvtt(
+        data["published_file_path"],
+        data["recordID"],
+        myarray
+      )
 
-      SpeechToText::GoogleS2T.delete_google_storage(data["google_bucket_name"], data["recordID"])
+      SpeechToText::GoogleS2T.delete_google_storage(
+        data["google_bucket_name"],
+        data["recordID"]
+      )
 
       u.update(progress: "done with #{u.service}")
 
