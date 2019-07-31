@@ -15,23 +15,11 @@ require rails_environment_path
 
 module WM
     
-    #ActiveRecord::Base.establish_connection(
-      #:adapter => "sqlite3",
-      #:database => "db/development.sqlite3"
-    #)
-    
-    #class to access database
-    #class Caption < ActiveRecord::Base
-    #end
-    
     class AudioWorker
       include Faktory::Job
       faktory_options retry: 0
         
       def perform(data)
-
-          #db = SQLite3::Database.open "../../../db/development.sqlite3"
-          #db.execute('SELECT * FROM captions')
           
 
           if Caption.exists?(record_id: "#{data["recordID"]}")
@@ -40,11 +28,8 @@ module WM
           else
               Caption.create(record_id: "#{data["recordID"]}", status: "Started audio conversion", service: "#{data["service"]}", caption_locale: "#{data["language_code"]}")
           end
- 
-          #Progress.find_by(recordID: "#{data["recordID"]}").first_or_create(recordID: "#{data["recordID"]}").update(progress: 'Started audio conversion')
           
           u = Caption.find_by(record_id: "#{data["recordID"]}")
-          #Progress.create(recordID: "#{data["recordID"]}", progress: "audio conversion started")
           
          
           if(u.service == "ibm")
