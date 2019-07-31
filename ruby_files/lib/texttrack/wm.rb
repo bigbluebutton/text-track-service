@@ -8,8 +8,10 @@ require "google/cloud/storage"
 require "speech_to_text"
 require "sqlite3"
 require 'active_record'
-ENV['RAILS_ENV'] = "development"
-require_relative "../../../config/environment"
+#ENV['RAILS_ENV'] = "development"
+#require_relative "../../../config/environment"
+rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', '..', 'config', 'environment'))
+require rails_environment_path
 
 module WM
     
