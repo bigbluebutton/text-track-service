@@ -20,7 +20,11 @@ module WM
       # TODO
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
-      SpeechToText::MozillaDeepspeechS2T.mozilla_speech_to_text(data["published_file_path"],data["recordID"],data["deepspeech_model_path"])
+      SpeechToText::MozillaDeepspeechS2T.mozilla_speech_to_text(
+        data["published_file_path"],
+        data["recordID"],
+        data["deepspeech_model_path"]
+      )
 
       u.update(progress: "done with #{u.service}")
 

@@ -6,6 +6,9 @@ redis_port: 6379
 
 log_to_file: false
 
+# Used to namespace the redis keys used by rails.
+# see config/initializers/redis.rb
+#
 redis_list_namespace: "bbb_texttrack_service"
 redis_jobs_list_key: "bbb_texttrack_service:caption_recordings_job"
 

@@ -18,7 +18,7 @@ sudo dpkg -i faktory_1.0.1-1_amd64.deb
 
 Development
 
-You will need to open at least 4 terminal windows: (1) for rails app, 
+You will need to open at least 4 terminal windows: (1) for rails app,
 (2) for text-track service, (3) for text-track-worker, (4) for commands you issue
 
 Open terminal 1
@@ -91,7 +91,7 @@ Open terminal 3
 
 ```
 # Start the worker
-./developemtn/start-worker.sh
+./developement/start-worker.sh
 ```
 
 Open terminal 4

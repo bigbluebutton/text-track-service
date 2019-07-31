@@ -1,12 +1,13 @@
 require 'yaml'
 
+
+if ENV['REDIS_URL'].nil?
+  redis = Redis.new
+else
+  redis = Redis.new(url: ENV['REDIS_URL'])
+end
+
 props = YAML::load(File.open('settings.yaml'))
-redis_host = props['redis_host']
-redis_port = props['redis_port']
-redis_password = props['redis_password']
-
-puts "REDIS HOST=#{redis_host} PORT=#{redis_port} PASS=#{redis_password}"
-
 redis_namespace = props["redis_list_namespace"]
 
 # Namespace our keys to bbb_texttrack_service:<whatever>

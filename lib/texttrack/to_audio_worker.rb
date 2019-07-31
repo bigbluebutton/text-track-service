@@ -21,11 +21,11 @@ module WM
 
       if Caption.exists?(record_id: "#{params[:record_id]}")
         u = Caption.find_by(record_id: "#{params[:record_id]}")
-        u.update(progress: "start_audio_conversion",
+        u.update(status: "start_audio_conversion",
                 service: "Do not need provider here.")
       else
         Caption.create(record_id: "#{params[:record_id]}",
-                progress: "started_audio_conversion",
+                status: "started_audio_conversion",
                 service: "Do not need provider here.")
       end
 
