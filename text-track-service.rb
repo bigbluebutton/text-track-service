@@ -14,17 +14,10 @@ end
 
 TextTrack.logger = logger
 
-#
-# Connect to Redis
-#
-redis_host = props['redis_host']
-redis_port = props['redis_port']
-redis_password = props['redis_password']
-
-if redis_password.nil?
-  redis = Redis.new(:host => redis_host, :port => redis_port)
+if ENV['REDIS_URL'].nil?
+  redis = Redis.new
 else
-  redis = Redis.new(:host => redis_host, :port => redis_port, :password => redis_password)
+  redis = Redis.new(url: ENV['REDIS_URL'])
 end
 
 RECORDINGS_JOB_LIST_KEY = props["redis_jobs_list_key"]

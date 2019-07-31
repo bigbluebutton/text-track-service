@@ -5,10 +5,10 @@ require 'faktory'
 require 'securerandom'
 require "speech_to_text"
 require "sqlite3"
-ENV['RAILS_ENV'] = "development"
-require "./config/environment"
+rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
+require rails_environment_path
 
-module WM            
+module WM
   class SpeechmaticsWorker
     include Faktory::Job
     faktory_options retry: 0
@@ -22,9 +22,9 @@ module WM
       # for pt-BR, etc. instead of en-US?
 
       SpeechToText::SpeechmaticsS2T.speechmatics_speech_to_text(data["published_file_path"],data["recordID"],data["userID"],data["auth_key"])
-              
+
       u.update(progress: "done with #{u.service}")
-          
+
     end
   end
 end

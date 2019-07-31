@@ -1,6 +1,6 @@
 tmp/*
 tmp/cache/bootsnap-load-path-cache
-db/
+db/*
 log/*
 credentials.yaml
 config/credentials.yaml
@@ -13,3 +13,4 @@ test/
 info.json
 out.json
 *.vtt
+

@@ -245,3 +245,6 @@ curl http://<ip>:3000/service/foo
 |普通话 (中国大陆)|zh|Chinese, Mandarin (Simplified, China)|
 
 
+# Country codes for Speechmatics
+
+https://www.speechmatics.com/language-support/
