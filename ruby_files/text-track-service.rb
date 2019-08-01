@@ -15,27 +15,29 @@ TextTrack.logger = logger
 
 def set_parameters(params)
 
-  if (params[0] == "ibm" && params.length == 4)
+  if (params[0] == "ibm")
     data = {
      :service => "#{params[0]}",
      :published_file_path => "#{params[1]}",
      :recordID => "#{params[2]}",
      :auth_key => "#{params[3]}",
+     :language_code => "#{params[4]}",
      :status => "success",
      :message => "successfully created json file for IBM"
      #:google_bucket_name => ("#{params[4]}" if "#{params[0]}" == "google").delete_if{ |k,v| v.nil?}
     }
-  elsif (params[0] == "google" && params.length == 5)
+  elsif (params[0] == "google")
     data = {
      :service => "#{params[0]}",
      :published_file_path => "#{params[1]}",
      :recordID => "#{params[2]}",
      :auth_key => "#{params[3]}",
      :google_bucket_name => "#{params[4]}",
+     :language_code => "#{params[5]}",
      :status => "success",
      :message => "successfully created json file for Google"
     }
-  elsif (params[0] == "mozilla_deepspeech" && params.length == 4)
+  elsif (params[0] == "deepspeech")
     data = {
      :service => "#{params[0]}",
      :published_file_path => "#{params[1]}",
@@ -44,13 +46,14 @@ def set_parameters(params)
      :status => "success",
      :message => "successfully created json file for Google"
     }
-  elsif (params[0] == "speechmatics" && params.length == 5)
+  elsif (params[0] == "speechmatics")
       data = {
        :service => "#{params[0]}",
        :published_file_path => "#{params[1]}",
        :recordID => "#{params[2]}",
        :userID => "#{params[3]}",
        :auth_key => "#{params[4]}",
+       :language_code => "#{params[5]}",
        :status => "success",
        :message => "successfully created json file for IBM"
        #:google_bucket_name => ("#{params[4]}" if "#{params[0]}" == "google").delete_if{ |k,v| v.nil?}
@@ -64,36 +67,8 @@ def set_parameters(params)
   return data
 end
 
-
-def create_json(data)
-  file = File.open("#{data[:published_file_path]}/#{data[:recordID]}/#{data[:recordID]}.json","w")
-    file.puts "{"
-    file.puts "\"service\" : \"#{data[:service]}\","
-    file.puts "\"published_file_path\" : \"#{data[:published_file_path]}\","
-    file.puts "\"recordID\" : \"#{data[:recordID]}\","
-
-    if data[:service] == "ibm"
-      file.puts "\"auth_key\" : \"#{data[:auth_key]}\","
-    elsif data[:service] == "google"
-      file.puts "\"auth_key\" : \"#{data[:auth_key]}\","
-      file.puts "\"google_bucket_name\" : \"#{data[:google_bucket_name]}\","
-    elsif data[:service] == "mozilla_deepspeech"
-      file.puts "\"deepspeech_model_path\" : \"#{data[:deepspeech_model_path]}\","
-    elsif data[:service] == "speechmatics"
-      file.puts "\"auth_key\" : \"#{data[:auth_key]}\","
-      file.puts "\"userID\" : \"#{data[:userID]}\","
-    else
-      file.puts "\"auth_key\" : \"auth_key not found\,"
-    end
-    file.puts "\"message\" : \"#{data[:message]}\""
-    file.puts "}"
-  file.close
-end
-
-def start_service(published_files,recordID)
-  dataFile = File.open("#{published_files}/#{recordID}/#{recordID}.json","r")
-  data = JSON.load(dataFile)
-  if data["service"] == "google" || data["service"] == "ibm" || data["service"] == "deepspeech" || data["service"] == "speechmatics"
+def start_service(data)
+  if data[:service] == "google" || data[:service] == "ibm" || data[:service] == "deepspeech" || data[:service] == "speechmatics"
     WM::AudioWorker.perform_async(data)
   else
     puts "no such service found..."
@@ -105,6 +80,5 @@ end
 
 data = set_parameters(ARGV)
 print ARGV
-create_json(data)
 
-start_service(data[:published_file_path],data[:recordID])
+start_service(data)

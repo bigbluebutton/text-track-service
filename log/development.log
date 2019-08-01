@@ -2925,3 +2925,505 @@ Completed 204 No Content in 862ms (ActiveRecord: 0.0ms)
   ↳ ruby_files/lib/texttrack/wm.rb:148
   [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
   ↳ ruby_files/lib/texttrack/wm.rb:148
+Started GET "/progress" for ::1 at 2019-08-01 09:38:46 -0400
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/gems/activerecord-5.2.3/lib/active_record/log_subscriber.rb:98
+Processing by CaptionsController#progress as HTML
+  [1m[36mCaption Load (0.2ms)[0m  [1m[34mSELECT "captions".* FROM "captions"[0m
+  ↳ app/controllers/captions_controller.rb:29
+Completed 204 No Content in 12ms (ActiveRecord: 0.6ms)
+
+
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+  [1m[35m (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+Migrating to CreateCaptions (20190709150627)
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+  [1m[35m (0.9ms)[0m  [1m[35mDROP TABLE "captions"[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+  [1m[36mActiveRecord::SchemaMigration Destroy (0.2ms)[0m  [1m[31mDELETE FROM "schema_migrations" WHERE "schema_migrations"."version" = ?[0m  [["version", "20190709150627"]]
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+Migrating to CreateCaptions (20190709150627)
+  [1m[35m (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  ↳ db/migrate/20190709150627_create_captions.rb:3
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE TABLE "captions" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "record_id" varchar, "service" varchar, "status" varchar, "caption_locale" varchar, "error" varchar, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL)[0m
+  ↳ db/migrate/20190709150627_create_captions.rb:3
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20190709150627"]]
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+  [1m[35m (1.4ms)[0m  [1m[36mcommit transaction[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT  "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = ? LIMIT ?[0m  [["key", "environment"], ["LIMIT", 1]]
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+  [1m[35m (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+  [1m[35m (0.1ms)[0m  [1m[36mcommit transaction[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/bin/rake:23
+Started GET "/service/google/french/fr-FR" for ::1 at 2019-08-01 10:07:21 -0400
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/gems/activerecord-5.2.3/lib/active_record/log_subscriber.rb:98
+Processing by CaptionsController#service as HTML
+  Parameters: {"service"=>"google", "recordID"=>"french", "language"=>"fr-FR"}
+Completed 204 No Content in 792ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/service/google/french/fr-FR" for ::1 at 2019-08-01 10:07:49 -0400
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/gems/activerecord-5.2.3/lib/active_record/log_subscriber.rb:98
+Processing by CaptionsController#service as HTML
+  Parameters: {"service"=>"google", "recordID"=>"french", "language"=>"fr-FR"}
+Completed 204 No Content in 595ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/service/google/french/fr-FR" for ::1 at 2019-08-01 10:09:35 -0400
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/gems/activerecord-5.2.3/lib/active_record/log_subscriber.rb:98
+Processing by CaptionsController#service as HTML
+  Parameters: {"service"=>"google", "recordID"=>"french", "language"=>"fr-FR"}
+Completed 204 No Content in 563ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/service/google/french/fr-FR" for ::1 at 2019-08-01 10:17:40 -0400
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/gems/activerecord-5.2.3/lib/active_record/log_subscriber.rb:98
+Processing by CaptionsController#service as HTML
+  Parameters: {"service"=>"google", "recordID"=>"french", "language"=>"fr-FR"}
+Completed 204 No Content in 495ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/service/google/french/fr-FR" for ::1 at 2019-08-01 10:28:59 -0400
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/gems/activerecord-5.2.3/lib/active_record/log_subscriber.rb:98
+Processing by CaptionsController#service as HTML
+  Parameters: {"service"=>"google", "recordID"=>"french", "language"=>"fr-FR"}
+Completed 204 No Content in 687ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/service/google/french/fr-FR" for ::1 at 2019-08-01 10:30:09 -0400
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/gems/activerecord-5.2.3/lib/active_record/log_subscriber.rb:98
+Processing by CaptionsController#service as HTML
+  Parameters: {"service"=>"google", "recordID"=>"french", "language"=>"fr-FR"}
+Completed 204 No Content in 910ms (ActiveRecord: 0.0ms)
+
+
+  [1m[36mCaption Exists (0.5ms)[0m  [1m[34mSELECT  1 AS one FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:23
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:27
+  [1m[36mCaption Create (0.8ms)[0m  [1m[32mINSERT INTO "captions" ("record_id", "service", "status", "caption_locale", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["record_id", "french"], ["service", "google"], ["status", "Started audio conversion"], ["caption_locale", ""], ["created_at", "2019-08-01 14:30:10.716041"], ["updated_at", "2019-08-01 14:30:10.716041"]]
+  ↳ ruby_files/lib/texttrack/wm.rb:27
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:27
+  [1m[36mCaption Load (0.2ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:32
+  [1m[36mCaption Load (0.3ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:68
+  [1m[35m (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:69
+  [1m[36mCaption Update (0.3ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "finished audio conversion"], ["updated_at", "2019-08-01 14:30:10.915257"], ["id", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:69
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:69
+Sending HTTP get https://www.googleapis.com/storage/v1/b/bbb-accessibility?
+200
+#<HTTP::Message:0x00007febbcbf67b0 @http_header=#<HTTP::Message::Headers:0x00007febbcbf6738 @http_version="1.1", @body_size=0, @chunked=false, @request_method="GET", @request_uri=#<Addressable::URI:0x3ff5de5fbc34 URI:https://www.googleapis.com/storage/v1/b/bbb-accessibility?>, @request_query=nil, @request_absolute_uri=nil, @status_code=200, @reason_phrase="OK", @body_type=nil, @body_charset=nil, @body_date=nil, @body_encoding=#<Encoding:UTF-8>, @is_request=false, @header_item=[["X-GUploader-UploadID", "AEnB2UqRSBCFzNn7OgeoacCs-giMI7dtP624ZGz1nwJJkYMSD4g0puoAeyVmdrHLmFa0zK_0fMKwKBd--6fiShiiHYKiRFDT0g"], ["ETag", "CAc="], ["Vary", "Origin"], ["Vary", "X-Origin"], ["Content-Type", "application/json; charset=UTF-8"], ["Expires", "Thu, 01 Aug 2019 14:30:11 GMT"], ["Date", "Thu, 01 Aug 2019 14:30:11 GMT"], ["Cache-Control", "private, max-age=0, must-revalidate, no-transform"], ["Content-Length", "538"], ["Server", "UploadServer"], ["Alt-Svc", "quic=\":443\"; ma=2592000; v=\"46,43,39\""]], @dumped=false>, @peer_cert=#<OpenSSL::X509::Certificate: subject=#<OpenSSL::X509::Name CN=*.googleapis.com,O=Google LLC,L=Mountain View,ST=California,C=US>, issuer=#<OpenSSL::X509::Name CN=Google Internet Authority G3,O=Google Trust Services,C=US>, serial=#<OpenSSL::BN:0x00007febbcbd4980>, not_before=2019-07-02 19:21:00 UTC, not_after=2019-09-24 18:57:00 UTC>, @http_body=#<HTTP::Message::Body:0x00007febbcbf6648 @body="{\n \"kind\": \"storage#bucket\",\n \"id\": \"bbb-accessibility\",\n \"selfLink\": \"https://www.googleapis.com/storage/v1/b/bbb-accessibility\",\n \"projectNumber\": \"1058731013136\",\n \"name\": \"bbb-accessibility\",\n \"timeCreated\": \"2019-05-08T18:48:21.473Z\",\n \"updated\": \"2019-05-09T14:49:53.656Z\",\n \"metageneration\": \"7\",\n \"iamConfiguration\": {\n  \"bucketPolicyOnly\": {\n   \"enabled\": false\n  },\n  \"uniformBucketLevelAccess\": {\n   \"enabled\": false\n  }\n },\n \"location\": \"US-CENTRAL1\",\n \"locationType\": \"region\",\n \"storageClass\": \"NEARLINE\",\n \"etag\": \"CAc=\"\n}\n", @size=0, @positions=nil, @chunk_size=nil>, @previous=nil>
+Success - #<Google::Apis::StorageV1::Bucket:0x00007febbcbd4110
+ @etag="CAc=",
+ @iam_configuration=
+  #<Google::Apis::StorageV1::Bucket::IamConfiguration:0x00007febb93441b0
+   @bucket_policy_only=
+    #<Google::Apis::StorageV1::Bucket::IamConfiguration::BucketPolicyOnly:0x00007febb9337780
+     @enabled=false>,
+   @uniform_bucket_level_access=
+    #<Google::Apis::StorageV1::Bucket::IamConfiguration::UniformBucketLevelAccess:0x00007febb93369c0
+     @enabled=false>>,
+ @id="bbb-accessibility",
+ @kind="storage#bucket",
+ @location="US-CENTRAL1",
+ @location_type="region",
+ @metageneration=7,
+ @name="bbb-accessibility",
+ @project_number=1058731013136,
+ @self_link="https://www.googleapis.com/storage/v1/b/bbb-accessibility",
+ @storage_class="NEARLINE",
+ @time_created=Wed, 08 May 2019 18:48:21 +0000,
+ @updated=Thu, 09 May 2019 14:49:53 +0000>
+
+Started GET "/service/google/french/fr-FR" for ::1 at 2019-08-01 10:32:02 -0400
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/gems/activerecord-5.2.3/lib/active_record/log_subscriber.rb:98
+Processing by CaptionsController#service as HTML
+  Parameters: {"service"=>"google", "recordID"=>"french", "language"=>"fr-FR"}
+Completed 204 No Content in 661ms (ActiveRecord: 0.0ms)
+
+
+  [1m[36mCaption Exists (0.5ms)[0m  [1m[34mSELECT  1 AS one FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:23
+  [1m[36mCaption Load (0.1ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:24
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:25
+  [1m[36mCaption Update (0.7ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "Started audio conversion"], ["updated_at", "2019-08-01 14:32:03.254900"], ["id", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:25
+  [1m[35m (0.9ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:25
+  [1m[36mCaption Load (0.1ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:32
+  [1m[36mCaption Load (0.1ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:68
+  [1m[35m (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:69
+  [1m[36mCaption Update (0.3ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "finished audio conversion"], ["updated_at", "2019-08-01 14:32:03.532092"], ["id", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:69
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:69
+Sending HTTP get https://www.googleapis.com/storage/v1/b/bbb-accessibility?
+200
+#<HTTP::Message:0x00007f8cecbe9ad0 @http_header=#<HTTP::Message::Headers:0x00007f8cecbe9aa8 @http_version="1.1", @body_size=0, @chunked=false, @request_method="GET", @request_uri=#<Addressable::URI:0x3fc6765f54fc URI:https://www.googleapis.com/storage/v1/b/bbb-accessibility?>, @request_query=nil, @request_absolute_uri=nil, @status_code=200, @reason_phrase="OK", @body_type=nil, @body_charset=nil, @body_date=nil, @body_encoding=#<Encoding:UTF-8>, @is_request=false, @header_item=[["X-GUploader-UploadID", "AEnB2UrpM4AA6fed8HrfVfyqpGyOKuzIrOd9dpKTgrsX1S7G0iQa89ihxsBQ2tTdQgeS-foyCDMsLCf-Ze52zzng0q7M-ZUy7w"], ["ETag", "CAc="], ["Vary", "Origin"], ["Vary", "X-Origin"], ["Content-Type", "application/json; charset=UTF-8"], ["Expires", "Thu, 01 Aug 2019 14:32:03 GMT"], ["Date", "Thu, 01 Aug 2019 14:32:03 GMT"], ["Cache-Control", "private, max-age=0, must-revalidate, no-transform"], ["Content-Length", "538"], ["Server", "UploadServer"], ["Alt-Svc", "quic=\":443\"; ma=2592000; v=\"46,43,39\""]], @dumped=false>, @peer_cert=#<OpenSSL::X509::Certificate: subject=#<OpenSSL::X509::Name CN=*.googleapis.com,O=Google LLC,L=Mountain View,ST=California,C=US>, issuer=#<OpenSSL::X509::Name CN=Google Internet Authority G3,O=Google Trust Services,C=US>, serial=#<OpenSSL::BN:0x00007f8cee87a988>, not_before=2019-07-02 19:21:00 UTC, not_after=2019-09-24 18:57:00 UTC>, @http_body=#<HTTP::Message::Body:0x00007f8cecbe9a30 @body="{\n \"kind\": \"storage#bucket\",\n \"id\": \"bbb-accessibility\",\n \"selfLink\": \"https://www.googleapis.com/storage/v1/b/bbb-accessibility\",\n \"projectNumber\": \"1058731013136\",\n \"name\": \"bbb-accessibility\",\n \"timeCreated\": \"2019-05-08T18:48:21.473Z\",\n \"updated\": \"2019-05-09T14:49:53.656Z\",\n \"metageneration\": \"7\",\n \"iamConfiguration\": {\n  \"bucketPolicyOnly\": {\n   \"enabled\": false\n  },\n  \"uniformBucketLevelAccess\": {\n   \"enabled\": false\n  }\n },\n \"location\": \"US-CENTRAL1\",\n \"locationType\": \"region\",\n \"storageClass\": \"NEARLINE\",\n \"etag\": \"CAc=\"\n}\n", @size=0, @positions=nil, @chunk_size=nil>, @previous=nil>
+Success - #<Google::Apis::StorageV1::Bucket:0x00007f8cee879c68
+ @etag="CAc=",
+ @iam_configuration=
+  #<Google::Apis::StorageV1::Bucket::IamConfiguration:0x00007f8cefbb28c0
+   @bucket_policy_only=
+    #<Google::Apis::StorageV1::Bucket::IamConfiguration::BucketPolicyOnly:0x00007f8cefbb21e0
+     @enabled=false>,
+   @uniform_bucket_level_access=
+    #<Google::Apis::StorageV1::Bucket::IamConfiguration::UniformBucketLevelAccess:0x00007f8cefbb1448
+     @enabled=false>>,
+ @id="bbb-accessibility",
+ @kind="storage#bucket",
+ @location="US-CENTRAL1",
+ @location_type="region",
+ @metageneration=7,
+ @name="bbb-accessibility",
+ @project_number=1058731013136,
+ @self_link="https://www.googleapis.com/storage/v1/b/bbb-accessibility",
+ @storage_class="NEARLINE",
+ @time_created=Wed, 08 May 2019 18:48:21 +0000,
+ @updated=Thu, 09 May 2019 14:49:53 +0000>
+
+Sending upload start command to https://www.googleapis.com/upload/storage/v1/b/bbb-accessibility/o?name=french.wav
+Upload status active
+Sending upload command to https://www.googleapis.com/upload/storage/v1/b/bbb-accessibility/o?name=french.wav&upload_id=AEnB2UpufILpG9QDancxXbQZLh5Sep3Y7UUYLAj9d4nmgaXbt_BOL6sp4WYCIHayOMz__I3MiPLuCf11GWshujApME_MnhKEQA&upload_protocol=resumable
+Upload status final
+Success - #<Google::Apis::StorageV1::Object:0x00007f8ceeca0620
+ @bucket="bbb-accessibility",
+ @content_type="audio/x-wav",
+ @crc32c="h1cR3w==",
+ @etag="CMSctNjx4eMCEAE=",
+ @generation=1564669924675140,
+ @id="bbb-accessibility/french.wav/1564669924675140",
+ @kind="storage#object",
+ @md5_hash="0k4KWHfLDFDE7WyRrDgvlg==",
+ @media_link=
+  "https://www.googleapis.com/download/storage/v1/b/bbb-accessibility/o/french.wav?generation=1564669924675140&alt=media",
+ @metageneration=1,
+ @name="french.wav",
+ @self_link=
+  "https://www.googleapis.com/storage/v1/b/bbb-accessibility/o/french.wav",
+ @size=642806,
+ @storage_class="NEARLINE",
+ @time_created=Thu, 01 Aug 2019 14:32:04 +0000,
+ @time_storage_class_updated=Thu, 01 Aug 2019 14:32:04 +0000,
+ @updated=Thu, 01 Aug 2019 14:32:04 +0000>
+
+Started GET "/service/google/french/fr-FR" for ::1 at 2019-08-01 10:32:34 -0400
+Processing by CaptionsController#service as HTML
+  Parameters: {"service"=>"google", "recordID"=>"french", "language"=>"fr-FR"}
+  [1m[36mCaption Exists (0.1ms)[0m  [1m[34mSELECT  1 AS one FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:23
+  [1m[36mCaption Load (0.2ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:24
+  [1m[35m (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:25
+  [1m[36mCaption Update (0.5ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "Started audio conversion"], ["updated_at", "2019-08-01 14:32:34.560791"], ["id", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:25
+  [1m[35m (1.6ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:25
+  [1m[36mCaption Load (0.2ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:32
+Completed 204 No Content in 618ms (ActiveRecord: 0.0ms)
+
+
+  [1m[36mCaption Load (0.2ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:68
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:69
+  [1m[36mCaption Update (0.3ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "finished audio conversion"], ["updated_at", "2019-08-01 14:32:37.577678"], ["id", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:69
+  [1m[35m (0.9ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:69
+Sending HTTP get https://www.googleapis.com/storage/v1/b/bbb-accessibility?
+200
+#<HTTP::Message:0x00007f8ceb5a39d8 @http_header=#<HTTP::Message::Headers:0x00007f8ceb5a39b0 @http_version="1.1", @body_size=0, @chunked=false, @request_method="GET", @request_uri=#<Addressable::URI:0x3fc675ad4b7c URI:https://www.googleapis.com/storage/v1/b/bbb-accessibility?>, @request_query=nil, @request_absolute_uri=nil, @status_code=200, @reason_phrase="OK", @body_type=nil, @body_charset=nil, @body_date=nil, @body_encoding=#<Encoding:UTF-8>, @is_request=false, @header_item=[["X-GUploader-UploadID", "AEnB2UqDmSHXCRnIegFloR2W-vBtzGT-sie1-hCKCF0zGIw2QH2fxgooF1vN-kmNnv9-m5MhwzuWMEbxCEI720vNeVQcluYTLw"], ["ETag", "CAc="], ["Vary", "Origin"], ["Vary", "X-Origin"], ["Content-Type", "application/json; charset=UTF-8"], ["Expires", "Thu, 01 Aug 2019 14:32:38 GMT"], ["Date", "Thu, 01 Aug 2019 14:32:38 GMT"], ["Cache-Control", "private, max-age=0, must-revalidate, no-transform"], ["Content-Length", "538"], ["Server", "UploadServer"], ["Alt-Svc", "quic=\":443\"; ma=2592000; v=\"46,43,39\""]], @dumped=false>, @peer_cert=#<OpenSSL::X509::Certificate: subject=#<OpenSSL::X509::Name CN=*.googleapis.com,O=Google LLC,L=Mountain View,ST=California,C=US>, issuer=#<OpenSSL::X509::Name CN=Google Internet Authority G3,O=Google Trust Services,C=US>, serial=#<OpenSSL::BN:0x00007f8ceb5891c8>, not_before=2019-07-02 19:21:00 UTC, not_after=2019-09-24 18:57:00 UTC>, @http_body=#<HTTP::Message::Body:0x00007f8ceb5a3910 @body="{\n \"kind\": \"storage#bucket\",\n \"id\": \"bbb-accessibility\",\n \"selfLink\": \"https://www.googleapis.com/storage/v1/b/bbb-accessibility\",\n \"projectNumber\": \"1058731013136\",\n \"name\": \"bbb-accessibility\",\n \"timeCreated\": \"2019-05-08T18:48:21.473Z\",\n \"updated\": \"2019-05-09T14:49:53.656Z\",\n \"metageneration\": \"7\",\n \"iamConfiguration\": {\n  \"bucketPolicyOnly\": {\n   \"enabled\": false\n  },\n  \"uniformBucketLevelAccess\": {\n   \"enabled\": false\n  }\n },\n \"location\": \"US-CENTRAL1\",\n \"locationType\": \"region\",\n \"storageClass\": \"NEARLINE\",\n \"etag\": \"CAc=\"\n}\n", @size=0, @positions=nil, @chunk_size=nil>, @previous=nil>
+Success - #<Google::Apis::StorageV1::Bucket:0x00007f8ceb583e30
+ @etag="CAc=",
+ @iam_configuration=
+  #<Google::Apis::StorageV1::Bucket::IamConfiguration:0x00007f8ceb57b488
+   @bucket_policy_only=
+    #<Google::Apis::StorageV1::Bucket::IamConfiguration::BucketPolicyOnly:0x00007f8ceb57ae48
+     @enabled=false>,
+   @uniform_bucket_level_access=
+    #<Google::Apis::StorageV1::Bucket::IamConfiguration::UniformBucketLevelAccess:0x00007f8ceb57a1a0
+     @enabled=false>>,
+ @id="bbb-accessibility",
+ @kind="storage#bucket",
+ @location="US-CENTRAL1",
+ @location_type="region",
+ @metageneration=7,
+ @name="bbb-accessibility",
+ @project_number=1058731013136,
+ @self_link="https://www.googleapis.com/storage/v1/b/bbb-accessibility",
+ @storage_class="NEARLINE",
+ @time_created=Wed, 08 May 2019 18:48:21 +0000,
+ @updated=Thu, 09 May 2019 14:49:53 +0000>
+
+Sending upload start command to https://www.googleapis.com/upload/storage/v1/b/bbb-accessibility/o?name=french.wav
+Upload status active
+Sending upload command to https://www.googleapis.com/upload/storage/v1/b/bbb-accessibility/o?name=french.wav&upload_id=AEnB2UqzK8iP3BXuXeFwFPm2tXlsR8kNlNc9LqGn8EpXtZY9f1VqC97_mMiUuIj5dWMn3j8Ts6ok7AjUSQTGdZPHNKn-S2Sv4A&upload_protocol=resumable
+Upload status final
+Success - #<Google::Apis::StorageV1::Object:0x00007f8ceb493c50
+ @bucket="bbb-accessibility",
+ @content_type="audio/x-wav",
+ @crc32c="h1cR3w==",
+ @etag="CObb1+jx4eMCEAE=",
+ @generation=1564669958811110,
+ @id="bbb-accessibility/french.wav/1564669958811110",
+ @kind="storage#object",
+ @md5_hash="0k4KWHfLDFDE7WyRrDgvlg==",
+ @media_link=
+  "https://www.googleapis.com/download/storage/v1/b/bbb-accessibility/o/french.wav?generation=1564669958811110&alt=media",
+ @metageneration=1,
+ @name="french.wav",
+ @self_link=
+  "https://www.googleapis.com/storage/v1/b/bbb-accessibility/o/french.wav",
+ @size=642806,
+ @storage_class="NEARLINE",
+ @time_created=Thu, 01 Aug 2019 14:32:38 +0000,
+ @time_storage_class_updated=Thu, 01 Aug 2019 14:32:38 +0000,
+ @updated=Thu, 01 Aug 2019 14:32:38 +0000>
+
+Started GET "/service/google/french/fr-FR" for ::1 at 2019-08-01 10:35:44 -0400
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/rahulrodrigues/.rvm/gems/ruby-2.5.3/gems/activerecord-5.2.3/lib/active_record/log_subscriber.rb:98
+Processing by CaptionsController#service as HTML
+  Parameters: {"service"=>"google", "recordID"=>"french", "language"=>"fr-FR"}
+Completed 204 No Content in 574ms (ActiveRecord: 0.0ms)
+
+
+  [1m[36mCaption Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:23
+  [1m[36mCaption Load (0.1ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:24
+  [1m[35m (0.4ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:25
+  [1m[36mCaption Update (1.0ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "caption_locale" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "Started audio conversion"], ["caption_locale", "fr-FR"], ["updated_at", "2019-08-01 14:35:45.340509"], ["id", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:25
+  [1m[35m (0.9ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:25
+  [1m[36mCaption Load (0.1ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "french"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:32
+  [1m[36mCaption Load (0.1ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:68
+  [1m[35m (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:69
+  [1m[36mCaption Update (0.3ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "finished audio conversion"], ["updated_at", "2019-08-01 14:35:46.878896"], ["id", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:69
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:69
+Sending HTTP get https://www.googleapis.com/storage/v1/b/bbb-accessibility?
+200
+#<HTTP::Message:0x00007feca883b138 @http_header=#<HTTP::Message::Headers:0x00007feca883b110 @http_version="1.1", @body_size=0, @chunked=false, @request_method="GET", @request_uri=#<Addressable::URI:0x3ff654596228 URI:https://www.googleapis.com/storage/v1/b/bbb-accessibility?>, @request_query=nil, @request_absolute_uri=nil, @status_code=200, @reason_phrase="OK", @body_type=nil, @body_charset=nil, @body_date=nil, @body_encoding=#<Encoding:UTF-8>, @is_request=false, @header_item=[["X-GUploader-UploadID", "AEnB2Uq6UJMwc6LUGfoEEQkvyYIidSIQUNFZ0XgsNJUylSwteqTQ3B_jslOv995jrB1ALEbHgWtcKgrdC1RcLSAzY6UWYppA1Q"], ["ETag", "CAc="], ["Vary", "Origin"], ["Vary", "X-Origin"], ["Content-Type", "application/json; charset=UTF-8"], ["Expires", "Thu, 01 Aug 2019 14:35:47 GMT"], ["Date", "Thu, 01 Aug 2019 14:35:47 GMT"], ["Cache-Control", "private, max-age=0, must-revalidate, no-transform"], ["Content-Length", "538"], ["Server", "UploadServer"], ["Alt-Svc", "quic=\":443\"; ma=2592000; v=\"46,43,39\""]], @dumped=false>, @peer_cert=#<OpenSSL::X509::Certificate: subject=#<OpenSSL::X509::Name CN=*.googleapis.com,O=Google LLC,L=Mountain View,ST=California,C=US>, issuer=#<OpenSSL::X509::Name CN=Google Internet Authority G3,O=Google Trust Services,C=US>, serial=#<OpenSSL::BN:0x00007feca5e2b208>, not_before=2019-07-02 19:21:00 UTC, not_after=2019-09-24 18:57:00 UTC>, @http_body=#<HTTP::Message::Body:0x00007feca883b070 @body="{\n \"kind\": \"storage#bucket\",\n \"id\": \"bbb-accessibility\",\n \"selfLink\": \"https://www.googleapis.com/storage/v1/b/bbb-accessibility\",\n \"projectNumber\": \"1058731013136\",\n \"name\": \"bbb-accessibility\",\n \"timeCreated\": \"2019-05-08T18:48:21.473Z\",\n \"updated\": \"2019-05-09T14:49:53.656Z\",\n \"metageneration\": \"7\",\n \"iamConfiguration\": {\n  \"bucketPolicyOnly\": {\n   \"enabled\": false\n  },\n  \"uniformBucketLevelAccess\": {\n   \"enabled\": false\n  }\n },\n \"location\": \"US-CENTRAL1\",\n \"locationType\": \"region\",\n \"storageClass\": \"NEARLINE\",\n \"etag\": \"CAc=\"\n}\n", @size=0, @positions=nil, @chunk_size=nil>, @previous=nil>
+Success - #<Google::Apis::StorageV1::Bucket:0x00007feca5e2aa88
+ @etag="CAc=",
+ @iam_configuration=
+  #<Google::Apis::StorageV1::Bucket::IamConfiguration:0x00007feca882bb70
+   @bucket_policy_only=
+    #<Google::Apis::StorageV1::Bucket::IamConfiguration::BucketPolicyOnly:0x00007feca882ad60
+     @enabled=false>,
+   @uniform_bucket_level_access=
+    #<Google::Apis::StorageV1::Bucket::IamConfiguration::UniformBucketLevelAccess:0x00007feca8829280
+     @enabled=false>>,
+ @id="bbb-accessibility",
+ @kind="storage#bucket",
+ @location="US-CENTRAL1",
+ @location_type="region",
+ @metageneration=7,
+ @name="bbb-accessibility",
+ @project_number=1058731013136,
+ @self_link="https://www.googleapis.com/storage/v1/b/bbb-accessibility",
+ @storage_class="NEARLINE",
+ @time_created=Wed, 08 May 2019 18:48:21 +0000,
+ @updated=Thu, 09 May 2019 14:49:53 +0000>
+
+Sending upload start command to https://www.googleapis.com/upload/storage/v1/b/bbb-accessibility/o?name=french.wav
+Upload status active
+Sending upload command to https://www.googleapis.com/upload/storage/v1/b/bbb-accessibility/o?name=french.wav&upload_id=AEnB2UrFLkByvhj9paSPWrN6ue4bziPkJ0rNg7gVJLJVug9fpE7JktphNAMRk5CV-UsTH2G6-7RcCWrweIa7p9SR8u0n5frtsQ&upload_protocol=resumable
+Upload status final
+Success - #<Google::Apis::StorageV1::Object:0x00007fecaa2b1e68
+ @bucket="bbb-accessibility",
+ @content_type="audio/x-wav",
+ @crc32c="h1cR3w==",
+ @etag="CPa8/8Ly4eMCEAE=",
+ @generation=1564670148206198,
+ @id="bbb-accessibility/french.wav/1564670148206198",
+ @kind="storage#object",
+ @md5_hash="0k4KWHfLDFDE7WyRrDgvlg==",
+ @media_link=
+  "https://www.googleapis.com/download/storage/v1/b/bbb-accessibility/o/french.wav?generation=1564670148206198&alt=media",
+ @metageneration=1,
+ @name="french.wav",
+ @self_link=
+  "https://www.googleapis.com/storage/v1/b/bbb-accessibility/o/french.wav",
+ @size=642806,
+ @storage_class="NEARLINE",
+ @time_created=Thu, 01 Aug 2019 14:35:48 +0000,
+ @time_storage_class_updated=Thu, 01 Aug 2019 14:35:48 +0000,
+ @updated=Thu, 01 Aug 2019 14:35:48 +0000>
+
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:77
+  [1m[36mCaption Update (0.5ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "created job with google"], ["updated_at", "2019-08-01 14:35:49.014942"], ["id", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:77
+  [1m[35m (0.9ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:77
+  [1m[36mCaption Load (0.3ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:96
+  [1m[35m (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:97
+  [1m[36mCaption Update (0.3ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "waiting on job from google"], ["updated_at", "2019-08-01 14:35:49.019584"], ["id", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:97
+  [1m[35m (0.7ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:97
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:104
+  [1m[36mCaption Update (0.5ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "writing subtitle file from google"], ["updated_at", "2019-08-01 14:35:59.530469"], ["id", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:104
+  [1m[35m (1.9ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:104
+Sending HTTP get https://www.googleapis.com/storage/v1/b/bbb-accessibility?
+200
+#<HTTP::Message:0x00007feca5b15398 @http_header=#<HTTP::Message::Headers:0x00007feca5b15370 @http_version="1.1", @body_size=0, @chunked=false, @request_method="GET", @request_uri=#<Addressable::URI:0x3ff652d8baac URI:https://www.googleapis.com/storage/v1/b/bbb-accessibility?>, @request_query=nil, @request_absolute_uri=nil, @status_code=200, @reason_phrase="OK", @body_type=nil, @body_charset=nil, @body_date=nil, @body_encoding=#<Encoding:UTF-8>, @is_request=false, @header_item=[["X-GUploader-UploadID", "AEnB2UpPkQnKpgYtwnZrS-9BZa6GbpRQQ0uXCoaPZZ2ABFQF9ErbEEjDgd68Lo3SDxB8Sf1Ug1xCYDtBi50rxUrP3eYawexcUQ"], ["ETag", "CAc="], ["Vary", "Origin"], ["Vary", "X-Origin"], ["Content-Type", "application/json; charset=UTF-8"], ["Expires", "Thu, 01 Aug 2019 14:35:59 GMT"], ["Date", "Thu, 01 Aug 2019 14:35:59 GMT"], ["Cache-Control", "private, max-age=0, must-revalidate, no-transform"], ["Content-Length", "538"], ["Server", "UploadServer"], ["Alt-Svc", "quic=\":443\"; ma=2592000; v=\"46,43,39\""]], @dumped=false>, @peer_cert=#<OpenSSL::X509::Certificate: subject=#<OpenSSL::X509::Name CN=*.googleapis.com,O=Google LLC,L=Mountain View,ST=California,C=US>, issuer=#<OpenSSL::X509::Name CN=Google Internet Authority G3,O=Google Trust Services,C=US>, serial=#<OpenSSL::BN:0x00007feca5ae57b0>, not_before=2019-07-02 19:21:00 UTC, not_after=2019-09-24 18:57:00 UTC>, @http_body=#<HTTP::Message::Body:0x00007feca5b15280 @body="{\n \"kind\": \"storage#bucket\",\n \"id\": \"bbb-accessibility\",\n \"selfLink\": \"https://www.googleapis.com/storage/v1/b/bbb-accessibility\",\n \"projectNumber\": \"1058731013136\",\n \"name\": \"bbb-accessibility\",\n \"timeCreated\": \"2019-05-08T18:48:21.473Z\",\n \"updated\": \"2019-05-09T14:49:53.656Z\",\n \"metageneration\": \"7\",\n \"iamConfiguration\": {\n  \"bucketPolicyOnly\": {\n   \"enabled\": false\n  },\n  \"uniformBucketLevelAccess\": {\n   \"enabled\": false\n  }\n },\n \"location\": \"US-CENTRAL1\",\n \"locationType\": \"region\",\n \"storageClass\": \"NEARLINE\",\n \"etag\": \"CAc=\"\n}\n", @size=0, @positions=nil, @chunk_size=nil>, @previous=nil>
+Success - #<Google::Apis::StorageV1::Bucket:0x00007feca5adf9f0
+ @etag="CAc=",
+ @iam_configuration=
+  #<Google::Apis::StorageV1::Bucket::IamConfiguration:0x00007feca5adca70
+   @bucket_policy_only=
+    #<Google::Apis::StorageV1::Bucket::IamConfiguration::BucketPolicyOnly:0x00007feca5ad7f20
+     @enabled=false>,
+   @uniform_bucket_level_access=
+    #<Google::Apis::StorageV1::Bucket::IamConfiguration::UniformBucketLevelAccess:0x00007feca5ad7278
+     @enabled=false>>,
+ @id="bbb-accessibility",
+ @kind="storage#bucket",
+ @location="US-CENTRAL1",
+ @location_type="region",
+ @metageneration=7,
+ @name="bbb-accessibility",
+ @project_number=1058731013136,
+ @self_link="https://www.googleapis.com/storage/v1/b/bbb-accessibility",
+ @storage_class="NEARLINE",
+ @time_created=Wed, 08 May 2019 18:48:21 +0000,
+ @updated=Thu, 09 May 2019 14:49:53 +0000>
+
+Sending HTTP get https://www.googleapis.com/storage/v1/b/bbb-accessibility/o/french.wav?
+200
+#<HTTP::Message:0x00007feca643d268 @http_header=#<HTTP::Message::Headers:0x00007feca643d240 @http_version="1.1", @body_size=0, @chunked=false, @request_method="GET", @request_uri=#<Addressable::URI:0x3ff6532272a0 URI:https://www.googleapis.com/storage/v1/b/bbb-accessibility/o/french.wav?>, @request_query=nil, @request_absolute_uri=nil, @status_code=200, @reason_phrase="OK", @body_type=nil, @body_charset=nil, @body_date=nil, @body_encoding=#<Encoding:UTF-8>, @is_request=false, @header_item=[["X-GUploader-UploadID", "AEnB2UpXEtTrpQgWHU1JLBxLePS1nY1Jm8NYr_eXDiJbOnqLb_mH60NZVf8yd-l6illxmYq4ny5MUZIo-Sne-BtOYcogWlTYzQ"], ["Etag", "CPa8/8Ly4eMCEAE="], ["Content-Type", "application/json; charset=UTF-8"], ["Date", "Thu, 01 Aug 2019 14:36:00 GMT"], ["Vary", "Origin"], ["Vary", "X-Origin"], ["Cache-Control", "private, max-age=0, must-revalidate, no-transform"], ["Expires", "Thu, 01 Aug 2019 14:36:00 GMT"], ["Content-Length", "750"], ["Server", "UploadServer"], ["Alt-Svc", "quic=\":443\"; ma=2592000; v=\"46,43,39\""]], @dumped=false>, @peer_cert=#<OpenSSL::X509::Certificate: subject=#<OpenSSL::X509::Name CN=*.googleapis.com,O=Google LLC,L=Mountain View,ST=California,C=US>, issuer=#<OpenSSL::X509::Name CN=Google Internet Authority G3,O=Google Trust Services,C=US>, serial=#<OpenSSL::BN:0x00007feca63eda60>, not_before=2019-07-02 19:21:00 UTC, not_after=2019-09-24 18:57:00 UTC>, @http_body=#<HTTP::Message::Body:0x00007feca643d038 @body="{\n  \"kind\": \"storage#object\",\n  \"id\": \"bbb-accessibility/french.wav/1564670148206198\",\n  \"selfLink\": \"https://www.googleapis.com/storage/v1/b/bbb-accessibility/o/french.wav\",\n  \"name\": \"french.wav\",\n  \"bucket\": \"bbb-accessibility\",\n  \"generation\": \"1564670148206198\",\n  \"metageneration\": \"1\",\n  \"contentType\": \"audio/x-wav\",\n  \"timeCreated\": \"2019-08-01T14:35:48.205Z\",\n  \"updated\": \"2019-08-01T14:35:48.205Z\",\n  \"storageClass\": \"NEARLINE\",\n  \"timeStorageClassUpdated\": \"2019-08-01T14:35:48.205Z\",\n  \"size\": \"642806\",\n  \"md5Hash\": \"0k4KWHfLDFDE7WyRrDgvlg==\",\n  \"mediaLink\": \"https://www.googleapis.com/download/storage/v1/b/bbb-accessibility/o/french.wav?generation=1564670148206198&alt=media\",\n  \"crc32c\": \"h1cR3w==\",\n  \"etag\": \"CPa8/8Ly4eMCEAE=\"\n}\n", @size=0, @positions=nil, @chunk_size=nil>, @previous=nil>
+Success - #<Google::Apis::StorageV1::Object:0x00007feca63e7d90
+ @bucket="bbb-accessibility",
+ @content_type="audio/x-wav",
+ @crc32c="h1cR3w==",
+ @etag="CPa8/8Ly4eMCEAE=",
+ @generation=1564670148206198,
+ @id="bbb-accessibility/french.wav/1564670148206198",
+ @kind="storage#object",
+ @md5_hash="0k4KWHfLDFDE7WyRrDgvlg==",
+ @media_link=
+  "https://www.googleapis.com/download/storage/v1/b/bbb-accessibility/o/french.wav?generation=1564670148206198&alt=media",
+ @metageneration=1,
+ @name="french.wav",
+ @self_link=
+  "https://www.googleapis.com/storage/v1/b/bbb-accessibility/o/french.wav",
+ @size=642806,
+ @storage_class="NEARLINE",
+ @time_created=Thu, 01 Aug 2019 14:35:48 +0000,
+ @time_storage_class_updated=Thu, 01 Aug 2019 14:35:48 +0000,
+ @updated=Thu, 01 Aug 2019 14:35:48 +0000>
+
+Sending HTTP delete https://www.googleapis.com/storage/v1/b/bbb-accessibility/o/french.wav?
+204
+#<HTTP::Message:0x00007feca5a6e228 @http_header=#<HTTP::Message::Headers:0x00007feca5a6e1b0 @http_version="1.1", @body_size=0, @chunked=false, @request_method="DELETE", @request_uri=#<Addressable::URI:0x3ff652d3e860 URI:https://www.googleapis.com/storage/v1/b/bbb-accessibility/o/french.wav?>, @request_query=nil, @request_absolute_uri=nil, @status_code=204, @reason_phrase="No Content", @body_type=nil, @body_charset=nil, @body_date=nil, @body_encoding=#<Encoding:ASCII-8BIT>, @is_request=false, @header_item=[["X-GUploader-UploadID", "AEnB2UoMc84lZ2h-PALNfN0L2xFcrVdbFXjW7Pwsb-yu2qb9lmJBabQmio5VudRzZqYwZnYcFDJmxYwWisa0TH_pz8_thV3N_A"], ["Vary", "Origin"], ["Vary", "X-Origin"], ["Content-Type", "application/json"], ["Cache-Control", "no-cache, no-store, max-age=0, must-revalidate"], ["Pragma", "no-cache"], ["Expires", "Mon, 01 Jan 1990 00:00:00 GMT"], ["Date", "Thu, 01 Aug 2019 14:36:00 GMT"], ["Content-Length", "0"], ["Server", "UploadServer"], ["Alt-Svc", "quic=\":443\"; ma=2592000; v=\"46,43,39\""]], @dumped=false>, @peer_cert=#<OpenSSL::X509::Certificate: subject=#<OpenSSL::X509::Name CN=*.googleapis.com,O=Google LLC,L=Mountain View,ST=California,C=US>, issuer=#<OpenSSL::X509::Name CN=Google Internet Authority G3,O=Google Trust Services,C=US>, serial=#<OpenSSL::BN:0x00007feca5a1f790>, not_before=2019-07-02 19:21:00 UTC, not_after=2019-09-24 18:57:00 UTC>, @http_body=#<HTTP::Message::Body:0x00007feca5a6e020 @body="", @size=0, @positions=nil, @chunk_size=nil>, @previous=nil>
+Success - ""
+
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:109
+  [1m[36mCaption Update (0.5ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "done with google"], ["updated_at", "2019-08-01 14:36:00.132549"], ["id", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:109
+  [1m[35m (1.0ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:109
+Started GET "/service/ibm/test2/en-US" for ::1 at 2019-08-01 10:36:15 -0400
+Processing by CaptionsController#service as HTML
+  Parameters: {"service"=>"ibm", "recordID"=>"test2", "language"=>"en-US"}
+  [1m[36mCaption Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "test2"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:23
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:27
+  [1m[36mCaption Create (0.6ms)[0m  [1m[32mINSERT INTO "captions" ("record_id", "service", "status", "caption_locale", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["record_id", "test2"], ["service", "ibm"], ["status", "Started audio conversion"], ["caption_locale", "en-US"], ["created_at", "2019-08-01 14:36:15.506191"], ["updated_at", "2019-08-01 14:36:15.506191"]]
+  ↳ ruby_files/lib/texttrack/wm.rb:27
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:27
+  [1m[36mCaption Load (0.3ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."record_id" = ? LIMIT ?[0m  [["record_id", "test2"], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:32
+Completed 204 No Content in 573ms (ActiveRecord: 0.0ms)
+
+
+  [1m[36mCaption Load (1.1ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:124
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:125
+  [1m[36mCaption Update (0.5ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "finished audio conversion"], ["updated_at", "2019-08-01 14:36:15.731075"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:125
+  [1m[35m (0.9ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:125
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:130
+  [1m[36mCaption Update (0.6ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "created job with ibm"], ["updated_at", "2019-08-01 14:36:18.893793"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:130
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:130
+  [1m[36mCaption Load (0.2ms)[0m  [1m[34mSELECT  "captions".* FROM "captions" WHERE "captions"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  ↳ ruby_files/lib/texttrack/wm.rb:142
+  [1m[35m (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:143
+  [1m[36mCaption Update (0.4ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "waiting on job from ibm"], ["updated_at", "2019-08-01 14:36:18.899438"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:143
+  [1m[35m (0.9ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:143
+  [1m[35m (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:155
+  [1m[36mCaption Update (0.4ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "writing subtitle file from ibm"], ["updated_at", "2019-08-01 14:36:25.744218"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:155
+  [1m[35m (1.7ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:155
+  [1m[35m (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:158
+  [1m[36mCaption Update (0.3ms)[0m  [1m[33mUPDATE "captions" SET "status" = ?, "updated_at" = ? WHERE "captions"."id" = ?[0m  [["status", "done with ibm"], ["updated_at", "2019-08-01 14:36:25.747858"], ["id", 2]]
+  ↳ ruby_files/lib/texttrack/wm.rb:158
+  [1m[35m (0.8ms)[0m  [1m[36mcommit transaction[0m
+  ↳ ruby_files/lib/texttrack/wm.rb:158
