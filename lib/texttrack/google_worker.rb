@@ -15,28 +15,33 @@ module WM
     include Faktory::Job
     faktory_options retry: 0
 
-    def perform(data, id)
+    def perform(params_json, id)
+      params = JSON.parse(param_json, :symbolize_names => true)
+        
       u = Caption.find(id)
-      u.update(progress: "finished audio conversion")
+      u.update(status: "finished audio conversion")
 
       # TODO
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
 
-      SpeechToText::GoogleS2T.set_environment(data["auth_key"])
+      SpeechToText::GoogleS2T.set_environment(params[:auth_key])
       SpeechToText::GoogleS2T.google_storage(
-        data["published_file_path"],
-        data["recordID"],
-        data["google_bucket_name"]
+        params[:recordings_dir],
+        params[:record_id],
+        "wav",
+        params[:google_bucket_name]
       )
       operation_name = SpeechToText::GoogleS2T.create_job(
-        data["recordID"],
-        data["google_bucket_name"]
+        params[:record_id],
+        "wav",
+        params[:google_bucket_name],
+        params[:caption_locale]
       )
 
-      u.update(progress: "created job with #{u.service}")
+      u.update(status: "created job with #{u.service}")
 
-      WM::GoogleWorker_2.perform_async(data, u.id, operation_name)
+      WM::GoogleWorker_2.perform_async(params.to_json, u.id, operation_name)
     end
   end
 
@@ -44,28 +49,31 @@ module WM
     include Faktory::Job
     faktory_options retry: 0
 
-    def perform(data, id, operation_name)
+    def perform(params_json, id, operation_name)
+      params = JSON.parse(param_json, :symbolize_names => true)
+        
       u = Caption.find(id)
-      u.update(progress: "waiting on job from #{u.service}")
+      u.update(status: "waiting on job from #{u.service}")
 
       callback = SpeechToText::GoogleS2T.check_job(operation_name)
       myarray = SpeechToText::GoogleS2T.create_array_google(callback["results"])
 
-      u.update(progress: "writing subtitle file from #{u.service}")
+      u.update(status: "writing subtitle file from #{u.service}")
       SpeechToText::Util.write_to_webvtt(
-        data["published_file_path"],
-        data["recordID"],
+        params[:recordings_dir],
+        "vttfile_#{params[:caption_locale]}.vtt",
         myarray
       )
 
       SpeechToText::GoogleS2T.delete_google_storage(
-        data["google_bucket_name"],
-        data["recordID"]
+        params[:google_bucket_name],
+        params[:record_id],
+        "wav"
       )
 
-      u.update(progress: "done with #{u.service}")
+      u.update(status: "done with #{u.service}")
 
-      File.delete("#{data["published_file_path"]}/#{data["recordID"]}/#{data["recordID"]}.json")
+      #File.delete("#{data["published_file_path"]}/#{data["recordID"]}/#{data["recordID"]}.json")
     end
   end
 end

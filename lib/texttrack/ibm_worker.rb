@@ -13,22 +13,26 @@ module WM
     include Faktory::Job
     faktory_options retry: 0
 
-    def perform(data, id)
+    def perform(params_json, id)
+      params = JSON.parse(param_json, :symbolize_names => true)
+        
       u = Caption.find(id)
-      u.update(progress: "finished audio conversion")
+      u.update(status: "finished audio conversion")
 
       # TODO
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
 
       job_id = SpeechToText::IbmWatsonS2T.create_job(
-        data["published_file_path"],
-        data["recordID"],
-        data["auth_key"])
+        audio_file_path: params[:recordings_dir],
+        apikey: params[:auth_key],
+        audio: params[:record_id],
+        content_type:"wav",
+        language_code: params[:caption_locale])
 
-      u.update(progress: "created job with #{u.service}")
+      u.update(status: "created job with #{u.service}")
 
-      WM::IbmWorker_2.perform_async(data, u.id, job_id);
+      WM::IbmWorker_2.perform_async(params.to_json, u.id, job_id);
     end
   end
 
@@ -36,24 +40,27 @@ module WM
     include Faktory::Job
     faktory_options retry: 0
 
-    def perform(data, id, job_id)
+    def perform(params_json, id, job_id)
+      params = JSON.parse(param_json, :symbolize_names => true)    
+    
       u = Caption.find(id)
-      u.update(progress: "waiting on job from #{u.service}")
+      u.update(status: "waiting on job from #{u.service}")
 
       status = "processing"
       while(status != "completed")
-        callback = SpeechToText::IbmWatsonS2T.check_job(job_id,data["auth_key"])
+        callback = SpeechToText::IbmWatsonS2T.check_job(job_id, params[:auth_key])
         status = callback["status"]
       end
 
       myarray = SpeechToText::IbmWatsonS2T.create_array_watson(callback["results"][0])
 
-      u.update(progress: "writing subtitle file from #{u.service}")
-      SpeechToText::Util.write_to_webvtt(data["published_file_path"],data["recordID"],myarray)
+      u.update(status: "writing subtitle file from #{u.service}")
+      SpeechToText::Util.write_to_webvtt(
+          params[:recordings_dir],
+          "vttfile_#{params[:caption_locale]}.vtt",
+          myarray)
 
-      u.update(progress: "done with #{u.service}")
-
-      File.delete("#{data["published_file_path"]}/#{data["recordID"]}/#{data["recordID"]}.json")
+      u.update(status: "done with #{u.service}")
 
     end
   end
