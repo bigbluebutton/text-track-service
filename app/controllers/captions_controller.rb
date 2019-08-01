@@ -1,43 +1,38 @@
+
 class CaptionsController < ApplicationController
-    def index
-        puts "Hello World!"
+  def index
+    puts "Hello World!"
+    #puts $redis.llen("foo")
+  end
+
+  def caption_recording
+    record_id = params[:record_id]
+    caption_locale = params[:caption_locale]
+
+    # TODO: Need to find how to get the key from settings.yaml
+    #props = YAML::load(File.open('settings.yaml'))
+    #puts "REDIS HOST=#{redis_host} PORT=#{redis_port} PASS=#{redis_password}"
+
+    #redis_namespace = props["redis_list_namespace"]
+    #
+    caption_job = {record_id: record_id,
+      caption_locale: caption_locale}
+    $redis.lpush("caption_recordings_job", caption_job.to_json)
+  end
+
+  def caption_status
+    record_id = params[:record_id]
+    caption_locale = params[:caption_locale]
+    caption_job = {record_id: record_id,
+      caption_locale: caption_locale}
+    # TODO:
+    # pass locale as param
+    caption = Caption.where(record_id: record_id)
+    tp caption
+  end
+
+  private
+    def find_record_by_id
+      @captionfile = Captions.find(params[:id])
     end
-    
-    def service
-        @service = params[:service]
-        @recordID = params[:recordID]
-        
-        puts "#{@service} #{@recordID}"
-        
-       if(params[:service] === "google")
-            system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put api key here> <put google bucket name>")
-       elsif(params[:service] === "ibm")
-           system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put api key here>")
-       elsif(params[:service] === "deepspeech")
-           system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put deepspeech model path here>")
-       elsif(params[:service] === "speechmatics")
-           system("bin/rails runner ./ruby_files/text-track-service.rb #{@service} /D/innovation/text-track-service #{@recordID} <put user id here> <put api key here>")
-       else
-           puts "No such service found"
-       end
-        
-    end
-    
-    def progress
-        @captions = Caption.all
-        
-        tp @captions
-    end
-    
-    def progress_id
-        @recordID = params[:id]
-        @caption = Caption.where(recordID: @recordID)
-        tp @caption
-    end
-    
-    private
-        def find_record_by_id
-            @captionfile = Captions.find(params[:id])
-        end
-    
 end

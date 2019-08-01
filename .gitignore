@@ -1,3 +1,13 @@
+tmp/*
+tmp/cache/bootsnap-load-path-cache
+db/test.sqlite3
+db/development.sqlite3
+db/production.sqlite3
+log/*
+credentials.yaml
+config/credentials.yaml
+start-text-track-service-worker.sh
+start-text-track-service.sh
 *.json
 bbb-accessibility-183f2b339bfb.json
 test/
@@ -5,3 +15,4 @@ test/
 info.json
 out.json
 *.vtt
+

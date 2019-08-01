@@ -1,0 +1,20 @@
+---
+redis_host: 127.0.0.1
+redis_port: 6379
+# Uncomment and set password if redis require it.
+# redis_password: changeme
+
+log_to_file: false
+
+# Used to namespace the redis keys used by rails.
+# see config/initializers/redis.rb
+#
+redis_list_namespace: "bbb_texttrack_service"
+redis_jobs_list_key: "bbb_texttrack_service:caption_recordings_job"
+
+default_provider: "ibm"
+
+# recording_dir: /path/to/recordings/dir/
+recordings_dir: "/path/to/recordings/dir/"
+
+captions_inbox_dir: "/var/bigbluebutton/captions/inbox"

@@ -1,3 +1,13 @@
-require "faktory"
+require 'logger'
+require './lib/texttrack'
 
-system("FAKTORY_PROVIDER=FAKTORY_URL FAKTORY_URL=tcp://:7832525986eee2f7@localhost:7419 bundle exec faktory-worker -r ./lib/texttrack/google_worker.rb")
+props = YAML::load_file('settings.yaml')
+
+if props['log_to_file']
+  log_dir = "/var/log/text-track-service"
+  logger = Logger.new("#{log_dir}/text-track-worker.log", 'daily', 14)
+else
+  logger = Logger.new(STDOUT)
+end
+
+TextTrack.logger = logger
