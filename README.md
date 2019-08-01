@@ -51,3 +51,15 @@ moved all ruby files in ruby_files folder
 moved test folder to root as test2 since rails has its own test folder
 databse name is development.sqlite3 table name is captions
 ```
+
+# Country codes for Google
+
+https://cloud.google.com/speech-to-text/docs/languages
+
+# Country codes for Ibm
+
+https://cloud.ibm.com/docs/services/discovery?topic=discovery-language-support
+
+# Country codes for Speechmatics
+
+https://www.speechmatics.com/language-support/
