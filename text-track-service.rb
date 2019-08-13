@@ -21,15 +21,14 @@ else
 end
 
 RECORDINGS_JOB_LIST_KEY = props["redis_jobs_list_key"]
-
-#num_entries = redis.llen(RECORDINGS_JOB_LIST_KEY)
-loop do
-#for i in 1..num_entries do
-  #list, element = redis.lpop(CALLBACK_JOB_LIST_KEY, :timeout => 0)
-  #element = redis.lpop(RECORDINGS_JOB_LIST_KEY)
-  element = redis.blpop(RECORDINGS_JOB_LIST_KEY)
+puts RECORDINGS_JOB_LIST_KEY
+num_entries = redis.llen(RECORDINGS_JOB_LIST_KEY)
+puts "num_entries = #{num_entries}"
+#loop do
+for i in 1..num_entries do
+  list, element = redis.blpop(RECORDINGS_JOB_LIST_KEY)
   TextTrack.logger.info("Processing analytics for recording #{element}")
-  job_entry = JSON.parse(element[1])
-  #job_entry = element
+  job_entry = JSON.parse(element)
+  puts job_entry
   WM::EntryWorker.perform_async(job_entry.to_json)
 end
