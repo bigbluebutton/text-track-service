@@ -29,7 +29,7 @@ loop do
   #element = redis.lpop(RECORDINGS_JOB_LIST_KEY)
   element = redis.blpop(RECORDINGS_JOB_LIST_KEY)
   TextTrack.logger.info("Processing analytics for recording #{element}")
-  job_entry = JSON.parse(element)
-
+  job_entry = JSON.parse(element[1])
+  #job_entry = element
   WM::EntryWorker.perform_async(job_entry.to_json)
 end

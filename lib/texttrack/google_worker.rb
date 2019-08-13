@@ -11,12 +11,12 @@ rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config
 require rails_environment_path
 
 module WM
-  class GoogleWorker_1
+  class GoogleWorker_createJob
     include Faktory::Job
     faktory_options retry: 0
 
-    def perform(params_json, id)
-      params = JSON.parse(param_json, :symbolize_names => true)
+    def perform(params_json, id, audio_type)
+      params = JSON.parse(params_json, :symbolize_names => true)
         
       u = Caption.find(id)
       u.update(status: "finished audio conversion")
@@ -27,30 +27,30 @@ module WM
 
       SpeechToText::GoogleS2T.set_environment(params[:auth_key])
       SpeechToText::GoogleS2T.google_storage(
-        params[:recordings_dir],
+        "#{params[:recordings_dir]}/#{params[:record_id]}",
         params[:record_id],
-        "wav",
+        audio_type,
         params[:google_bucket_name]
       )
       operation_name = SpeechToText::GoogleS2T.create_job(
         params[:record_id],
-        "wav",
+        audio_type,
         params[:google_bucket_name],
         params[:caption_locale]
       )
 
       u.update(status: "created job with #{u.service}")
 
-      WM::GoogleWorker_2.perform_async(params.to_json, u.id, operation_name)
+      WM::GoogleWorker_getJob.perform_async(params.to_json, u.id, operation_name, audio_type)
     end
   end
 
-  class GoogleWorker_2
+  class GoogleWorker_getJob
     include Faktory::Job
     faktory_options retry: 0
 
-    def perform(params_json, id, operation_name)
-      params = JSON.parse(param_json, :symbolize_names => true)
+    def perform(params_json, id, operation_name, audio_type)
+      params = JSON.parse(params_json, :symbolize_names => true)
         
       u = Caption.find(id)
       u.update(status: "waiting on job from #{u.service}")
@@ -60,7 +60,7 @@ module WM
 
       u.update(status: "writing subtitle file from #{u.service}")
       SpeechToText::Util.write_to_webvtt(
-        params[:recordings_dir],
+        "#{params[:recordings_dir]}/#{params[:record_id]}",
         "vttfile_#{params[:caption_locale]}.vtt",
         myarray
       )
@@ -68,7 +68,7 @@ module WM
       SpeechToText::GoogleS2T.delete_google_storage(
         params[:google_bucket_name],
         params[:record_id],
-        "wav"
+        audio_type
       )
 
       u.update(status: "done with #{u.service}")
