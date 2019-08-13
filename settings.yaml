@@ -15,6 +15,6 @@ redis_jobs_list_key: "bbb_texttrack_service:caption_recordings_job"
 default_provider: "ibm"
 
 # recording_dir: /path/to/recordings/dir/
-recordings_dir: "/path/to/recordings/dir/"
+recordings_dir: "/D/innovation/text-track-service"
 
 captions_inbox_dir: "/var/bigbluebutton/captions/inbox"
