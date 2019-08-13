@@ -13,7 +13,7 @@ module WM
     include Faktory::Job
     faktory_options retry: 0
 
-    def perform(params_json, id)
+    def perform(params_json, id, audio_type)
       params = JSON.parse(params_json, :symbolize_names => true)    
     
       u = Caption.find(id)
@@ -26,7 +26,7 @@ module WM
       jobID = SpeechToText::SpeechmaticsS2T.create_job(
           "#{params[:recordings_dir]}/#{params[:record_id]}",
           params[:record_id],
-          "mp3",
+          audio_type,
           params[:userID],
           params[:auth_key],
           params[:caption_locale],
