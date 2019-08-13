@@ -8,36 +8,45 @@ module WM
     include Faktory::Job
     faktory_options retry: 5
 
-    def perform(record_id)
-      
-      TextTrack.logger.info("Processing analytics for #{record_id}")
+    def perform(params_json)
+      params = JSON.parse(params_json, :symbolize_names => true)
+
+      TextTrack.logger.info("Processing analytics for #{params[:record_id]}")
       props = YAML::load_file('settings.yaml')
-        
+
       props_keys = YAML::load_file('credentials.yaml')
-        
-      record_id = JSON.parse(record_id)
-        
-      apikey = props_keys["providers"][record_id["provider"]]["apikey"]
 
       default_provider = props["default_provider"]
       recordings_dir = props["recordings_dir"]
       captions_inbox_dir = props["captions_inbox_dir"]
-        
-      
-        
-      params = {record_id: record_id["record_id"],
-        caption_locale: record_id["caption_locale"],
-        provider: record_id["provider"],
-        auth_key: apikey,
+
+      provider_name = default_provider
+      unless params[:provider].nil?
+        provider_name = params[:provider]
+      end
+
+      to_audio_params = {record_id: params[:record_id],
+        caption_locale: params[:caption_locale],
         recordings_dir: recordings_dir,
         captions_inbox_dir: captions_inbox_dir}
-        
-      if(record_id["provider"] == "google") 
-         params.merge!(google_bucket_name: props_keys["providers"][record_id["provider"]]["bucket"]) 
-      elsif(record_id["provider"] == "speechmatics")
-          params.merge!(userID: props_keys["providers"][record_id["provider"]]["userID"])
+
+      provider = {name: provider_name}
+
+      if (provider_name == "google")
+        provider[:google_bucket_name] = props_keys["providers"][provider_name]["bucket"]
+        provider[:auth_file_path] = props_keys["providers"][provider_name]["auth_file_path"]
+      elsif (provider_name == 'ibm')
+        provider[:google_bucket_name] = props_keys["providers"][provider_name]["bucket"]
+        provider[:auth_file_path] = props_keys["providers"][provider_name]["auth_file_path"]
+      elsif (provider_name == "speechmatics")
+        provider[:url] = props_keys["providers"][provider_name]["url"]
+        provider[:apikey] = props_keys["providers"][provider_name]["apikey"]
       end
-      WM::ToAudioWorker.perform_async(params.to_json)
+
+      to_audio_params[:provider] = provider
+
+      puts to_audio_params
+      WM::ToAudioWorker.perform_async(to_audio_params.to_json)
     end
   end
 end
