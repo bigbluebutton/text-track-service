@@ -8,14 +8,15 @@ class CaptionsController < ApplicationController
   def caption_recording
     record_id = params[:record_id]
     caption_locale = params[:caption_locale]
+    provider = params[:provider]
 
     # TODO: Need to find how to get the key from settings.yaml
-    props = YAML::load(File.open('settings.yaml'))
-    provider = props["default_provider"]
+    #props = YAML::load(File.open('settings.yaml'))
+    #provider = props["default_provider"]
       
-    if(params[:provider].present?)
-        provider = params[:provider]
-    end
+    #if(params[:provider].present?)
+        #provider = params[:provider]
+    #end
     #puts "REDIS HOST=#{redis_host} PORT=#{redis_port} PASS=#{redis_password}"
 
     #redis_namespace = props["redis_list_namespace"]

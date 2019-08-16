@@ -16,6 +16,7 @@ require 'texttrack/google_worker'
 require 'texttrack/ibm_worker'
 require 'texttrack/deepspeech_worker'
 require 'texttrack/speechmatics_worker'
+require 'texttrack/threeplaymedia_worker'
 require 'texttrack/to_audio_worker'
 
 module TextTrack

@@ -22,12 +22,12 @@ module WM
       if Caption.exists?(record_id: "#{params[:record_id]}")
         u = Caption.find_by(record_id: "#{params[:record_id]}")
         u.update(status: "start_audio_conversion",
-                service: "#{params[:provider]}",
+                service: "#{params[:provider][:name]}",
                 caption_locale: "#{params[:caption_locale]}")
       else
         Caption.create(record_id: "#{params[:record_id]}",
                 status: "started_audio_conversion",
-                service: "#{params[:provider]}",
+                service: "#{params[:provider][:name]}",
                 caption_locale: "#{params[:caption_locale]}")
       end
 
@@ -37,7 +37,7 @@ module WM
          "ibm" => "wav",
          "google" => "flac",
          "speechmatics" => "mp3",
-         
+         "threeplaymedia" => "wav"
       } 
       
       SpeechToText::Util.video_to_audio(
@@ -46,16 +46,18 @@ module WM
                   video_content_type: "mp4",
                   audio_file_path: "#{params[:recordings_dir]}/#{params[:record_id]}",
                   audio_name: params[:record_id],
-                  audio_content_type: audio_type_hash[params[:provider]])
+                  audio_content_type: audio_type_hash[params[:provider][:name]])
 
-      if(params[:provider] === "google")
-        WM::GoogleWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider]]);
-      elsif(params[:provider] === "ibm")
-        WM::IbmWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider]]);
-      elsif(params[:provider] === "deepspeech")
+      if(params[:provider][:name] === "google")
+        WM::GoogleWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider][:name]]);
+      elsif(params[:provider][:name] === "ibm")
+        WM::IbmWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider][:name]]);
+      elsif(params[:provider][:name] === "deepspeech")
         WM::DeepspeechWorker.perform_async(params.to_json, u.id);
-      elsif(params[:provider] === "speechmatics")
-        WM::SpeechmaticsWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider]]);
+      elsif(params[:provider][:name] === "speechmatics")
+        WM::SpeechmaticsWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider][:name]]);
+      elsif(params[:provider][:name] === "threeplaymedia")
+        WM::ThreeplaymediaWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider][:name]]);
       end
     end
   end

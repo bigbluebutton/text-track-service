@@ -25,17 +25,17 @@ module WM
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
 
-      SpeechToText::GoogleS2T.set_environment(params[:auth_key])
+      SpeechToText::GoogleS2T.set_environment(params[:provider][:auth_file_path])
       SpeechToText::GoogleS2T.google_storage(
         "#{params[:recordings_dir]}/#{params[:record_id]}",
         params[:record_id],
         audio_type,
-        params[:google_bucket_name]
+        params[:provider][:google_bucket_name]
       )
       operation_name = SpeechToText::GoogleS2T.create_job(
         params[:record_id],
         audio_type,
-        params[:google_bucket_name],
+        params[:provider][:google_bucket_name],
         params[:caption_locale]
       )
 
@@ -66,7 +66,7 @@ module WM
       )
 
       SpeechToText::GoogleS2T.delete_google_storage(
-        params[:google_bucket_name],
+        params[:provider][:google_bucket_name],
         params[:record_id],
         audio_type
       )

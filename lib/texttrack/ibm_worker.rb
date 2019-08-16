@@ -25,7 +25,7 @@ module WM
 
       job_id = SpeechToText::IbmWatsonS2T.create_job(
         audio_file_path: "#{params[:recordings_dir]}/#{params[:record_id]}",
-        apikey: params[:auth_key],
+        apikey: params[:provider][:auth_file_path],
         audio: params[:record_id],
         content_type: audio_type,
         language_code: params[:caption_locale])
@@ -48,7 +48,7 @@ module WM
 
       status = "processing"
       while(status != "completed")
-        callback = SpeechToText::IbmWatsonS2T.check_job(job_id, params[:auth_key])
+        callback = SpeechToText::IbmWatsonS2T.check_job(job_id, params[:provider][:auth_file_path])
         status = callback["status"]
       end
 
