@@ -27,8 +27,8 @@ module WM
           "#{params[:recordings_dir]}/#{params[:record_id]}",
           params[:record_id],
           audio_type,
-          params[:userID],
-          params[:auth_key],
+          params[:provider][:userID],
+          params[:provider][:apikey],
           params[:caption_locale],
           "#{params[:recordings_dir]}/#{params[:record_id]}/jobID_#{params[:userID]}.json")
 
@@ -53,9 +53,9 @@ module WM
               wait_time = 30
               while !wait_time.nil?
                 wait_time = SpeechToText::SpeechmaticsS2T.check_job(
-                    params[:userID],
+                    params[:provider][:userID],
                     jobID,
-                    params[:auth_key],
+                    params[:provider][:apikey],
                     "#{params[:recordings_dir]}/#{params[:record_id]}/jobdetails_#{params[:userID]}.json")
                   
                 if !wait_time.nil?
@@ -65,9 +65,9 @@ module WM
               end
           
               callback = SpeechToText::SpeechmaticsS2T.get_transcription(
-                  params[:userID],
+                  params[:provider][:userID],
                   jobID,
-                  params[:auth_key],
+                  params[:provider][:apikey],
                   "#{params[:recordings_dir]}/#{params[:record_id]}/transcription_#{params[:userID]}.json")
           
               

@@ -39,8 +39,10 @@ module WM
         provider[:google_bucket_name] = props_keys["providers"][provider_name]["bucket"]
         provider[:auth_file_path] = props_keys["providers"][provider_name]["auth_file_path"]
       elsif (provider_name == "speechmatics")
-        provider[:url] = props_keys["providers"][provider_name]["url"]
+        provider[:userID] = props_keys["providers"][provider_name]["userID"]
         provider[:apikey] = props_keys["providers"][provider_name]["apikey"]
+      elsif (provider_name == "threeplaymedia")
+        provider[:auth_file_path] = props_keys["providers"][provider_name]["auth_file_path"]
       end
 
       to_audio_params[:provider] = provider
