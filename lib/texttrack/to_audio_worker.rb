@@ -42,8 +42,8 @@ module WM
       
       SpeechToText::Util.video_to_audio(
                   video_file_path: "#{params[:recordings_dir]}/#{params[:record_id]}/video",
-                  video_name:"video",
-                  video_content_type: "mp4",
+                  video_name:"webcams",
+                  video_content_type: "webm",
                   audio_file_path: "#{params[:recordings_dir]}/#{params[:record_id]}",
                   audio_name: params[:record_id],
                   audio_content_type: audio_type_hash[params[:provider][:name]])
