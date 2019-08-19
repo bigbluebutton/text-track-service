@@ -22,7 +22,7 @@ module WM
       # TODO
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
-      job_name = "test"#rand(36**8).to_s(36)
+      job_name = rand(36**8).to_s(36)
       job_id = SpeechToText::ThreePlaymediaS2T.create_job(
         params[:provider][:auth_file_path],
         "#{params[:recordings_dir]}/#{params[:record_id]}/#{params[:record_id]}.#{audio_type}",
@@ -72,7 +72,7 @@ module WM
             params[:provider][:auth_file_path],
             139,
             transcript_id,
-            "#{params[:recordings_dir]}/#{params[:record_id]}/vttfile_#{params[:caption_locale]}.vtt")
+            "#{params[:recordings_dir]}/#{params[:record_id]}/caption_#{params[:caption_locale]}.vtt")
           
         u.update(status: "writing subtitle file from #{u.service}")
           

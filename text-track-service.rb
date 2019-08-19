@@ -24,8 +24,8 @@ RECORDINGS_JOB_LIST_KEY = props["redis_jobs_list_key"]
 puts RECORDINGS_JOB_LIST_KEY
 num_entries = redis.llen(RECORDINGS_JOB_LIST_KEY)
 puts "num_entries = #{num_entries}"
-#loop do
-for i in 1..num_entries do
+loop do
+#for i in 1..num_entries do
   list, element = redis.blpop(RECORDINGS_JOB_LIST_KEY)
   TextTrack.logger.info("Processing analytics for recording #{element}")
   job_entry = JSON.parse(element)

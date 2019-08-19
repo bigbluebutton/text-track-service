@@ -76,7 +76,7 @@ module WM
               u.update(status: "writing subtitle file from #{u.service}")
               SpeechToText::Util.write_to_webvtt(
                   "#{params[:recordings_dir]}/#{params[:record_id]}",
-                  "vttfile_#{params[:caption_locale]}.vtt",
+                  "caption_#{params[:caption_locale]}.vtt",
                   myarray)
               
           
