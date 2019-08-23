@@ -26,7 +26,7 @@ module WM
         
       u.update(status: "created job with #{u.service}")
         
-      WM::DeepspeechWorker_getJob.perform_async(params.to_json, u.id, jobID);
+      WM::DeepspeechWorker_getJob.perform_async(params.to_json, u.id, job_id);
 
     end
   end
