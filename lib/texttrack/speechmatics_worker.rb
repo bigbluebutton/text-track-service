@@ -32,7 +32,7 @@ module WM
           params[:caption_locale],
           "#{params[:recordings_dir]}/#{params[:record_id]}/jobID_#{params[:userID]}.json")
 
-      u.update(status: "done with #{u.service}")
+      u.update(status: "created job with #{u.service}")
         
       WM::SpeechmaticsWorker_getJob.perform_async(params.to_json, u.id, jobID);
 
@@ -55,8 +55,7 @@ module WM
                 wait_time = SpeechToText::SpeechmaticsS2T.check_job(
                     params[:provider][:userID],
                     jobID,
-                    params[:provider][:apikey],
-                    "#{params[:recordings_dir]}/#{params[:record_id]}/jobdetails_#{params[:userID]}.json")
+                    params[:provider][:apikey])
                   
                 if !wait_time.nil?
                     sleep(wait_time)
@@ -67,8 +66,7 @@ module WM
               callback = SpeechToText::SpeechmaticsS2T.get_transcription(
                   params[:provider][:userID],
                   jobID,
-                  params[:provider][:apikey],
-                  "#{params[:recordings_dir]}/#{params[:record_id]}/transcription_#{params[:userID]}.json")
+                  params[:provider][:apikey])
           
               
               myarray = SpeechToText::SpeechmaticsS2T.create_array_speechmatic(callback)
@@ -83,8 +81,6 @@ module WM
               u.update(status: "done with #{u.service}")
               
               File.delete("#{params[:recordings_dir]}/#{params[:record_id]}/jobID_#{params[:userID]}.json")
-              File.delete("#{params[:recordings_dir]}/#{params[:record_id]}/jobdetails_#{params[:userID]}.json")
-              File.delete("#{params[:recordings_dir]}/#{params[:record_id]}/transcription_#{params[:userID]}.json")
               
           
       end

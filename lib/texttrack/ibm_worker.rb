@@ -55,6 +55,7 @@ module WM
       myarray = SpeechToText::IbmWatsonS2T.create_array_watson(callback["results"][0])
 
       u.update(status: "writing subtitle file from #{u.service}")
+        
       SpeechToText::Util.write_to_webvtt(
           "#{params[:recordings_dir]}/#{params[:record_id]}",
           "caption_#{params[:caption_locale]}.vtt",

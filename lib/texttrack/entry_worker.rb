@@ -43,6 +43,8 @@ module WM
         provider[:apikey] = props_keys["providers"][provider_name]["apikey"]
       elsif (provider_name == "threeplaymedia")
         provider[:auth_file_path] = props_keys["providers"][provider_name]["auth_file_path"]
+      elsif (provider_name == "deepspeech")
+        provider[:auth_file_path] = props_keys["providers"][provider_name]["url"]
       end
 
       to_audio_params[:provider] = provider
