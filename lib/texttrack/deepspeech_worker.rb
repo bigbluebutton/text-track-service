@@ -21,7 +21,7 @@ module WM
         
      job_id = SpeechToText::MozillaDeepspeechS2T.create_job(
           "#{params[:recordings_dir]}/#{params[:record_id]}/#{params[:record_id]}.#{audio_type}",
-          params[:auth_file_path],
+          params[:provider]["auth_file_path"],
           "#{params[:recordings_dir]}/#{params[:record_id]}/#{params[:record_id]}_jobdetails.json"
           )
         
@@ -46,11 +46,11 @@ module WM
       status = "inProgress"
       while(status != "completed")
         status = SpeechToText::MozillaDeepspeechS2T.checkstatus(job_id,
-              params[:auth_file_path])
+              params[:provider]["auth_file_path"])
       end
         
       callback_json = SpeechToText::MozillaDeepspeechS2T.order_transcript(job_id,
-               params[:auth_file_path])
+               params[:provider]["auth_file_path"])
         
       u.update(status: "writing subtitle file from #{u.service}")
         
