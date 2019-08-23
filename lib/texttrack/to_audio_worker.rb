@@ -37,7 +37,8 @@ module WM
          "ibm" => "wav",
          "google" => "flac",
          "speechmatics" => "mp3",
-         "threeplaymedia" => "wav"
+         "threeplaymedia" => "wav",
+         "deepspeech" => "wav"
       } 
       
       SpeechToText::Util.video_to_audio(
