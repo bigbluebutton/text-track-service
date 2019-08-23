@@ -60,7 +60,9 @@ module WM
         myarray
       )
 
-      u.update(progress: "done with #{u.service}")
+      u.update(status: "done with #{u.service}")
+        
+      File.delete("#{params[:recordings_dir]}/#{params[:record_id]}/#{params[:record_id]}_jobdetails.json")
 
     end
   end
