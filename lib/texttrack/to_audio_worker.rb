@@ -53,7 +53,7 @@ module WM
       elsif(params[:provider][:name] === "ibm")
         WM::IbmWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider][:name]]);
       elsif(params[:provider][:name] === "deepspeech")
-        WM::DeepspeechWorker.perform_async(params.to_json, u.id);
+        WM::DeepspeechWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider][:name]]);
       elsif(params[:provider][:name] === "speechmatics")
         WM::SpeechmaticsWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider][:name]]);
       elsif(params[:provider][:name] === "threeplaymedia")
