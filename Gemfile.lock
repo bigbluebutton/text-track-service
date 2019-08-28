@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/parthikmodi/speech_to_text.git
-  revision: e692a9640012df48d9fd980af4c53c6dba0cfbce
+  revision: 8fdedd68c9a7759bfe09757f2a31c3a88dfea8d1
   specs:
     speech_to_text (0.1.1)
       google-cloud-speech (= 0.35.0)
@@ -169,7 +169,7 @@ GEM
     msgpack (1.3.1)
     multi_json (1.13.1)
     multipart-post (2.1.1)
-    nio4r (2.5.0)
+    nio4r (2.5.1)
     nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
     os (1.0.1)
