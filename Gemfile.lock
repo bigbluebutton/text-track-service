@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/parthikmodi/speech_to_text.git
-  revision: 9da7d515b0801ba74233fa95da49e5ac7a44567f
+  revision: e692a9640012df48d9fd980af4c53c6dba0cfbce
   specs:
     speech_to_text (0.1.1)
       google-cloud-speech (= 0.35.0)
@@ -86,9 +86,9 @@ GEM
       representable (~> 3.0)
       retriable (>= 2.0, < 4.0)
       signet (~> 0.10)
-    google-cloud-core (1.3.0)
+    google-cloud-core (1.3.1)
       google-cloud-env (~> 1.0)
-    google-cloud-env (1.2.0)
+    google-cloud-env (1.2.1)
       faraday (~> 0.11)
     google-cloud-speech (0.35.0)
       google-gax (~> 1.3)
@@ -169,7 +169,7 @@ GEM
     msgpack (1.3.1)
     multi_json (1.13.1)
     multipart-post (2.1.1)
-    nio4r (2.4.0)
+    nio4r (2.5.0)
     nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
     os (1.0.1)
@@ -213,8 +213,8 @@ GEM
       actionpack (>= 4.0, < 7)
       redis-rack (>= 1, < 3)
       redis-store (>= 1.1.0, < 2)
-    redis-activesupport (5.0.7)
-      activesupport (>= 3, < 6)
+    redis-activesupport (5.2.0)
+      activesupport (>= 3, < 7)
       redis-store (>= 1.3, < 2)
     redis-namespace (1.6.0)
       redis (>= 3.0.4)
