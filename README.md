@@ -59,6 +59,9 @@ gem install bundler
 gem env home
 gem install rails -v 5.2.3
 rbenv rehash
+apt-get install libsqlite3-dev
+sudo chown -R texttrack.texttrack ~/.rbenv
+sudo chown -R texttrack:texttrack /usr/local/text-track-service
 bundle install
 
 rails db:setup
