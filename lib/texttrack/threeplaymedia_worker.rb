@@ -72,7 +72,8 @@ module WM
             params[:provider][:auth_file_path],
             139,
             transcript_id,
-            "#{params[:recordings_dir]}/#{params[:record_id]}/caption_#{params[:caption_locale]}.vtt")
+            "#{params[:recordings_dir]}/#{params[:record_id]}",
+            "caption_#{params[:caption_locale]}.vtt")
           
         u.update(status: "writing subtitle file from #{u.service}")
           
