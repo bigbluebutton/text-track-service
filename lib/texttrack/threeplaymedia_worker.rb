@@ -25,9 +25,9 @@ module WM
       job_name = rand(36**8).to_s(36)
       job_id = SpeechToText::ThreePlaymediaS2T.create_job(
         params[:provider][:auth_file_path],
-        "#{params[:recordings_dir]}/#{params[:record_id]}/#{params[:record_id]}.#{audio_type}",
+        "#{params[:captions_inbox_dir]}/#{params[:record_id]}/#{params[:record_id]}.#{audio_type}",
         job_name,
-        "#{params[:recordings_dir]}/#{params[:record_id]}/job_file.json")
+        "#{params[:captions_inbox_dir]}/#{params[:record_id]}/job_file.json")
 
       u.update(status: "created job with #{u.service}")
 
@@ -72,12 +72,12 @@ module WM
             params[:provider][:auth_file_path],
             139,
             transcript_id,
-            "#{params[:recordings_dir]}/#{params[:record_id]}",
+            "#{params[:captions_inbox_dir]}/#{params[:record_id]}",
             "caption_#{params[:caption_locale]}.vtt")
           
         u.update(status: "writing subtitle file from #{u.service}")
           
-            File.delete("#{params[:recordings_dir]}/#{params[:record_id]}/job_file.json")
+            File.delete("#{params[:captions_inbox_dir]}/#{params[:record_id]}/job_file.json")
           
         u.update(status: "done with #{u.service}")
       end

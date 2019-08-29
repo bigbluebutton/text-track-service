@@ -45,6 +45,29 @@ Visit your domain and start a meeting to see if everything is working okay
 bbb.example.com/demo/demo10.jsp
 ```
 
+# Edit post_publish file
+
+Navigate to /usr/local/bigbluebutton/core/scripts/post_publish 
+```
+gem install rest-client
+sudo nano post_publish.rb
+
+add the following code just above exit 0 at the bottom
+require "rest-client"
+
+response = RestClient::Request.execute(
+    method: :get,
+    url:    "http://localhost:4000/caption/#{$meeting_id}/en-US",
+)
+
+if(response.code != 200)
+  BigBlueButton.logger.info("#{response.code} error")
+end
+
+ctrl x type y and hit enter to save and exit
+
+```
+
 # Install text-track-service rails app
 
 Navigate to /usr/local/
