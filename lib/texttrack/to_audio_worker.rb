@@ -34,10 +34,10 @@ module WM
       u = Caption.find_by(record_id: "#{params[:record_id]}")
 
       audio_type_hash = {
-         "ibm" => "wav",
-         "google" => "flac",
+         "ibm" => "mp3",
+         "google" => "mp3",
          "speechmatics" => "mp3",
-         "threeplaymedia" => "wav",
+         "threeplaymedia" => "mp3",
          "deepspeech" => "wav"
       } 
       
@@ -45,7 +45,7 @@ module WM
                   video_file_path: "#{params[:recordings_dir]}/#{params[:record_id]}/video",
                   video_name:"webcams",
                   video_content_type: "webm",
-                  audio_file_path: "#{params[:recordings_dir]}/#{params[:record_id]}",
+                  audio_file_path: "#{params[:captions_inbox_dir]}/#{params[:record_id]}",
                   audio_name: params[:record_id],
                   audio_content_type: audio_type_hash[params[:provider][:name]])
 

@@ -20,9 +20,9 @@ module WM
       u.update(status: "finished audio & started #{u.service} transcription process")
         
      job_id = SpeechToText::MozillaDeepspeechS2T.create_job(
-          "#{params[:recordings_dir]}/#{params[:record_id]}/#{params[:record_id]}.#{audio_type}",
+          "#{params[:captions_inbox_dir]}/#{params[:record_id]}/#{params[:record_id]}.#{audio_type}",
           params[:provider][:auth_file_path],
-          "#{params[:recordings_dir]}/#{params[:record_id]}/#{params[:record_id]}_jobdetails.json"
+          "#{params[:captions_inbox_dir]}/#{params[:record_id]}/#{params[:record_id]}_jobdetails.json"
           )
         
       u.update(status: "created job with #{u.service}")
@@ -47,6 +47,10 @@ module WM
       while(status != "completed")
         status = SpeechToText::MozillaDeepspeechS2T.checkstatus(job_id,
               params[:provider][:auth_file_path])
+          
+        if status["message"] == "No jobID found"
+            break
+        end
       end
         
       callback_json = SpeechToText::MozillaDeepspeechS2T.order_transcript(job_id,
@@ -58,14 +62,14 @@ module WM
         
         
       SpeechToText::Util.write_to_webvtt(
-        "#{params[:recordings_dir]}/#{params[:record_id]}",
+        "#{params[:captions_inbox_dir]}/#{params[:record_id]}",
         "caption_#{params[:caption_locale]}.vtt",
         myarray
       )
 
       u.update(status: "done with #{u.service}")
         
-      File.delete("#{params[:recordings_dir]}/#{params[:record_id]}/#{params[:record_id]}_jobdetails.json")
+      File.delete("#{params[:captions_inbox_dir]}/#{params[:record_id]}/#{params[:record_id]}_jobdetails.json")
 
     end
   end

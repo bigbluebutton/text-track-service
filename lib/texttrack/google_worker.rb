@@ -27,7 +27,7 @@ module WM
 
       SpeechToText::GoogleS2T.set_environment(params[:provider][:auth_file_path])
       SpeechToText::GoogleS2T.google_storage(
-        "#{params[:recordings_dir]}/#{params[:record_id]}",
+        "#{params[:captions_inbox_dir]}/#{params[:record_id]}",
         params[:record_id],
         audio_type,
         params[:provider][:google_bucket_name]
@@ -60,7 +60,7 @@ module WM
 
       u.update(status: "writing subtitle file from #{u.service}")
       SpeechToText::Util.write_to_webvtt(
-        "#{params[:recordings_dir]}/#{params[:record_id]}",
+        "#{params[:captions_inbox_dir]}/#{params[:record_id]}",
         "caption_#{params[:caption_locale]}.vtt",
         myarray
       )

@@ -24,13 +24,13 @@ module WM
       # for pt-BR, etc. instead of en-US?
         
       jobID = SpeechToText::SpeechmaticsS2T.create_job(
-          "#{params[:recordings_dir]}/#{params[:record_id]}",
+          "#{params[:captions_inbox_dir]}/#{params[:record_id]}",
           params[:record_id],
           audio_type,
           params[:provider][:userID],
           params[:provider][:apikey],
           params[:caption_locale],
-          "#{params[:recordings_dir]}/#{params[:record_id]}/jobID_#{params[:userID]}.json")
+          "#{params[:captions_inbox_dir]}/#{params[:record_id]}/jobID_#{params[:userID]}.json")
 
       u.update(status: "created job with #{u.service}")
         
@@ -73,14 +73,14 @@ module WM
                 
               u.update(status: "writing subtitle file from #{u.service}")
               SpeechToText::Util.write_to_webvtt(
-                  "#{params[:recordings_dir]}/#{params[:record_id]}",
+                  "#{params[:captions_inbox_dir]}/#{params[:record_id]}",
                   "caption_#{params[:caption_locale]}.vtt",
                   myarray)
               
           
               u.update(status: "done with #{u.service}")
               
-              File.delete("#{params[:recordings_dir]}/#{params[:record_id]}/jobID_#{params[:userID]}.json")
+              File.delete("#{params[:captions_inbox_dir]}/#{params[:record_id]}/jobID_#{params[:userID]}.json")
               
           
       end
