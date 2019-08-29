@@ -47,6 +47,10 @@ module WM
       while(status != "completed")
         status = SpeechToText::MozillaDeepspeechS2T.checkstatus(job_id,
               params[:provider][:auth_file_path])
+          
+        if status["message"] == "No jobID found"
+            break
+        end
       end
         
       callback_json = SpeechToText::MozillaDeepspeechS2T.order_transcript(job_id,
