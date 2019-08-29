@@ -28,8 +28,7 @@ sudo usermod -a -G bigbluebutton texttrack
 
 Give access to texttrack to needed folders
 ```
-chgrp -R bigbluebutton /var/bigbluebutton/captions
-chmod -R g+ws /var/bigbluebutton/captions
+sudo chmod g-s,g+x /var/bigbluebutton/captions
 ```
 
 # Now install big blue button
