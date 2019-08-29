@@ -20,6 +20,18 @@ su texttrack (switch to user)
 sudo ls -la /root
 ```
 
+Add texttrack user to bigbluebutton group
+```
+cat /etc/group (check groups)
+sudo usermod -a -G bigbluebutton texttrack
+```
+
+Give access to texttrack to needed folders
+```
+chgrp -R bigbluebutton /var/bigbluebutton/captions
+chmod -R g+ws /var/bigbluebutton/captions
+```
+
 # Now install big blue button
 
 Go home by typing cd and hitting enter, then enter the following command

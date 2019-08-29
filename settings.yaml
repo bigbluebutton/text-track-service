@@ -17,4 +17,5 @@ default_provider: "ibm"
 # recording_dir: /path/to/recordings/dir/
 recordings_dir: "/var/bigbluebutton/published/presentation"
 
-captions_inbox_dir: "/var/bigbluebutton/captions/inbox"
+#removed /inbox
+captions_inbox_dir: "/var/bigbluebutton/captions"
