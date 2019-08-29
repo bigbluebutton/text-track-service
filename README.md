@@ -60,11 +60,13 @@ gem env home
 gem install rails -v 5.2.3
 rbenv rehash
 apt-get install libsqlite3-dev
-sudo chown -R texttrack.texttrack ~/.rbenv
-sudo chown -R texttrack:texttrack /usr/local/text-track-service
 bundle install
 
 rails db:setup
+
+# If Ruby & permission issues
+sudo chown -R texttrack.texttrack ~/.rbenv
+sudo chown -R texttrack:texttrack /usr/local/text-track-service
 
 # Start rails and listen on all interfaces
 rails s -b 0.0.0.0
