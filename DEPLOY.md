@@ -4,7 +4,7 @@
 
 ssh into your server
 ```
-adduser texttrack 
+adduser texttrack
 ```
 
 grant sudo access to this user

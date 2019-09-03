@@ -39,13 +39,19 @@ module WM
          "speechmatics" => "mp3",
          "threeplaymedia" => "mp3",
          "deepspeech" => "wav"
-      } 
+      }
+        
+      final_dest_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
+      unless Dir.exist?(final_dest_dir)
+          FileUtils.mkdir_p(final_dest_dir)
+          FileUtils.chmod("u=wrx,g=wrx,o=r", final_dest_dir)
+      end
       
       SpeechToText::Util.video_to_audio(
                   video_file_path: "#{params[:recordings_dir]}/#{params[:record_id]}/video",
                   video_name:"webcams",
                   video_content_type: "webm",
-                  audio_file_path: "#{params[:captions_inbox_dir]}/#{params[:record_id]}",
+                  audio_file_path: "#{params[:temp_storage]}/#{params[:record_id]}",
                   audio_name: params[:record_id],
                   audio_content_type: audio_type_hash[params[:provider][:name]])
 

@@ -19,3 +19,6 @@ recordings_dir: "/var/bigbluebutton/published/presentation"
 
 #removed /inbox
 captions_inbox_dir: "/var/bigbluebutton/captions"
+
+#temp_storage_dir
+temp_storage: "/var/texttrackservice"

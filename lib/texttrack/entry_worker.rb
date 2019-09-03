@@ -19,6 +19,7 @@ module WM
       default_provider = props["default_provider"]
       recordings_dir = props["recordings_dir"]
       captions_inbox_dir = props["captions_inbox_dir"]
+      temp_storage = props["temp_storage"]
 
       provider_name = default_provider
       unless params[:provider].nil?
@@ -28,7 +29,8 @@ module WM
       to_audio_params = {record_id: params[:record_id],
         caption_locale: params[:caption_locale],
         recordings_dir: recordings_dir,
-        captions_inbox_dir: captions_inbox_dir}
+        captions_inbox_dir: captions_inbox_dir,
+        temp_storage: temp_storage}
 
       provider = {name: provider_name}
 
