@@ -47,13 +47,15 @@ module WM
           FileUtils.chmod("u=wrx,g=wrx,o=r", final_dest_dir)
       end
       
-      SpeechToText::Util.video_to_audio(
+      unless File.exist?("#{final_dest_dir}/#{params[:record_id]}.#{audio_type_hash[params[:provider][:name]]}")
+        SpeechToText::Util.video_to_audio(
                   video_file_path: "#{params[:recordings_dir]}/#{params[:record_id]}/video",
                   video_name:"webcams",
                   video_content_type: "webm",
                   audio_file_path: "#{params[:temp_storage]}/#{params[:record_id]}",
                   audio_name: params[:record_id],
                   audio_content_type: audio_type_hash[params[:provider][:name]])
+      end
 
       if(params[:provider][:name] === "google")
         WM::GoogleWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider][:name]]);

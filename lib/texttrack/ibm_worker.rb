@@ -24,7 +24,7 @@ module WM
       # for pt-BR, etc. instead of en-US?
 
       job_id = SpeechToText::IbmWatsonS2T.create_job(
-        audio_file_path: "#{params[:captions_inbox_dir]}/#{params[:record_id]}",
+        audio_file_path: "#{params[:temp_storage]}/#{params[:record_id]}",
         apikey: params[:provider][:auth_file_path],
         audio: params[:record_id],
         content_type: audio_type,
@@ -57,7 +57,7 @@ module WM
       u.update(status: "writing subtitle file from #{u.service}")
         
       SpeechToText::Util.write_to_webvtt(
-          "#{params[:captions_inbox_dir]}/#{params[:record_id]}",
+          "#{params[:temp_storage]}/#{params[:record_id]}",
           "caption_#{params[:caption_locale]}.vtt",
           myarray)
 

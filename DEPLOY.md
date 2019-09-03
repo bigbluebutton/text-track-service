@@ -31,6 +31,14 @@ Give access to texttrack to needed folders
 sudo chmod g-s,g+x /var/bigbluebutton/captions
 ```
 
+Create temp folder for storage at /var/texttrackservice and give permissions
+```
+cd /var
+sudo mkdir texttrackservice
+sudo chown -R texttrack:texttrack /var/texttrackservice (change ownership to texttrackservice)
+sudo chmod g+w /var/texttrackservice/ (give group permissions)
+```
+
 # Now install big blue button
 
 Go home by typing cd and hitting enter, then enter the following command
