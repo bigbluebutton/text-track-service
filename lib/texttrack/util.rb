@@ -22,6 +22,10 @@ module TextTrack
       # https://stackoverflow.com/questions/24036821/ruby-2-0-0-stringmatch-argumenterror-invalid-byte-sequence-in-utf-8
       line.scrub
     end
+      
+    def mv_files(src, dest)
+        FileUtils.mv(src, dest, :verbose => true)#, :force => true)   
+    end
   end
 end
 
