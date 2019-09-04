@@ -51,6 +51,7 @@ module WM
         if status["message"] == "No jobID found"
             break
         end
+        #sleep(300)
       end
         
       callback_json = SpeechToText::MozillaDeepspeechS2T.order_transcript(job_id,

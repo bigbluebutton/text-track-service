@@ -47,6 +47,11 @@ Make sure to replace bbb.example.com with your domain name and info@example.com 
 wget -qO- https://ubuntu.bigbluebutton.org/bbb-install.sh | bash -s -- -v xenial-220-beta -s bbb.example.com -e info@example.com
 ```
 
+Install the podcast package
+```
+sudo apt-get install bbb-playback-podcast
+```
+
 Visit your domain and start a meeting to see if everything is working okay
 ```
 bbb.example.com/demo/demo10.jsp
@@ -161,6 +166,8 @@ Open terminal 2
 ```
 # Copy example-credentials.yaml to credentials.yaml
 cp example-credentials.yaml credentials.yaml
+
+Also copy your google auth json file into a folder called auth inside the app folder if you plan on using google translate
 
 # Edit credentials.yaml to setup your credentials for the providers.
 

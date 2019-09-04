@@ -50,6 +50,7 @@ module WM
       while(status != "completed")
         callback = SpeechToText::IbmWatsonS2T.check_job(job_id, params[:provider][:auth_file_path])
         status = callback["status"]
+        #sleep(300)
       end
 
       myarray = SpeechToText::IbmWatsonS2T.create_array_watson(callback["results"][0])
@@ -62,6 +63,8 @@ module WM
           myarray)
 
       u.update(status: "done with #{u.service}")
+        
+      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/*", "#{params[:captions_inbox_dir]}/#{params[:record_id]}", :verbose => true, :force => true)
 
     end
   end
