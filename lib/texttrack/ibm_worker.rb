@@ -64,9 +64,11 @@ module WM
 
       u.update(status: "done with #{u.service}")
         
-      TextTrack::Util.mv_files("#{params[:temp_storage]}/#{params[:record_id]}/caption_#{params[:caption_locale]}.vtt", "#{params[:captions_inbox_dir]}/inbox", :verbose => true)#, :force => true)
+      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/caption_#{params[:caption_locale]}.vtt", "#{params[:captions_inbox_dir]}/inbox", :verbose => true)#, :force => true)
         
-      TextTrack::Util.mv_files("#{params[:temp_storage]}/#{params[:record_id]}/captions.json", "#{params[:captions_inbox_dir]}/inbox", :verbose => true)#, :force => true)
+      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/captions.json", "#{params[:captions_inbox_dir]}/inbox", :verbose => true)#, :force => true)
+        
+      FileUtils.remove_dir("#{params[:temp_storage]}/#{params[:record_id]}")
 
     end
   end

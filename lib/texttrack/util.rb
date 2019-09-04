@@ -23,9 +23,7 @@ module TextTrack
       line.scrub
     end
       
-    def mv_files(src, dest)
-        FileUtils.mv(src, dest, :verbose => true)#, :force => true)   
-    end
+    
   end
 end
 
