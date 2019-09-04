@@ -80,9 +80,9 @@ module WM
         
       File.delete("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}_jobdetails.json")
         
-      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/caption_#{params[:caption_locale]}.vtt", "#{params[:captions_inbox_dir]}/inbox", :verbose => true)#, :force => true)
+      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}-#{current_time}-track.vtt", "#{params[:captions_inbox_dir]}/inbox", :verbose => true)#, :force => true)
         
-      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/captions.json", "#{params[:captions_inbox_dir]}/inbox", :verbose => true)#, :force => true)
+      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}-#{current_time}-track.json", "#{params[:captions_inbox_dir]}/inbox", :verbose => true)#, :force => true)
         
       FileUtils.remove_dir("#{params[:temp_storage]}/#{params[:record_id]}")
 
