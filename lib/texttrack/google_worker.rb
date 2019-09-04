@@ -59,11 +59,21 @@ module WM
       myarray = SpeechToText::GoogleS2T.create_array_google(callback["results"])
 
       u.update(status: "writing subtitle file from #{u.service}")
+        
+      current_time = (Time.now.to_f * 1000).to_i    
+        
       SpeechToText::Util.write_to_webvtt(
         "#{params[:temp_storage]}/#{params[:record_id]}",
-        "caption_#{params[:caption_locale]}.vtt",
+        "#{params[:record_id]}-#{current_time}-track.vtt",
         myarray
       )
+        
+      SpeechToText::Util.recording_json(
+          file_path: "#{params[:temp_storage]}/#{params[:record_id]}",
+          record_id: params[:record_id],
+          timestamp: current_time,
+          language: params[:caption_locale]
+          )
 
       SpeechToText::GoogleS2T.delete_google_storage(
         params[:provider][:google_bucket_name],

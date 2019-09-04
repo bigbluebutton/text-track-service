@@ -68,12 +68,21 @@ module WM
       end
         
       if(status == "complete")
-        SpeechToText::ThreePlaymediaS2T.get_vttfile(
+       
+           current_time = (Time.now.to_f * 1000).to_i
+          SpeechToText::ThreePlaymediaS2T.get_vttfile(
             params[:provider][:auth_file_path],
             139,
             transcript_id,
             "#{params[:temp_storage]}/#{params[:record_id]}",
-            "caption_#{params[:caption_locale]}.vtt")
+            "#{params[:record_id]}-#{current_time}-track.vtt")
+          
+          SpeechToText::Util.recording_json(
+          file_path: "#{params[:temp_storage]}/#{params[:record_id]}",
+          record_id: params[:record_id],
+          timestamp: current_time,
+          language: params[:caption_locale]
+          )
           
         u.update(status: "writing subtitle file from #{u.service}")
           

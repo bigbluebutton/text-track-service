@@ -51,7 +51,7 @@ module WM
 
       to_audio_params[:provider] = provider
 
-      puts to_audio_params
+      #puts to_audio_params
       WM::ToAudioWorker.perform_async(to_audio_params.to_json)
     end
   end
