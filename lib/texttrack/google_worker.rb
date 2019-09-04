@@ -72,6 +72,12 @@ module WM
       )
 
       u.update(status: "done with #{u.service}")
+        
+      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/caption_#{params[:caption_locale]}.vtt", "#{params[:captions_inbox_dir]}/inbox", :verbose => true)#, :force => true)
+        
+      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/captions.json", "#{params[:captions_inbox_dir]}/inbox", :verbose => true)#, :force => true)
+        
+      FileUtils.remove_dir("#{params[:temp_storage]}/#{params[:record_id]}")
 
       #File.delete("#{data["published_file_path"]}/#{data["recordID"]}/#{data["recordID"]}.json")
     end
