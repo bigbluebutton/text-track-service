@@ -22,7 +22,8 @@ module WM
      job_id = SpeechToText::MozillaDeepspeechS2T.create_job(
           "#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}.#{audio_type}",
           params[:provider][:auth_file_path],
-          "#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}_jobdetails.json"
+          "#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}_jobdetails.json",
+          params[:record_id]
           )
         
       u.update(status: "created job with #{u.service}")

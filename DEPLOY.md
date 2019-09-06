@@ -185,6 +185,31 @@ After it is done reload the demo page and click on presentation, you should have
 navigate to the record id folder at /var/bigbluebutton/captions/inbox/ to see the captions.json and vtt files
 ```
 
+# Copy /usr/local/text-track-service/service/*.service to /etc/systemd/system
+cd /usr/local/text-track-service/service/
+scp *.service /etc/systemd/system
+
+# Start all services
+sudo systemctl enable text-track-rails
+sudo systemctl start text-track-rails
+
+sudo systemctl enable text-track-service
+sudo systemctl start text-track-service
+
+sudo systemctl enable text-track-worker
+sudo systemctl start text-track-worker
+
+# If restart or stop service 
+sudo systemctl restart service-name
+sudo systemctl stop service-name
+
+# If Check service
+sudo systemctl status service-name
+
+# easy edit service file for future
+sudo systemctl edit service-name --full
+sudo systemctl daemon-reload (After editing)
+
 # Edit post_publish file(for automatic captions)
 
 Navigate to /usr/local/bigbluebutton/core/scripts/post_publish 
