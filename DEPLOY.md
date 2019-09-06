@@ -29,7 +29,7 @@ touch authorized_keys
 paste your public key in this file(authorized_keys)
 ```
 
-# Now install big blue button
+# Now install big blue button(Make sure you are root)
 
 Go home by typing cd and hitting enter, then enter the following command
 Make sure to replace bbb.example.com with your domain name and info@example.com with your email
@@ -55,7 +55,8 @@ sudo usermod -a -G bigbluebutton texttrack
 
 Give access to texttrack to needed folders
 ```
-sudo chmod g-s,g+x /var/bigbluebutton/captions
+sudo chmod g+wrx /var/bigbluebutton/captions
+sudo chmod g+wrx /var/bigbluebutton/captions/inbox
 ```
 
 Create temp folder for storage at /var/texttrackservice and give permissions
