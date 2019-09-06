@@ -148,31 +148,6 @@ curl http://<ip>:4000
 
 ```
 
-# Edit post_publish file
-
-Navigate to /usr/local/bigbluebutton/core/scripts/post_publish 
-```
-gem install rest-client
-sudo mv post_publish.rb.example post_publish.rb
-sudo nano post_publish.rb
-
-add the following code just above exit 0 at the bottom
-require "rest-client"
-
-response = RestClient::Request.execute(
-    method: :get,
-    url:    "http://localhost:4000/caption/#{$meeting_id}/en-US",
-)
-
-if(response.code != 200)
-  BigBlueButton.logger.info("#{response.code} error")
-end
-
-ctrl x type y and hit enter to save and exit
-
-```
-
-
 Open terminal 2
 
 ```
@@ -208,5 +183,29 @@ bbb-record --watch
 After it is done reload the demo page and click on presentation, you should have a video with captions
 ```
 navigate to the record id folder at /var/bigbluebutton/captions/inbox/ to see the captions.json and vtt files
+```
+
+# Edit post_publish file(for automatic captions)
+
+Navigate to /usr/local/bigbluebutton/core/scripts/post_publish 
+```
+gem install rest-client
+sudo mv post_publish.rb.example post_publish.rb
+sudo nano post_publish.rb
+
+add the following code just above exit 0 at the bottom
+require "rest-client"
+
+response = RestClient::Request.execute(
+    method: :get,
+    url:    "http://localhost:4000/caption/#{$meeting_id}/en-US",
+)
+
+if(response.code != 200)
+  BigBlueButton.logger.info("#{response.code} error")
+end
+
+ctrl x type y and hit enter to save and exit
+
 ```
 

@@ -1,0 +1,14 @@
+# text-track-service.service
+[Unit]
+Description=Text Track Service
+[Service]
+Environment=LANG=en_US.UTF-8
+User=texttrack
+Group=bigbluebutton
+ExecStart=/usr/local/text-track-service/development/start-service.sh
+Restart=always
+[Install]
+WantedBy=multi-user.target
+#### start-service.sh
+#!/bin/bash
+FAKTORY_PROVIDER=FAKTORY_URL FAKTORY_URL=tcp://:dcd1b7351070d689@localhost:7419 bundle exec ruby ./text-track-service.rb

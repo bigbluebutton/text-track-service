@@ -49,6 +49,7 @@ module WM
               params[:provider][:auth_file_path])
           
         if status["message"] == "No jobID found"
+            puts "Job does not exist"
             break
         end
         sleep(30)#0)
