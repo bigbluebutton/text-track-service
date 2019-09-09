@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Set encoding to utf-8
 # encoding: UTF-8
 
@@ -8,22 +10,17 @@
 #
 
 module TextTrack
-  module Util
+  module Util # rubocop:disable Style/Documentation
     def self.valid_json?(json)
-      begin
-        JSON.parse(json)
-        return true
-      rescue Exception => e
-        return false
-      end
+      JSON.parse(json)
+      true
+    rescue Exception => e # rubocop:disable Lint/RescueException
+      false
     end
 
     def self.scrub_line_to_remove_illegal_chars(line)
       # https://stackoverflow.com/questions/24036821/ruby-2-0-0-stringmatch-argumenterror-invalid-byte-sequence-in-utf-8
       line.scrub
     end
-      
-    
   end
 end
-

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Set encoding to utf-8
 # encoding: UTF-8
 
@@ -19,16 +21,16 @@ require 'texttrack/speechmatics_worker'
 require 'texttrack/threeplaymedia_worker'
 require 'texttrack/to_audio_worker'
 
-module TextTrack
+module TextTrack # rubocop:disable Style/Documentation
   def self.logger=(log)
     @logger = log
   end
-  
+
   def self.logger
     return @logger if @logger
+
     logger = Logger.new(STDOUT)
     logger.level = Logger::DEBUG
     @logger = logger
   end
 end
-

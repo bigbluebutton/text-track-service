@@ -1,3 +1,6 @@
+# rubocop:disable Style/Documentation
+# frozen_string_literal: true
+
 class CreateCaptions < ActiveRecord::Migration[5.2]
   def change
     create_table :captions do |t|
@@ -11,3 +14,4 @@ class CreateCaptions < ActiveRecord::Migration[5.2]
     end
   end
 end
+# rubocop:enable Style/Documentation
