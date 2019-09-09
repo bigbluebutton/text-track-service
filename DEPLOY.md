@@ -209,6 +209,10 @@ sudo systemctl status service-name
 # easy edit service file for future
 sudo systemctl edit service-name --full
 sudo systemctl daemon-reload (After editing)
+sudo journalctl service-name
+
+# see logs for service
+sudo journalctl -u service-name.service
 
 # Edit post_publish file(for automatic captions)
 
