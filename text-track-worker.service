@@ -1,0 +1,14 @@
+# text-track-worker.service
+[Unit]
+Description=Text Track Worker
+[Service]
+Environment=LANG=en_US.UTF-8
+User=texttrack
+Group=bigbluebutton
+ExecStart=/usr/local/text-track-service/start-worker.sh
+Restart=always
+[Install]
+WantedBy=multi-user.target
+#### start-worker.sh
+#!/bin/bash
+FAKTORY_PROVIDER=FAKTORY_URL FAKTORY_URL=tcp://:06aa1602e3fcc580@localhost:7419 bundle exec faktory-worker  -r ./text-track-worker.rb

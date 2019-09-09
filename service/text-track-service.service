@@ -1,0 +1,12 @@
+# text-track-service.service
+[Unit]
+Description=Text Track Service
+[Service]
+Environment=LANG=en_US.UTF-8
+User=texttrack
+Group=bigbluebutton
+WorkingDirectory=/usr/local/text-track-service
+ExecStart=/usr/local/text-track-service/start-service.sh
+Restart=always
+[Install]
+WantedBy=multi-user.target

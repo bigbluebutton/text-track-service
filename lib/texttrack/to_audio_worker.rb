@@ -1,65 +1,102 @@
+# frozen_string_literal: true
+
 require 'faktory_worker_ruby'
 
 require 'connection_pool'
 require 'faktory'
 require 'securerandom'
-require "google/cloud/speech"
-require "google/cloud/storage"
-require "speech_to_text"
-require "sqlite3"
+require 'google/cloud/speech'
+require 'google/cloud/storage'
+require 'speech_to_text'
+require 'sqlite3'
 require 'active_record'
 rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
 
 module WM
-  class ToAudioWorker
+  class ToAudioWorker # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0
 
-    def perform(param_json)
-      params = JSON.parse(param_json, :symbolize_names => true)
+    # rubocop:disable Metrics/PerceivedComplexity
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
+    def perform(param_json) # rubocop:disable Metrics/CyclomaticComplexity
+      params = JSON.parse(param_json, symbolize_names: true)
 
-      if Caption.exists?(record_id: "#{params[:record_id]}")
-        u = Caption.find_by(record_id: "#{params[:record_id]}")
-        u.update(status: "start_audio_conversion",
-                service: "#{params[:provider][:name]}",
-                caption_locale: "#{params[:caption_locale]}")
+      if Caption.exists?(record_id: (params[:record_id]).to_s)
+        u = Caption.find_by(record_id: (params[:record_id]).to_s)
+        u.update(status: 'start_audio_conversion',
+                 service: (params[:provider][:name]).to_s,
+                 caption_locale: (params[:caption_locale]).to_s)
       else
-        Caption.create(record_id: "#{params[:record_id]}",
-                status: "started_audio_conversion",
-                service: "#{params[:provider][:name]}",
-                caption_locale: "#{params[:caption_locale]}")
+        Caption.create(record_id: (params[:record_id]).to_s,
+                       status: 'started_audio_conversion',
+                       service: (params[:provider][:name]).to_s,
+                       caption_locale: (params[:caption_locale]).to_s)
       end
 
-      u = Caption.find_by(record_id: "#{params[:record_id]}")
+      u = Caption.find_by(record_id: (params[:record_id]).to_s)
 
       audio_type_hash = {
-         "ibm" => "mp3",
-         "google" => "mp3",
-         "speechmatics" => "mp3",
-         "threeplaymedia" => "mp3",
-         "deepspeech" => "wav"
-      } 
-      
-      SpeechToText::Util.video_to_audio(
-                  video_file_path: "#{params[:recordings_dir]}/#{params[:record_id]}/video",
-                  video_name:"webcams",
-                  video_content_type: "webm",
-                  audio_file_path: "#{params[:captions_inbox_dir]}/#{params[:record_id]}",
-                  audio_name: params[:record_id],
-                  audio_content_type: audio_type_hash[params[:provider][:name]])
+        'ibm' => 'mp3',
+        'google' => 'mp3',
+        'speechmatics' => 'mp3',
+        'threeplaymedia' => 'mp3',
+        'deepspeech' => 'wav'
+      }
 
-      if(params[:provider][:name] === "google")
-        WM::GoogleWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider][:name]]);
-      elsif(params[:provider][:name] === "ibm")
-        WM::IbmWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider][:name]]);
-      elsif(params[:provider][:name] === "deepspeech")
-        WM::DeepspeechWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider][:name]]);
-      elsif(params[:provider][:name] === "speechmatics")
-        WM::SpeechmaticsWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider][:name]]);
-      elsif(params[:provider][:name] === "threeplaymedia")
-        WM::ThreeplaymediaWorker_createJob.perform_async(params.to_json, u.id, audio_type_hash[params[:provider][:name]]);
+      final_dest_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
+      unless Dir.exist?(final_dest_dir)
+        FileUtils.mkdir_p(final_dest_dir)
+        FileUtils.chmod('u=wrx,g=wrx,o=r', final_dest_dir)
+      end
+
+      unless File.exist?("#{final_dest_dir}/#{params[:record_id]}.#{audio_type_hash[params[:provider][:name]]}")
+        SpeechToText::Util.video_to_audio(
+          video_file_path: "#{params[:recordings_dir]}/#{params[:record_id]}/video",
+          video_name: 'webcams',
+          video_content_type: 'webm',
+          audio_file_path: "#{params[:temp_storage]}/#{params[:record_id]}",
+          audio_name: params[:record_id],
+          audio_content_type: audio_type_hash[params[:provider][:name]]
+        )
+      end
+
+      # rubocop:disable Style/CaseEquality
+      if params[:provider][:name] === 'google'
+        # rubocop:enable Style/CaseEquality
+        WM::GoogleWorker_createJob.perform_async(params.to_json,
+                                                 u.id, 
+                                                 audio_type_hash[params[:provider][:name]])
+      # rubocop:disable Style/CaseEquality
+      elsif params[:provider][:name] === 'ibm'
+        # rubocop:enable Style/CaseEquality
+        WM::IbmWorker_createJob.perform_async(params.to_json, 
+                                              u.id, 
+                                              audio_type_hash[params[:provider][:name]])
+      # rubocop:disable Style/CaseEquality
+      elsif params[:provider][:name] === 'deepspeech'
+        # rubocop:enable Style/CaseEquality
+        WM::DeepspeechWorker_createJob.perform_async(params.to_json, 
+                                                     u.id, 
+                                                     audio_type_hash[params[:provider][:name]])
+      # rubocop:disable Style/CaseEquality
+      elsif params[:provider][:name] === 'speechmatics'
+        # rubocop:enable Style/CaseEquality
+        WM::SpeechmaticsWorker_createJob.perform_async(params.to_json, 
+                                                       u.id, 
+                                                       audio_type_hash[params[:provider][:name]])
+      # rubocop:disable Style/CaseEquality
+      elsif params[:provider][:name] === 'threeplaymedia'
+        # rubocop:enable Style/CaseEquality
+        WM::ThreeplaymediaWorker_createJob.perform_async(params.to_json, 
+                                                         u.id, 
+                                                         audio_type_hash[params[:provider][:name]])
       end
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
   end
 end
