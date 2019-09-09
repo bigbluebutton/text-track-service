@@ -29,7 +29,17 @@ touch authorized_keys
 paste your public key in this file(authorized_keys)
 ```
 
-# Now install big blue button(Make sure you are root)
+
+# Now install big blue button
+
+(Make sure you are root)
+
+Give access to texttrack to needed folders
+```
+sudo chmod g+wx /var/bigbluebutton/captions
+```
+
+# Now install big blue button
 
 Go home by typing cd and hitting enter, then enter the following command
 Make sure to replace bbb.example.com with your domain name and info@example.com with your email
