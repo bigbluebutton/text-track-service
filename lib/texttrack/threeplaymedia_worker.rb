@@ -10,7 +10,7 @@ require 'sqlite3'
 rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
 
-module WM
+module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
   class ThreeplaymediaWorker_createJob # rubocop:disable Style/Documentation
     include Faktory::Job
@@ -37,7 +37,9 @@ module WM
 
       u.update(status: "created job with #{u.service}")
 
-      WM::ThreeplaymediaWorker_getJob.perform_async(params.to_json, u.id, job_id)
+      WM::ThreeplaymediaWorker_getJob.perform_async(params.to_json,
+                                                    u.id,
+                                                    job_id)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -100,15 +102,25 @@ module WM
 
         u.update(status: "writing subtitle file from #{u.service}")
 
-        File.delete("#{params[:temp_storage]}/#{params[:record_id]}/job_file.json")
-
         u.update(status: "done with #{u.service}")
 
-        FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}-#{current_time}-track.vtt", "#{params[:captions_inbox_dir]}/inbox", verbose: true) # , :force => true)
+        temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
+        temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
+        temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
 
-        FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}-#{current_time}-track.json", "#{params[:captions_inbox_dir]}/inbox", verbose: true) # , :force => true)
+        File.delete("#{temp_dir}/job_file.json")
 
-        FileUtils.remove_dir("#{params[:temp_storage]}/#{params[:record_id]}")
+        FileUtils.mv("#{track_dir}/#{temp_track_vtt}",
+                     "#{params[:captions_inbox_dir]}/inbox",
+                     verbose: true)
+        # , :force => true)
+
+        FileUtils.mv("#{track_dir}/#{temp_track_json}",
+                     "#{params[:captions_inbox_dir]}/inbox",
+                     verbose: true)
+        # , :force => true)
+
+        FileUtils.remove_dir(temp_dir.to_s)
       end
     end
     # rubocop:enable Metrics/MethodLength

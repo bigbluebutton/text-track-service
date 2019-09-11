@@ -10,7 +10,7 @@ require 'sqlite3'
 rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
 
-module WM
+module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
   class DeepspeechWorker_createJob # rubocop:disable Style/Documentation
     include Faktory::Job
@@ -33,7 +33,7 @@ module WM
 
       u.update(status: "created job with #{u.service}")
 
-      WM::DeepspeechWorker_getJob.perform_async(params.to_json, u.id, job_id)
+      TTS::DeepspeechWorker_getJob.perform_async(params.to_json, u.id, job_id)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -52,10 +52,12 @@ module WM
       u = Caption.find(id)
       u.update(status: "waiting on job from #{u.service}")
 
+      auth_file_path = params[:provider][:auth_file_path]
+        
       status = 'inProgress'
       while status != 'completed'
         status = SpeechToText::MozillaDeepspeechS2T.checkstatus(job_id,
-                                                                params[:provider][:auth_file_path])
+                                                                auth_file_path)
 
         if status['message'] == 'No jobID found'
           puts 'Job does not exist'
@@ -65,7 +67,7 @@ module WM
       end
 
       callback_json = SpeechToText::MozillaDeepspeechS2T.order_transcript(job_id,
-                                                                          params[:provider][:auth_file_path])
+                                                                          auth_file_path)
 
       u.update(status: "writing subtitle file from #{u.service}")
 
@@ -88,13 +90,23 @@ module WM
 
       u.update(status: "done with #{u.service}")
 
-      File.delete("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}_jobdetails.json")
+      temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
+      temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
+      temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
 
-      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}-#{current_time}-track.vtt", "#{params[:captions_inbox_dir]}/inbox", verbose: true) # , :force => true)
+      File.delete("#{temp_dir}/#{params[:record_id]}_jobdetails.json")
 
-      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}-#{current_time}-track.json", "#{params[:captions_inbox_dir]}/inbox", verbose: true) # , :force => true)
+      FileUtils.mv("#{track_dir}/#{temp_track_vtt}",
+                   "#{params[:captions_inbox_dir]}/inbox",
+                   verbose: true)
+      # , :force => true)
 
-      FileUtils.remove_dir("#{params[:temp_storage]}/#{params[:record_id]}")
+      FileUtils.mv("#{track_dir}/#{temp_track_json}",
+                   "#{params[:captions_inbox_dir]}/inbox",
+                   verbose: true)
+      # , :force => true)
+
+      FileUtils.remove_dir(temp_dir.to_s)
     end
     # rubocop:enable Metrics/MethodLength
   end

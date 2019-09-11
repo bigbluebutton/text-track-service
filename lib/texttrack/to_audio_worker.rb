@@ -13,7 +13,7 @@ require 'active_record'
 rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
 
-module WM
+module TTS
   class ToAudioWorker # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0
@@ -46,53 +46,57 @@ module WM
         'deepspeech' => 'wav'
       }
 
+      audio_type = audio_type_hash[params[:provider][:name]]
+
       final_dest_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
+      source_dir = "#{params[:recordings_dir]}/#{params[:record_id]}"
+      audio_file = "#{params[:record_id]}.#{audio_type}"
       unless Dir.exist?(final_dest_dir)
         FileUtils.mkdir_p(final_dest_dir)
         FileUtils.chmod('u=wrx,g=wrx,o=r', final_dest_dir)
       end
 
-      unless File.exist?("#{final_dest_dir}/#{params[:record_id]}.#{audio_type_hash[params[:provider][:name]]}")
+      unless File.exist?("#{final_dest_dir}/#{audio_file}")
         SpeechToText::Util.video_to_audio(
-          video_file_path: "#{params[:recordings_dir]}/#{params[:record_id]}/video",
+          video_file_path: "#{source_dir}/video",
           video_name: 'webcams',
           video_content_type: 'webm',
-          audio_file_path: "#{params[:temp_storage]}/#{params[:record_id]}",
+          audio_file_path: final_dest_dir.to_s,
           audio_name: params[:record_id],
-          audio_content_type: audio_type_hash[params[:provider][:name]]
+          audio_content_type: audio_type
         )
       end
 
       # rubocop:disable Style/CaseEquality
       if params[:provider][:name] === 'google'
         # rubocop:enable Style/CaseEquality
-        WM::GoogleWorker_createJob.perform_async(params.to_json,
-                                                 u.id, 
-                                                 audio_type_hash[params[:provider][:name]])
+        TTS::GoogleWorker_createJob.perform_async(params.to_json,
+                                                  u.id,
+                                                  audio_type)
       # rubocop:disable Style/CaseEquality
       elsif params[:provider][:name] === 'ibm'
         # rubocop:enable Style/CaseEquality
-        WM::IbmWorker_createJob.perform_async(params.to_json, 
-                                              u.id, 
-                                              audio_type_hash[params[:provider][:name]])
+        TTS::IbmWorker_createJob.perform_async(params.to_json,
+                                               u.id,
+                                               audio_type)
       # rubocop:disable Style/CaseEquality
       elsif params[:provider][:name] === 'deepspeech'
         # rubocop:enable Style/CaseEquality
-        WM::DeepspeechWorker_createJob.perform_async(params.to_json, 
-                                                     u.id, 
-                                                     audio_type_hash[params[:provider][:name]])
+        TTS::DeepspeechWorker_createJob.perform_async(params.to_json,
+                                                      u.id,
+                                                      audio_type)
       # rubocop:disable Style/CaseEquality
       elsif params[:provider][:name] === 'speechmatics'
         # rubocop:enable Style/CaseEquality
-        WM::SpeechmaticsWorker_createJob.perform_async(params.to_json, 
-                                                       u.id, 
-                                                       audio_type_hash[params[:provider][:name]])
+        TTS::SpeechmaticsWorker_createJob.perform_async(params.to_json,
+                                                        u.id,
+                                                        audio_type)
       # rubocop:disable Style/CaseEquality
       elsif params[:provider][:name] === 'threeplaymedia'
         # rubocop:enable Style/CaseEquality
-        WM::ThreeplaymediaWorker_createJob.perform_async(params.to_json, 
-                                                         u.id, 
-                                                         audio_type_hash[params[:provider][:name]])
+        TTS::ThreeplaymediaWorker_createJob.perform_async(params.to_json,
+                                                          u.id,
+                                                          audio_type)
       end
     end
     # rubocop:enable Metrics/AbcSize

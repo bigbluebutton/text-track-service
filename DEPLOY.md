@@ -196,10 +196,13 @@ navigate to the record id folder at /var/bigbluebutton/captions/inbox/ to see th
 ```
 
 # Copy /usr/local/text-track-service/service/*.service to /etc/systemd/system
+```
 cd /usr/local/text-track-service/service/
 scp *.service /etc/systemd/system
+```
 
 # Start all services
+```
 sudo systemctl enable text-track-rails
 sudo systemctl start text-track-rails
 
@@ -208,26 +211,35 @@ sudo systemctl start text-track-service
 
 sudo systemctl enable text-track-worker
 sudo systemctl start text-track-worker
+```
 
 # If restart or stop service 
+```
 sudo systemctl restart service-name
 sudo systemctl stop service-name
+```
 
 # If Check service
+```
 sudo systemctl status service-name
+```
 
 # easy edit service file for future
+```
 sudo systemctl edit service-name --full
 sudo systemctl daemon-reload (After editing)
-sudo journalctl service-name
+sudo journalctl -u service-name.service
+```
 
 # see logs for service
+```
 sudo journalctl -u service-name.service
+```
 
 # Edit post_publish file(for automatic captions)
-
-Navigate to /usr/local/bigbluebutton/core/scripts/post_publish 
 ```
+Navigate to /usr/local/bigbluebutton/core/scripts/post_publish 
+
 gem install rest-client
 sudo mv post_publish.rb.example post_publish.rb
 sudo nano post_publish.rb

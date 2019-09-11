@@ -3,7 +3,7 @@
 require 'connection_pool'
 require 'faktory'
 
-module WM
+module TTS
   class EntryWorker # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 5
@@ -53,7 +53,7 @@ module WM
       to_audio_params[:provider] = provider
 
       # puts to_audio_params
-      WM::ToAudioWorker.perform_async(to_audio_params.to_json)
+      TTS::ToAudioWorker.perform_async(to_audio_params.to_json)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength

@@ -31,5 +31,5 @@ loop do
   TextTrack.logger.info("Processing analytics for recording #{element}")
   job_entry = JSON.parse(element)
   puts job_entry
-  WM::EntryWorker.perform_async(job_entry.to_json)
+  TTS::EntryWorker.perform_async(job_entry.to_json)
 end

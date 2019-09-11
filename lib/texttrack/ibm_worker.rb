@@ -10,7 +10,7 @@ require 'sqlite3'
 rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
 
-module WM
+module TTS
   # rubocop:disable Style/Documentation
   class IbmWorker_createJob # rubocop:disable Naming/ClassAndModuleCamelCase
     include Faktory::Job
@@ -38,7 +38,9 @@ module WM
 
       u.update(status: "created job with #{u.service}")
 
-      WM::IbmWorker_getJob.perform_async(params.to_json, u.id, job_id)
+      TTS::IbmWorker_getJob.perform_async(params.to_json,
+                                          u.id,
+                                          job_id)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -62,7 +64,7 @@ module WM
         callback = SpeechToText::IbmWatsonS2T.check_job(job_id, params[:provider][:auth_file_path])
         status = callback['status']
         sleep(30) # 0)
-        next unless status != 'processing'
+        next unless status != 'processing' && status != 'completed'
 
         puts '-------------------'
         puts "status is #{status}"
@@ -91,11 +93,21 @@ module WM
 
       u.update(status: "done with #{u.service}")
 
-      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}-#{current_time}-track.vtt", "#{params[:captions_inbox_dir]}/inbox", verbose: true) # , :force => true)
+      temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
+      temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
+      temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
 
-      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}-#{current_time}-track.json", "#{params[:captions_inbox_dir]}/inbox", verbose: true) # , :force => true)
+      FileUtils.mv("#{track_dir}/#{temp_track_vtt}",
+                   "#{params[:captions_inbox_dir]}/inbox",
+                   verbose: true)
+      # , :force => true)
 
-      FileUtils.remove_dir("#{params[:temp_storage]}/#{params[:record_id]}")
+      FileUtils.mv("#{track_dir}/#{temp_track_json}",
+                   "#{params[:captions_inbox_dir]}/inbox",
+                   verbose: true)
+      # , :force => true)
+
+      FileUtils.remove_dir(temp_dir.to_s)
     end
     # rubocop:enable Metrics/MethodLength
   end

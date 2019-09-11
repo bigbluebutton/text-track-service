@@ -2,11 +2,12 @@
 [Unit]
 Description=Text Track Rails
 [Service]
+Type=simple
 Environment=LANG=en_US.UTF-8
 User=texttrack
 Group=bigbluebutton
 WorkingDirectory=/usr/local/text-track-service
-ExecStart=/usr/bin/bash -lc '/home/texttrack/.rbenv/shims/bundle exec rails server -e production --bind 0.0.0.0 --port 4000'
+ExecStart=/home/texttrack/.rbenv/shims/bundle exec rails s -e production -p 4000
 Restart=always
 [Install]
 WantedBy=multi-user.target
