@@ -71,6 +71,7 @@ module TTS
           
           #break if status['message'] == 'No jobID found'
           DeepspeechGetJob.perform_in(30, params.to_json)
+          return
       end
 
       callback_json =
@@ -105,12 +106,12 @@ module TTS
 
       File.delete("#{temp_dir}/#{params[:record_id]}_jobdetails.json")
 
-      FileUtils.mv("#{track_dir}/#{temp_track_vtt}",
+      FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
                    "#{params[:captions_inbox_dir]}/inbox",
                    verbose: true)
       # , :force => true)
 
-      FileUtils.mv("#{track_dir}/#{temp_track_json}",
+      FileUtils.mv("#{temp_dir}/#{temp_track_json}",
                    "#{params[:captions_inbox_dir]}/inbox",
                    verbose: true)
       # , :force => true)

@@ -116,11 +116,11 @@ module TTS
 
       File.delete("#{temp_dir}/jobID_#{params[:userID]}.json")
 
-      FileUtils.mv("#{track_dir}/#{temp_track_vtt}",
+      FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
                    "#{params[:captions_inbox_dir]}/inbox",
                    verbose: true) # , :force => true)
 
-      FileUtils.mv("#{track_dir}/#{temp_track_json}",
+      FileUtils.mv("#{temp_dir}/#{temp_track_json}",
                    "#{params[:captions_inbox_dir]}/inbox",
                    verbose: true) # , :force => true)
 

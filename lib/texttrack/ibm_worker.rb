@@ -67,8 +67,11 @@ module TTS
           puts '-------------------'
           puts "status is #{status}"
           puts '-------------------'
-          IbmGetJob.perform_in(30, params.to_json)
+          IbmGetJob.perform_in(30, params.to_json, u.id, job_id)
+          return
       end
+        
+      
 
       myarray =
         SpeechToText::IbmWatsonS2T.create_array_watson(callback['results'][0])
@@ -96,12 +99,12 @@ module TTS
       temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
       temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
 
-      FileUtils.mv("#{track_dir}/#{temp_track_vtt}",
+      FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
                    "#{params[:captions_inbox_dir]}/inbox",
                    verbose: true)
       # , :force => true)
 
-      FileUtils.mv("#{track_dir}/#{temp_track_json}",
+      FileUtils.mv("#{temp_dir}/#{temp_track_json}",
                    "#{params[:captions_inbox_dir]}/inbox",
                    verbose: true)
       # , :force => true)
