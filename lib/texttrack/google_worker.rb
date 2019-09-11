@@ -15,7 +15,7 @@ require rails_environment_path
 
 module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
-  class GoogleWorker_createJob # rubocop:disable Style/Documentation
+  class GoogleCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0
 
@@ -49,7 +49,7 @@ module TTS
 
       u.update(status: "created job with #{u.service}")
 
-      TTS::GoogleWorker_getJob.perform_async(params.to_json,
+      TTS::GoogleGetJob.perform_async(params.to_json,
                                              u.id,
                                              operation_name,
                                              audio_type)
@@ -60,7 +60,7 @@ module TTS
   # rubocop:enable Naming/ClassAndModuleCamelCase
 
   # rubocop:disable Style/Documentation
-  class GoogleWorker_getJob # rubocop:disable Naming/ClassAndModuleCamelCase
+  class GoogleGetJob # rubocop:disable Naming/ClassAndModuleCamelCase
     include Faktory::Job
     faktory_options retry: 0
 
@@ -71,7 +71,8 @@ module TTS
 
       u = Caption.find(id)
       u.update(status: "waiting on job from #{u.service}")
-
+      
+      # Google will not return until check_job is done, occupies thread
       callback = SpeechToText::GoogleS2T.check_job(operation_name)
       myarray = SpeechToText::GoogleS2T.create_array_google(callback['results'])
 

@@ -13,7 +13,7 @@ require rails_environment_path
 
 module TTS
   # rubocop:disable Style/Documentation
-  class IbmWorker_createJob # rubocop:disable Naming/ClassAndModuleCamelCase
+  class IbmCreateJob # rubocop:disable Naming/ClassAndModuleCamelCase
     include Faktory::Job
     faktory_options retry: 0
 
@@ -39,7 +39,7 @@ module TTS
 
       u.update(status: "created job with #{u.service}")
 
-      TTS::IbmWorker_getJob.perform_async(params.to_json,
+      TTS::IbmGetJob.perform_async(params.to_json,
                                           u.id,
                                           job_id)
     end
@@ -49,7 +49,7 @@ module TTS
   # rubocop:enable Style/Documentation
 
   # rubocop:disable Style/Documentation
-  class IbmWorker_getJob # rubocop:disable Naming/ClassAndModuleCamelCase
+  class IbmGetJob # rubocop:disable Naming/ClassAndModuleCamelCase
     include Faktory::Job
     faktory_options retry: 0
 
@@ -67,7 +67,7 @@ module TTS
           puts '-------------------'
           puts "status is #{status}"
           puts '-------------------'
-          IbmWorker_getJob.perform_in(30, params.to_json)
+          TTS::IbmGetJob.perform_in(30, params.to_json)
       end
 
       myarray =

@@ -71,31 +71,31 @@ module TTS
       # rubocop:disable Style/CaseEquality
       if params[:provider][:name] === 'google'
         # rubocop:enable Style/CaseEquality
-        TTS::GoogleWorker_createJob.perform_async(params.to_json,
+        TTS::GoogleCreateJob.perform_async(params.to_json,
                                                   u.id,
                                                   audio_type)
       # rubocop:disable Style/CaseEquality
       elsif params[:provider][:name] === 'ibm'
         # rubocop:enable Style/CaseEquality
-        TTS::IbmWorker_createJob.perform_async(params.to_json,
+        TTS::IbmCreateJob.perform_async(params.to_json,
                                                u.id,
                                                audio_type)
       # rubocop:disable Style/CaseEquality
       elsif params[:provider][:name] === 'deepspeech'
         # rubocop:enable Style/CaseEquality
-        TTS::DeepspeechWorker_createJob.perform_async(params.to_json,
+        TTS::DeepspeechCreateJob.perform_async(params.to_json,
                                                       u.id,
                                                       audio_type)
       # rubocop:disable Style/CaseEquality
       elsif params[:provider][:name] === 'speechmatics'
         # rubocop:enable Style/CaseEquality
-        TTS::SpeechmaticsWorker_createJob.perform_async(params.to_json,
+        TTS::SpeechmaticsCreateJob.perform_async(params.to_json,
                                                         u.id,
                                                         audio_type)
       # rubocop:disable Style/CaseEquality
       elsif params[:provider][:name] === 'threeplaymedia'
         # rubocop:enable Style/CaseEquality
-        TTS::ThreeplaymediaWorker_createJob.perform_async(params.to_json,
+        TTS::ThreeplaymediaCreateJob.perform_async(params.to_json,
                                                           u.id,
                                                           audio_type)
       end

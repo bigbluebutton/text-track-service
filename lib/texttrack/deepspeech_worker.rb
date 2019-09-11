@@ -13,7 +13,7 @@ require rails_environment_path
 
 module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
-  class DeepspeechWorker_createJob # rubocop:disable Style/Documentation
+  class DeepspeechCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0
 
@@ -36,7 +36,7 @@ module TTS
 
       u.update(status: "created job with #{u.service}")
 
-      TTS::DeepspeechWorker_getJob.perform_async(params.to_json, u.id, job_id)
+      TTS::DeepspeechGetJob.perform_async(params.to_json, u.id, job_id)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -44,7 +44,7 @@ module TTS
   # rubocop:enable Naming/ClassAndModuleCamelCase
 
   # rubocop:disable Naming/ClassAndModuleCamelCase
-  class DeepspeechWorker_getJob # rubocop:disable Style/Documentation
+  class DeepspeechGetJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0
 
@@ -56,17 +56,20 @@ module TTS
       u.update(status: "waiting on job from #{u.service}")
 
       auth_file_path = params[:provider][:auth_file_path]
-
-      status = 'inProgress'
-      while status != 'completed'
-        status = SpeechToText::MozillaDeepspeechS2T.checkstatus(job_id,
+        
+      status = SpeechToText::MozillaDeepspeechS2T.checkstatus(job_id,
                                                                 auth_file_path)
-
-        if status['message'] == 'No jobID found'
-          puts 'Job does not exist'
-          break
-        end
-        sleep(30) # 0)
+      if status != 'completed'
+          puts '-------------------'
+          puts "status is #{status}"
+          puts '-------------------'
+          
+          if status['message'] == 'No jobID found'
+            puts 'Job does not exist'
+            break
+          end
+          
+          TTS::DeepspeechGetJob.perform_in(30, params.to_json)
       end
 
       callback_json =

@@ -13,7 +13,7 @@ require rails_environment_path
 
 module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
-  class SpeechmaticsWorker_createJob # rubocop:disable Style/Documentation
+  class SpeechmaticsCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0
 
@@ -44,7 +44,7 @@ module TTS
 
       u.update(status: "created job with #{u.service}")
 
-      TTS::SpeechmaticsWorker_getJob.perform_async(params.to_json,
+      TTS::SpeechmaticsGetJob.perform_async(params.to_json,
                                                    u.id,
                                                    jobID)
     end
@@ -54,7 +54,7 @@ module TTS
   # rubocop:enable Naming/ClassAndModuleCamelCase
 
   # rubocop:disable Naming/ClassAndModuleCamelCase
-  class SpeechmaticsWorker_getJob # rubocop:disable Style/Documentation
+  class SpeechmaticsGetJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0
 
@@ -70,15 +70,17 @@ module TTS
       u.update(status: "waiting on job from #{u.service}")
 
       wait_time = 30
-      until wait_time.nil?
-        wait_time = SpeechToText::SpeechmaticsS2T.check_job(
+        
+      wait_time = SpeechToText::SpeechmaticsS2T.check_job(
           params[:provider][:userID],
           jobID,
           params[:provider][:apikey]
         )
-
-        sleep(wait_time) unless wait_time.nil?
-
+      if wait_time != nil
+          puts '-------------------'
+          puts "wait time is #{wait_time} seconds"
+          puts '-------------------'
+          TTS::SpeechmaticsGetJob.perform_in(wait_time, params.to_json)
       end
 
       callback = SpeechToText::SpeechmaticsS2T.get_transcription(

@@ -13,7 +13,7 @@ require rails_environment_path
 
 module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
-  class ThreeplaymediaWorker_createJob # rubocop:disable Style/Documentation
+  class ThreeplaymediaCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0
 
@@ -40,7 +40,7 @@ module TTS
 
       u.update(status: "created job with #{u.service}")
 
-      WM::ThreeplaymediaWorker_getJob.perform_async(params.to_json,
+      WM::ThreeplaymediaGetJob.perform_async(params.to_json,
                                                     u.id,
                                                     job_id)
     end
@@ -50,7 +50,7 @@ module TTS
   # rubocop:enable Naming/ClassAndModuleCamelCase
 
   # rubocop:disable Naming/ClassAndModuleCamelCase
-  class ThreeplaymediaWorker_getJob # rubocop:disable Style/Documentation
+  class ThreeplaymediaGetJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0
 
@@ -66,23 +66,17 @@ module TTS
         job_id,
         6
       )
-
+        
       status = SpeechToText::ThreePlaymediaS2T.check_status(
         params[:provider][:auth_file_path],
         transcript_id
       )
-
-      # status = 'processing'
-      while status != 'complete'
-        puts status
-        status = SpeechToText::ThreePlaymediaS2T.check_status(
-          params[:provider][:auth_file_path],
-          transcript_id
-        )
-
-        break if status == 'cancelled'
-
-        sleep(30)
+      if status != 'complete'
+          puts '-------------------'
+          puts "status is #{status}"
+          puts '-------------------'
+          break if status == 'cancelled'
+          TTS::ThreeplaymediaGetJob.perform_in(30, params.to_json)
       end
 
       if status == 'complete' # rubocop:disable Style/GuardClause
