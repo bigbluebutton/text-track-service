@@ -7,7 +7,8 @@ require 'faktory'
 require 'securerandom'
 require 'speech_to_text'
 require 'sqlite3'
-rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
+rails_environment_path =
+  File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
 
 module TTS
@@ -58,21 +59,19 @@ module TTS
 
       u = Caption.find(id)
       u.update(status: "waiting on job from #{u.service}")
-
-      status = 'processing'
-      while status != 'completed'
-        callback = SpeechToText::IbmWatsonS2T.check_job(job_id, params[:provider][:auth_file_path])
-        status = callback['status']
-        sleep(30) # 0)
-        next unless status != 'processing' && status != 'completed'
-
-        puts '-------------------'
-        puts "status is #{status}"
-        puts '-------------------'
-        break
+        
+      callback =
+          SpeechToText::IbmWatsonS2T.check_job(job_id, params[:provider][:auth_file_path])
+      status = callback['status']
+      if status != 'completed'
+          puts '-------------------'
+          puts "status is #{status}"
+          puts '-------------------'
+          IbmWorker_getJob.perform_in(30, params.to_json)
       end
 
-      myarray = SpeechToText::IbmWatsonS2T.create_array_watson(callback['results'][0])
+      myarray =
+        SpeechToText::IbmWatsonS2T.create_array_watson(callback['results'][0])
 
       u.update(status: "writing subtitle file from #{u.service}")
 

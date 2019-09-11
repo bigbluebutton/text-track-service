@@ -7,7 +7,8 @@ require 'faktory'
 require 'securerandom'
 require 'speech_to_text'
 require 'sqlite3'
-rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
+rails_environment_path =
+  File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
 
 module TTS
@@ -27,12 +28,14 @@ module TTS
       # TODO
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
+      temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
+
       job_name = rand(36**8).to_s(36)
       job_id = SpeechToText::ThreePlaymediaS2T.create_job(
         params[:provider][:auth_file_path],
-        "#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}.#{audio_type}",
+        "#{temp_dir}/#{params[:record_id]}.#{audio_type}",
         job_name,
-        "#{params[:temp_storage]}/#{params[:record_id]}/job_file.json"
+        "#{temp_dir}/job_file.json"
       )
 
       u.update(status: "created job with #{u.service}")
@@ -69,7 +72,7 @@ module TTS
         transcript_id
       )
 
-      status = 'processing'
+      # status = 'processing'
       while status != 'complete'
         puts status
         status = SpeechToText::ThreePlaymediaS2T.check_status(

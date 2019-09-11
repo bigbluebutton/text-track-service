@@ -9,7 +9,8 @@ require 'google/cloud/speech'
 require 'google/cloud/storage'
 require 'speech_to_text'
 require 'sqlite3'
-rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
+rails_environment_path =
+  File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
 
 module TTS
@@ -30,7 +31,9 @@ module TTS
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
 
-      SpeechToText::GoogleS2T.set_environment(params[:provider][:auth_file_path])
+      auth_file = params[:provider][:auth_file_path]
+
+      SpeechToText::GoogleS2T.set_environment(auth_file)
       SpeechToText::GoogleS2T.google_storage(
         "#{params[:temp_storage]}/#{params[:record_id]}",
         params[:record_id],

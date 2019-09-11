@@ -92,6 +92,8 @@ sudo wget https://github.com/contribsys/faktory/releases/download/v1.0.1-1/fakto
 
 sudo dpkg -i faktory_1.0.1-1_amd64.deb
 
+sudo cat /etc/faktory/password (Manually find password if ever needed)
+
 ```
 
 Development
@@ -260,3 +262,7 @@ ctrl x type y and hit enter to save and exit
 
 ```
 
+# If you make any changes to the code please run & keep code clean with Rubocop
+```
+rubocop --safe-auto-correct --disable-uncorrectable
+```

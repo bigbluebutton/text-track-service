@@ -7,7 +7,8 @@ require 'faktory'
 require 'securerandom'
 require 'speech_to_text'
 require 'sqlite3'
-rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
+rails_environment_path =
+  File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
 
 module TTS
@@ -22,12 +23,14 @@ module TTS
       params = JSON.parse(params_json, symbolize_names: true)
 
       u = Caption.find(id)
-      u.update(status: "finished audio & started #{u.service} transcription process")
+      u.update(status: 'finished audio conversion')
+
+      temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
 
       job_id = SpeechToText::MozillaDeepspeechS2T.create_job(
-        "#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}.#{audio_type}",
+        "#{temp_dir}/#{params[:record_id]}.#{audio_type}",
         params[:provider][:auth_file_path],
-        "#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}_jobdetails.json",
+        "#{temp_dir}/#{params[:record_id]}_jobdetails.json",
         params[:record_id]
       )
 
@@ -53,7 +56,7 @@ module TTS
       u.update(status: "waiting on job from #{u.service}")
 
       auth_file_path = params[:provider][:auth_file_path]
-        
+
       status = 'inProgress'
       while status != 'completed'
         status = SpeechToText::MozillaDeepspeechS2T.checkstatus(job_id,
@@ -66,33 +69,35 @@ module TTS
         sleep(30) # 0)
       end
 
-      callback_json = SpeechToText::MozillaDeepspeechS2T.order_transcript(job_id,
-                                                                          auth_file_path)
+      callback_json =
+        SpeechToText::MozillaDeepspeechS2T.order_transcript(job_id,
+                                                            auth_file_path)
 
       u.update(status: "writing subtitle file from #{u.service}")
 
-      myarray = SpeechToText::MozillaDeepspeechS2T.create_mozilla_array(callback_json)
+      myarray =
+        SpeechToText::MozillaDeepspeechS2T.create_mozilla_array(callback_json)
 
       current_time = (Time.now.to_f * 1000).to_i
 
+      temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
+      temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
+      temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
+
       SpeechToText::Util.write_to_webvtt(
-        "#{params[:temp_storage]}/#{params[:record_id]}",
-        "#{params[:record_id]}-#{current_time}-track.vtt",
+        temp_dir.to_s,
+        temp_track_vtt.to_s,
         myarray
       )
 
       SpeechToText::Util.recording_json(
-        file_path: "#{params[:temp_storage]}/#{params[:record_id]}",
+        file_path: temp_dir.to_s,
         record_id: params[:record_id],
         timestamp: current_time,
         language: params[:caption_locale]
       )
 
       u.update(status: "done with #{u.service}")
-
-      temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
-      temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
-      temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
 
       File.delete("#{temp_dir}/#{params[:record_id]}_jobdetails.json")
 

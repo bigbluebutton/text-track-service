@@ -7,7 +7,8 @@ require 'faktory'
 require 'securerandom'
 require 'speech_to_text'
 require 'sqlite3'
-rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
+rails_environment_path =
+  File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
 
 module TTS
@@ -22,7 +23,7 @@ module TTS
       params = JSON.parse(params_json, symbolize_names: true)
 
       u = Caption.find(id)
-      u.update(status: "finished audio & started #{u.service} transcription process")
+      u.update(status: 'finished audio conversion')
 
       # TODO
       # Need to handle locale here. What if we want to generate caption

@@ -12,7 +12,7 @@ class CaptionsController < ApplicationController
     caption_locale = params[:caption_locale]
     provider = params[:provider]
 
-    # TODO: Need to find how to get the key from settings.yaml
+    # Need to find how to get the key from settings.yaml
     # props = YAML::load(File.open('settings.yaml'))
     # provider = props["default_provider"]
 
@@ -37,8 +37,7 @@ class CaptionsController < ApplicationController
     caption_locale = params[:caption_locale]
     caption_job = { record_id: record_id,
                     caption_locale: caption_locale }
-    # TODO:
-    # pass locale as param
+    # TODO:  pass locale as param
     caption = Caption.where(record_id: record_id)
     tp caption
   end
