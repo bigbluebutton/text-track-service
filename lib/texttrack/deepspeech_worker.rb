@@ -30,8 +30,7 @@ module TTS
       job_id = SpeechToText::MozillaDeepspeechS2T.create_job(
         "#{temp_dir}/#{params[:record_id]}.#{audio_type}",
         params[:provider][:auth_file_path],
-        "#{temp_dir}/#{params[:record_id]}_jobdetails.json",
-        params[:record_id]
+        "#{temp_dir}/#{params[:record_id]}_jobdetails.json"
       )
 
       u.update(status: "created job with #{u.service}")

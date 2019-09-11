@@ -40,7 +40,7 @@ module TTS
 
       u.update(status: "created job with #{u.service}")
 
-      WM::ThreeplaymediaGetJob.perform_async(params.to_json,
+      TTS::ThreeplaymediaGetJob.perform_async(params.to_json,
                                                     u.id,
                                                     job_id)
     end
