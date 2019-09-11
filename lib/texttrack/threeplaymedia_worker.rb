@@ -76,7 +76,7 @@ module TTS
           puts "status is #{status}"
           puts '-------------------'
           #break if status == 'cancelled'
-          ThreeplaymediaGetJob.perform_in(30, params.to_json)
+          ThreeplaymediaGetJob.perform_in(3, params.to_json, u.id, job_id)
       end
 
       if status == 'complete' # rubocop:disable Style/GuardClause
