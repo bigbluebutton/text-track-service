@@ -200,7 +200,7 @@ navigate to the record id folder at /var/bigbluebutton/captions/inbox/ to see th
 # Copy /usr/local/text-track-service/service/*.service to /etc/systemd/system
 ```
 cd /usr/local/text-track-service/service/
-scp *.service /etc/systemd/system
+sudo cp *.service /etc/systemd/system
 ```
 
 # Start all services

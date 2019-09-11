@@ -67,7 +67,7 @@ module TTS
           puts '-------------------'
           puts "status is #{status}"
           puts '-------------------'
-          TTS::IbmGetJob.perform_in(30, params.to_json)
+          IbmGetJob.perform_in(30, params.to_json)
       end
 
       myarray =

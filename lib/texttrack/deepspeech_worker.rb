@@ -66,10 +66,11 @@ module TTS
           
           if status['message'] == 'No jobID found'
             puts 'Job does not exist'
-            break
+            
           end
           
-          TTS::DeepspeechGetJob.perform_in(30, params.to_json)
+          #break if status['message'] == 'No jobID found'
+          DeepspeechGetJob.perform_in(30, params.to_json)
       end
 
       callback_json =
