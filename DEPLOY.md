@@ -238,6 +238,12 @@ sudo journalctl -u service-name.service
 sudo journalctl -u service-name.service
 ```
 
+# clear journals
+```
+journalctl --rotate
+journalctl --vacuum-time=1s
+```
+
 # Edit post_publish file(for automatic captions)
 ```
 Navigate to /usr/local/bigbluebutton/core/scripts/post_publish 

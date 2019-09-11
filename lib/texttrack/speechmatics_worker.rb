@@ -81,6 +81,7 @@ module TTS
           puts "wait time is #{wait_time} seconds"
           puts '-------------------'
           SpeechmaticsGetJob.perform_in(wait_time, params.to_json, u.id, jobID)
+          return
       end
 
       callback = SpeechToText::SpeechmaticsS2T.get_transcription(

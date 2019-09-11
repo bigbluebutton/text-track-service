@@ -49,7 +49,7 @@ module TTS
 
       u.update(status: "created job with #{u.service}")
 
-      GoogleGetJob.perform_async(params.to_json,
+      TTS::GoogleGetJob.perform_async(params.to_json,
                                              u.id,
                                              operation_name,
                                              audio_type)
