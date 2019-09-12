@@ -63,9 +63,15 @@ module TTS
       callback =
           SpeechToText::IbmWatsonS2T.check_job(job_id, params[:provider][:auth_file_path])
       status = callback['status']
-      if status != 'completed'
+      status_msg = "status is #{status}"
+      if status == 'failed'
           puts '-------------------'
-          puts "status is #{status}"
+          puts status_msg
+          puts '-------------------'
+          return
+      elsif status != 'completed'
+          puts '-------------------'
+          puts status_msg
           puts '-------------------'
           IbmGetJob.perform_in(30, params.to_json, u.id, job_id)
           return
