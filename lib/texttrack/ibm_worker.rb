@@ -67,7 +67,7 @@ module TTS
           puts '-------------------'
           puts "status is #{status}"
           puts '-------------------'
-          IbmGetJob.perform_in(3, params.to_json, u.id, job_id)
+          IbmGetJob.perform_in(30, params.to_json, u.id, job_id)
           return
       end
         

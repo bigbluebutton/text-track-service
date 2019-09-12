@@ -240,8 +240,8 @@ sudo journalctl -u service-name.service
 
 # clear journals
 ```
-journalctl --rotate
-journalctl --vacuum-time=1s
+sudo journalctl --rotate
+sudo journalctl --vacuum-time=1s
 ```
 
 # Edit post_publish file(for automatic captions)

@@ -71,12 +71,18 @@ module TTS
         params[:provider][:auth_file_path],
         transcript_id
       )
-      if status != 'complete'
+      status_msg = "status is #{status}"
+      if status == 'cancelled'
           puts '-------------------'
-          puts "status is #{status}"
+          puts status_msg
           puts '-------------------'
-          #break if status == 'cancelled'
-          ThreeplaymediaGetJob.perform_in(3, params.to_json, u.id, job_id)
+          return
+      elsif status != 'complete'
+          puts '-------------------'
+          puts status_msg
+          puts '-------------------'
+          
+          ThreeplaymediaGetJob.perform_in(30, params.to_json, u.id, job_id)
           return
       end
 

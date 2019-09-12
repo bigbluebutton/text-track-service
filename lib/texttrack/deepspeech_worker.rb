@@ -26,7 +26,7 @@ module TTS
       u.update(status: 'finished audio conversion')
 
       temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
-
+        
       job_id = SpeechToText::MozillaDeepspeechS2T.create_job(
         "#{temp_dir}/#{params[:record_id]}.#{audio_type}",
         params[:provider][:auth_file_path],
@@ -57,19 +57,20 @@ module TTS
       auth_file_path = params[:provider][:auth_file_path]
         
       status = SpeechToText::MozillaDeepspeechS2T.checkstatus(job_id,
-                                                                auth_file_path)
+                                                              auth_file_path)
       if status != 'completed'
           puts '-------------------'
           puts "status is #{status}"
           puts '-------------------'
-          
+          puts "#{job_id}"
+          puts '-------------------'
           if status['message'] == 'No jobID found'
             puts 'Job does not exist'
-            
+            return
           end
           
           #break if status['message'] == 'No jobID found'
-          DeepspeechGetJob.perform_in(3, params.to_json, u.id, job_id)
+          DeepspeechGetJob.perform_in(30, params.to_json, u.id, job_id)
           return
       end
 
