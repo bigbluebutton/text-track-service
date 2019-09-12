@@ -2,7 +2,10 @@
 
 require 'google/cloud/storage'
 
-ENV['GOOGLE_APPLICATION_CREDENTIALS'] = '/D/innovation/text-track-service/test/bbb-accessibility-183f2b339bfb.json'
+auth_path = '/D/innovation/text-track-service/test'
+google_auth = 'bbb-accessibility-183f2b339bfb.json'
+
+ENV['GOOGLE_APPLICATION_CREDENTIALS'] = "#{auth_path}/#{google_auth}"
 
 storage = Google::Cloud::Storage.new project_id: 'bbb-accessibility'
 bucket  = storage.bucket 'bbb-accessibility'

@@ -3,7 +3,7 @@
 require 'connection_pool'
 require 'faktory'
 
-module WM
+module TTS
   class EntryWorker # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 5
@@ -36,24 +36,32 @@ module WM
       provider = { name: provider_name }
 
       if provider_name == 'google'
-        provider[:google_bucket_name] = props_keys['providers'][provider_name]['bucket']
-        provider[:auth_file_path] = props_keys['providers'][provider_name]['auth_file_path']
+        provider[:google_bucket_name] =
+          props_keys['providers'][provider_name]['bucket']
+        provider[:auth_file_path] =
+          props_keys['providers'][provider_name]['auth_file_path']
       elsif provider_name == 'ibm'
-        provider[:google_bucket_name] = props_keys['providers'][provider_name]['bucket']
-        provider[:auth_file_path] = props_keys['providers'][provider_name]['auth_file_path']
+        provider[:google_bucket_name] =
+          props_keys['providers'][provider_name]['bucket']
+        provider[:auth_file_path] =
+          props_keys['providers'][provider_name]['auth_file_path']
       elsif provider_name == 'speechmatics'
-        provider[:userID] = props_keys['providers'][provider_name]['userID']
-        provider[:apikey] = props_keys['providers'][provider_name]['apikey']
+        provider[:userID] =
+          props_keys['providers'][provider_name]['userID']
+        provider[:apikey] =
+          props_keys['providers'][provider_name]['apikey']
       elsif provider_name == 'threeplaymedia'
-        provider[:auth_file_path] = props_keys['providers'][provider_name]['auth_file_path']
+        provider[:auth_file_path] =
+          props_keys['providers'][provider_name]['auth_file_path']
       elsif provider_name == 'deepspeech'
-        provider[:auth_file_path] = props_keys['providers'][provider_name]['url']
+        provider[:auth_file_path] =
+          props_keys['providers'][provider_name]['url']
       end
 
       to_audio_params[:provider] = provider
 
       # puts to_audio_params
-      WM::ToAudioWorker.perform_async(to_audio_params.to_json)
+      TTS::ToAudioWorker.perform_async(to_audio_params.to_json)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength

@@ -92,6 +92,8 @@ sudo wget https://github.com/contribsys/faktory/releases/download/v1.0.1-1/fakto
 
 sudo dpkg -i faktory_1.0.1-1_amd64.deb
 
+sudo cat /etc/faktory/password (Manually find password if ever needed)
+
 ```
 
 Development
@@ -196,10 +198,13 @@ navigate to the record id folder at /var/bigbluebutton/captions/inbox/ to see th
 ```
 
 # Copy /usr/local/text-track-service/service/*.service to /etc/systemd/system
+```
 cd /usr/local/text-track-service/service/
-scp *.service /etc/systemd/system
+sudo cp *.service /etc/systemd/system
+```
 
 # Start all services
+```
 sudo systemctl enable text-track-rails
 sudo systemctl start text-track-rails
 
@@ -208,26 +213,41 @@ sudo systemctl start text-track-service
 
 sudo systemctl enable text-track-worker
 sudo systemctl start text-track-worker
+```
 
 # If restart or stop service 
+```
 sudo systemctl restart service-name
 sudo systemctl stop service-name
+```
 
 # If Check service
+```
 sudo systemctl status service-name
+```
 
 # easy edit service file for future
+```
 sudo systemctl edit service-name --full
 sudo systemctl daemon-reload (After editing)
-sudo journalctl service-name
+sudo journalctl -u service-name.service
+```
 
 # see logs for service
+```
 sudo journalctl -u service-name.service
+```
+
+# clear journals
+```
+sudo journalctl --rotate
+sudo journalctl --vacuum-time=1s
+```
 
 # Edit post_publish file(for automatic captions)
-
-Navigate to /usr/local/bigbluebutton/core/scripts/post_publish 
 ```
+Navigate to /usr/local/bigbluebutton/core/scripts/post_publish 
+
 gem install rest-client
 sudo mv post_publish.rb.example post_publish.rb
 sudo nano post_publish.rb
@@ -248,3 +268,7 @@ ctrl x type y and hit enter to save and exit
 
 ```
 
+# If you make any changes to the code please run & keep code clean with Rubocop
+```
+rubocop --safe-auto-correct --disable-uncorrectable
+```

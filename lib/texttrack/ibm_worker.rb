@@ -7,12 +7,13 @@ require 'faktory'
 require 'securerandom'
 require 'speech_to_text'
 require 'sqlite3'
-rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
+rails_environment_path =
+  File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
 
-module WM
+module TTS
   # rubocop:disable Style/Documentation
-  class IbmWorker_createJob # rubocop:disable Naming/ClassAndModuleCamelCase
+  class IbmCreateJob # rubocop:disable Naming/ClassAndModuleCamelCase
     include Faktory::Job
     faktory_options retry: 0
 
@@ -38,7 +39,9 @@ module WM
 
       u.update(status: "created job with #{u.service}")
 
-      WM::IbmWorker_getJob.perform_async(params.to_json, u.id, job_id)
+      TTS::IbmGetJob.perform_async(params.to_json,
+                                          u.id,
+                                          job_id)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -46,7 +49,7 @@ module WM
   # rubocop:enable Style/Documentation
 
   # rubocop:disable Style/Documentation
-  class IbmWorker_getJob # rubocop:disable Naming/ClassAndModuleCamelCase
+  class IbmGetJob # rubocop:disable Naming/ClassAndModuleCamelCase
     include Faktory::Job
     faktory_options retry: 0
 
@@ -56,21 +59,28 @@ module WM
 
       u = Caption.find(id)
       u.update(status: "waiting on job from #{u.service}")
-
-      status = 'processing'
-      while status != 'completed'
-        callback = SpeechToText::IbmWatsonS2T.check_job(job_id, params[:provider][:auth_file_path])
-        status = callback['status']
-        sleep(30) # 0)
-        next unless status != 'processing'
-
-        puts '-------------------'
-        puts "status is #{status}"
-        puts '-------------------'
-        break
+        
+      callback =
+          SpeechToText::IbmWatsonS2T.check_job(job_id, params[:provider][:auth_file_path])
+      status = callback['status']
+      status_msg = "status is #{status}"
+      if status == 'failed'
+          puts '-------------------'
+          puts status_msg
+          puts '-------------------'
+          return
+      elsif status != 'completed'
+          puts '-------------------'
+          puts status_msg
+          puts '-------------------'
+          IbmGetJob.perform_in(30, params.to_json, u.id, job_id)
+          return
       end
+        
+      
 
-      myarray = SpeechToText::IbmWatsonS2T.create_array_watson(callback['results'][0])
+      myarray =
+        SpeechToText::IbmWatsonS2T.create_array_watson(callback['results'][0])
 
       u.update(status: "writing subtitle file from #{u.service}")
 
@@ -91,11 +101,21 @@ module WM
 
       u.update(status: "done with #{u.service}")
 
-      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}-#{current_time}-track.vtt", "#{params[:captions_inbox_dir]}/inbox", verbose: true) # , :force => true)
+      temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
+      temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
+      temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
 
-      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}-#{current_time}-track.json", "#{params[:captions_inbox_dir]}/inbox", verbose: true) # , :force => true)
+      FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
+                   "#{params[:captions_inbox_dir]}/inbox",
+                   verbose: true)
+      # , :force => true)
 
-      FileUtils.remove_dir("#{params[:temp_storage]}/#{params[:record_id]}")
+      FileUtils.mv("#{temp_dir}/#{temp_track_json}",
+                   "#{params[:captions_inbox_dir]}/inbox",
+                   verbose: true)
+      # , :force => true)
+
+      FileUtils.remove_dir(temp_dir.to_s)
     end
     # rubocop:enable Metrics/MethodLength
   end

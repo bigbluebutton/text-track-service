@@ -9,12 +9,13 @@ require 'google/cloud/speech'
 require 'google/cloud/storage'
 require 'speech_to_text'
 require 'sqlite3'
-rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
+rails_environment_path =
+  File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
 
-module WM
+module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
-  class GoogleWorker_createJob # rubocop:disable Style/Documentation
+  class GoogleCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0
 
@@ -30,7 +31,9 @@ module WM
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
 
-      SpeechToText::GoogleS2T.set_environment(params[:provider][:auth_file_path])
+      auth_file = params[:provider][:auth_file_path]
+
+      SpeechToText::GoogleS2T.set_environment(auth_file)
       SpeechToText::GoogleS2T.google_storage(
         "#{params[:temp_storage]}/#{params[:record_id]}",
         params[:record_id],
@@ -46,7 +49,10 @@ module WM
 
       u.update(status: "created job with #{u.service}")
 
-      WM::GoogleWorker_getJob.perform_async(params.to_json, u.id, operation_name, audio_type)
+      TTS::GoogleGetJob.perform_async(params.to_json,
+                                             u.id,
+                                             operation_name,
+                                             audio_type)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -54,7 +60,7 @@ module WM
   # rubocop:enable Naming/ClassAndModuleCamelCase
 
   # rubocop:disable Style/Documentation
-  class GoogleWorker_getJob # rubocop:disable Naming/ClassAndModuleCamelCase
+  class GoogleGetJob # rubocop:disable Naming/ClassAndModuleCamelCase
     include Faktory::Job
     faktory_options retry: 0
 
@@ -65,7 +71,8 @@ module WM
 
       u = Caption.find(id)
       u.update(status: "waiting on job from #{u.service}")
-
+      
+      # Google will not return until check_job is done, occupies thread
       callback = SpeechToText::GoogleS2T.check_job(operation_name)
       myarray = SpeechToText::GoogleS2T.create_array_google(callback['results'])
 
@@ -94,13 +101,21 @@ module WM
 
       u.update(status: "done with #{u.service}")
 
-      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}-#{current_time}-track.vtt", "#{params[:captions_inbox_dir]}/inbox", verbose: true) # , :force => true)
+      temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
+      temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
+      temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
 
-      FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}-#{current_time}-track.json", "#{params[:captions_inbox_dir]}/inbox", verbose: true) # , :force => true)
+      FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
+                   "#{params[:captions_inbox_dir]}/inbox",
+                   verbose: true)
+      # , :force => true)
 
-      FileUtils.remove_dir("#{params[:temp_storage]}/#{params[:record_id]}")
+      FileUtils.mv("#{temp_dir}/#{temp_track_json}",
+                   "#{params[:captions_inbox_dir]}/inbox",
+                   verbose: true)
+      # , :force => true)
 
-      # File.delete("#{data["published_file_path"]}/#{data["recordID"]}/#{data["recordID"]}.json")
+      FileUtils.remove_dir(temp_dir.to_s)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength

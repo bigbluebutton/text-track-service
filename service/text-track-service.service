@@ -2,11 +2,11 @@
 [Unit]
 Description=Text Track Service
 [Service]
-Environment=LANG=en_US.UTF-8
+Environment=LANG=en_US.UTF-8 FAKTORY_PROVIDER=FAKTORY_URL FAKTORY_URL=tcp://:06aa1602e3fcc580@localhost:7419
 User=texttrack
 Group=bigbluebutton
 WorkingDirectory=/usr/local/text-track-service
-ExecStart=/usr/local/text-track-service/start-service.sh
+ExecStart=/home/texttrack/.rbenv/shims/bundle exec ruby ./text-track-service.rb
 Restart=always
 [Install]
 WantedBy=multi-user.target

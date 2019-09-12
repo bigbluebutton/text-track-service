@@ -7,12 +7,13 @@ require 'faktory'
 require 'securerandom'
 require 'speech_to_text'
 require 'sqlite3'
-rails_environment_path = File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
+rails_environment_path =
+  File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
 
-module WM
+module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
-  class ThreeplaymediaWorker_createJob # rubocop:disable Style/Documentation
+  class ThreeplaymediaCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0
 
@@ -27,17 +28,21 @@ module WM
       # TODO
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
+      temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
+
       job_name = rand(36**8).to_s(36)
       job_id = SpeechToText::ThreePlaymediaS2T.create_job(
         params[:provider][:auth_file_path],
-        "#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}.#{audio_type}",
+        "#{temp_dir}/#{params[:record_id]}.#{audio_type}",
         job_name,
-        "#{params[:temp_storage]}/#{params[:record_id]}/job_file.json"
+        "#{temp_dir}/job_file.json"
       )
 
       u.update(status: "created job with #{u.service}")
 
-      WM::ThreeplaymediaWorker_getJob.perform_async(params.to_json, u.id, job_id)
+      TTS::ThreeplaymediaGetJob.perform_async(params.to_json,
+                                                    u.id,
+                                                    job_id)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -45,7 +50,7 @@ module WM
   # rubocop:enable Naming/ClassAndModuleCamelCase
 
   # rubocop:disable Naming/ClassAndModuleCamelCase
-  class ThreeplaymediaWorker_getJob # rubocop:disable Style/Documentation
+  class ThreeplaymediaGetJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0
 
@@ -61,23 +66,24 @@ module WM
         job_id,
         6
       )
-
+        
       status = SpeechToText::ThreePlaymediaS2T.check_status(
         params[:provider][:auth_file_path],
         transcript_id
       )
-
-      status = 'processing'
-      while status != 'complete'
-        puts status
-        status = SpeechToText::ThreePlaymediaS2T.check_status(
-          params[:provider][:auth_file_path],
-          transcript_id
-        )
-
-        break if status == 'cancelled'
-
-        sleep(30)
+      status_msg = "status is #{status}"
+      if status == 'cancelled'
+          puts '-------------------'
+          puts status_msg
+          puts '-------------------'
+          return
+      elsif status != 'complete'
+          puts '-------------------'
+          puts status_msg
+          puts '-------------------'
+          
+          ThreeplaymediaGetJob.perform_in(30, params.to_json, u.id, job_id)
+          return
       end
 
       if status == 'complete' # rubocop:disable Style/GuardClause
@@ -100,15 +106,25 @@ module WM
 
         u.update(status: "writing subtitle file from #{u.service}")
 
-        File.delete("#{params[:temp_storage]}/#{params[:record_id]}/job_file.json")
-
         u.update(status: "done with #{u.service}")
 
-        FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}-#{current_time}-track.vtt", "#{params[:captions_inbox_dir]}/inbox", verbose: true) # , :force => true)
+        temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
+        temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
+        temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
 
-        FileUtils.mv("#{params[:temp_storage]}/#{params[:record_id]}/#{params[:record_id]}-#{current_time}-track.json", "#{params[:captions_inbox_dir]}/inbox", verbose: true) # , :force => true)
+        File.delete("#{temp_dir}/job_file.json")
 
-        FileUtils.remove_dir("#{params[:temp_storage]}/#{params[:record_id]}")
+        FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
+                     "#{params[:captions_inbox_dir]}/inbox",
+                     verbose: true)
+        # , :force => true)
+
+        FileUtils.mv("#{temp_dir}/#{temp_track_json}",
+                     "#{params[:captions_inbox_dir]}/inbox",
+                     verbose: true)
+        # , :force => true)
+
+        FileUtils.remove_dir(temp_dir.to_s)
       end
     end
     # rubocop:enable Metrics/MethodLength

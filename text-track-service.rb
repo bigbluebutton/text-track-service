@@ -27,9 +27,9 @@ num_entries = redis.llen(RECORDINGS_JOB_LIST_KEY)
 puts "num_entries = #{num_entries}"
 loop do
   # for i in 1..num_entries do
-  list, element = redis.blpop(RECORDINGS_JOB_LIST_KEY)
+  _list, element = redis.blpop(RECORDINGS_JOB_LIST_KEY)
   TextTrack.logger.info("Processing analytics for recording #{element}")
   job_entry = JSON.parse(element)
   puts job_entry
-  WM::EntryWorker.perform_async(job_entry.to_json)
+  TTS::EntryWorker.perform_async(job_entry.to_json)
 end
