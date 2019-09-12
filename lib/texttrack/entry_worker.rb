@@ -6,7 +6,7 @@ require 'faktory'
 module TTS
   class EntryWorker # rubocop:disable Style/Documentation
     include Faktory::Job
-    faktory_options retry: 5
+    faktory_options retry: 5, concurrency: 1
 
     # rubocop:disable Metrics/PerceivedComplexity
     # rubocop:disable Metrics/MethodLength

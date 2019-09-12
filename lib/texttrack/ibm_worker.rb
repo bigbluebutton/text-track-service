@@ -15,16 +15,17 @@ module TTS
   # rubocop:disable Style/Documentation
   class IbmCreateJob # rubocop:disable Naming/ClassAndModuleCamelCase
     include Faktory::Job
-    faktory_options retry: 0
+    faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def perform(params_json, id, audio_type)
       params = JSON.parse(params_json, symbolize_names: true)
-
-      u = Caption.find(id)
-      u.update(status: 'finished audio conversion')
-
+      u = nil
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(status: 'finished audio conversion')
+      end
       # TODO
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
@@ -36,9 +37,16 @@ module TTS
         content_type: audio_type,
         language_code: params[:caption_locale]
       )
-
-      u.update(status: "created job with #{u.service}")
-
+      
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(status: "created job with #{u.service}")
+      end
+        
+      #ActiveRecord::Base.connection_pool.with_connection do
+          #u = Caption.find(id)
+          #u.update(status: "waiting on job from #{u.service}")
+      #end
+        
       TTS::IbmGetJob.perform_async(params.to_json,
                                           u.id,
                                           job_id)
@@ -51,14 +59,16 @@ module TTS
   # rubocop:disable Style/Documentation
   class IbmGetJob # rubocop:disable Naming/ClassAndModuleCamelCase
     include Faktory::Job
-    faktory_options retry: 0
+    faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
     def perform(params_json, id, job_id) # rubocop:disable Metrics/AbcSize
       params = JSON.parse(params_json, symbolize_names: true)
-
-      u = Caption.find(id)
-      u.update(status: "waiting on job from #{u.service}")
+      u = nil
+      ActiveRecord::Base.connection_pool.with_connection do
+          u = Caption.find(id)
+          u.update(status: "waiting on job from #{u.service}")
+      end
         
       callback =
           SpeechToText::IbmWatsonS2T.check_job(job_id, params[:provider][:auth_file_path])
@@ -73,16 +83,19 @@ module TTS
           puts '-------------------'
           puts status_msg
           puts '-------------------'
-          IbmGetJob.perform_in(30, params.to_json, u.id, job_id)
+          IbmGetJob.perform_in(30, params.to_json, id, job_id)
           return
       end
         
       
-
+      #u = nil
       myarray =
         SpeechToText::IbmWatsonS2T.create_array_watson(callback['results'][0])
-
-      u.update(status: "writing subtitle file from #{u.service}")
+      
+      ActiveRecord::Base.connection_pool.with_connection do
+        #u = Caption.find(id)
+        u.update(status: "writing subtitle file from #{u.service}")
+      end
 
       current_time = (Time.now.to_f * 1000).to_i
 
@@ -98,8 +111,10 @@ module TTS
         timestamp: current_time,
         language: params[:caption_locale]
       )
-
-      u.update(status: "done with #{u.service}")
+      
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(status: "done with #{u.service}")
+      end
 
       temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
       temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"

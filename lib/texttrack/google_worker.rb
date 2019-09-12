@@ -17,15 +17,17 @@ module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
   class GoogleCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
-    faktory_options retry: 0
+    faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def perform(params_json, id, audio_type)
       params = JSON.parse(params_json, symbolize_names: true)
-
-      u = Caption.find(id)
-      u.update(status: 'finished audio conversion')
+      u = nil
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(status: 'finished audio conversion')
+      end
 
       # TODO
       # Need to handle locale here. What if we want to generate caption
@@ -46,8 +48,10 @@ module TTS
         params[:provider][:google_bucket_name],
         params[:caption_locale]
       )
-
-      u.update(status: "created job with #{u.service}")
+      
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(status: "created job with #{u.service}")
+      end
 
       TTS::GoogleGetJob.perform_async(params.to_json,
                                              u.id,
@@ -62,21 +66,25 @@ module TTS
   # rubocop:disable Style/Documentation
   class GoogleGetJob # rubocop:disable Naming/ClassAndModuleCamelCase
     include Faktory::Job
-    faktory_options retry: 0
+    faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def perform(params_json, id, operation_name, audio_type)
       params = JSON.parse(params_json, symbolize_names: true)
-
-      u = Caption.find(id)
-      u.update(status: "waiting on job from #{u.service}")
+      u = nil
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(status: "waiting on job from #{u.service}")
+      end
       
       # Google will not return until check_job is done, occupies thread
       callback = SpeechToText::GoogleS2T.check_job(operation_name)
       myarray = SpeechToText::GoogleS2T.create_array_google(callback['results'])
-
-      u.update(status: "writing subtitle file from #{u.service}")
+      
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(status: "writing subtitle file from #{u.service}")
+      end
 
       current_time = (Time.now.to_f * 1000).to_i
 
@@ -98,8 +106,10 @@ module TTS
         params[:record_id],
         audio_type
       )
-
-      u.update(status: "done with #{u.service}")
+      
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(status: "done with #{u.service}")
+      end
 
       temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
       temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
