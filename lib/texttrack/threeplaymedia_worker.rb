@@ -15,15 +15,17 @@ module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
   class ThreeplaymediaCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
-    faktory_options retry: 0
+    faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def perform(params_json, id, audio_type)
       params = JSON.parse(params_json, symbolize_names: true)
-
-      u = Caption.find(id)
-      u.update(status: 'finished audio conversion')
+      u = nil
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(status: 'finished audio conversion')
+      end
 
       # TODO
       # Need to handle locale here. What if we want to generate caption
@@ -37,12 +39,21 @@ module TTS
         job_name,
         "#{temp_dir}/job_file.json"
       )
-
-      u.update(status: "created job with #{u.service}")
+        
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(status: "created job with #{u.service}")
+      end
+        
+      transcript_id = SpeechToText::ThreePlaymediaS2T.order_transcript(
+        params[:provider][:auth_file_path],
+        job_id,
+        6
+      )
 
       TTS::ThreeplaymediaGetJob.perform_async(params.to_json,
-                                                    u.id,
-                                                    job_id)
+                                              u.id,
+                                              job_id,
+                                              transcript_id)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -52,20 +63,22 @@ module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
   class ThreeplaymediaGetJob # rubocop:disable Style/Documentation
     include Faktory::Job
-    faktory_options retry: 0
+    faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
-    def perform(params_json, id, job_id) # rubocop:disable Metrics/AbcSize
+    def perform(params_json, id, job_id, transcript_id) # rubocop:disable Metrics/AbcSize
       params = JSON.parse(params_json, symbolize_names: true)
+      u = nil
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(status: "waiting on job from #{u.service}")
+      end
 
-      u = Caption.find(id)
-      u.update(status: "waiting on job from #{u.service}")
-
-      transcript_id = SpeechToText::ThreePlaymediaS2T.order_transcript(
-        params[:provider][:auth_file_path],
-        job_id,
-        6
-      )
+      #transcript_id = SpeechToText::ThreePlaymediaS2T.order_transcript(
+        #params[:provider][:auth_file_path],
+        #job_id,
+        #6
+      #)
         
       status = SpeechToText::ThreePlaymediaS2T.check_status(
         params[:provider][:auth_file_path],
@@ -82,11 +95,11 @@ module TTS
           puts status_msg
           puts '-------------------'
           
-          ThreeplaymediaGetJob.perform_in(30, params.to_json, u.id, job_id)
+          ThreeplaymediaGetJob.perform_in(30, params.to_json, id, job_id, transcript_id)
           return
-      end
+      
 
-      if status == 'complete' # rubocop:disable Style/GuardClause
+      elsif status == 'complete' # rubocop:disable Style/GuardClause
 
         current_time = (Time.now.to_f * 1000).to_i
         SpeechToText::ThreePlaymediaS2T.get_vttfile(
@@ -103,10 +116,12 @@ module TTS
           timestamp: current_time,
           language: params[:caption_locale]
         )
+          
+        ActiveRecord::Base.connection_pool.with_connection do
+            u.update(status: "writing subtitle file from #{u.service}")
 
-        u.update(status: "writing subtitle file from #{u.service}")
-
-        u.update(status: "done with #{u.service}")
+            u.update(status: "done with #{u.service}")
+        end
 
         temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
         temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"

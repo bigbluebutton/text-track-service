@@ -15,15 +15,17 @@ module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
   class DeepspeechCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
-    faktory_options retry: 0
+    faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def perform(params_json, id, audio_type)
       params = JSON.parse(params_json, symbolize_names: true)
-
-      u = Caption.find(id)
-      u.update(status: 'finished audio conversion')
+      u = nil
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(status: 'finished audio conversion')
+      end
 
       temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
         
@@ -32,8 +34,10 @@ module TTS
         params[:provider][:auth_file_path],
         "#{temp_dir}/#{params[:record_id]}_jobdetails.json"
       )
-
-      u.update(status: "created job with #{u.service}")
+      
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(status: "created job with #{u.service}")
+      end
 
       TTS::DeepspeechGetJob.perform_async(params.to_json, u.id, job_id)
     end
@@ -45,14 +49,16 @@ module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
   class DeepspeechGetJob # rubocop:disable Style/Documentation
     include Faktory::Job
-    faktory_options retry: 0
+    faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
     def perform(params_json, id, job_id) # rubocop:disable Metrics/AbcSize
       params = JSON.parse(params_json, symbolize_names: true)
-
-      u = Caption.find(id)
-      u.update(status: "waiting on job from #{u.service}")
+      u = nil
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(status: "waiting on job from #{u.service}")
+      end
 
       auth_file_path = params[:provider][:auth_file_path]
         
@@ -70,15 +76,17 @@ module TTS
           end
           
           #break if status['message'] == 'No jobID found'
-          DeepspeechGetJob.perform_in(30, params.to_json, u.id, job_id)
+          DeepspeechGetJob.perform_in(30, params.to_json, id, job_id)
           return
       end
 
       callback_json =
         SpeechToText::MozillaDeepspeechS2T.order_transcript(job_id,
                                                             auth_file_path)
-
-      u.update(status: "writing subtitle file from #{u.service}")
+        
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(status: "writing subtitle file from #{u.service}")
+      end
 
       myarray =
         SpeechToText::MozillaDeepspeechS2T.create_mozilla_array(callback_json)
@@ -102,7 +110,9 @@ module TTS
         language: params[:caption_locale]
       )
 
-      u.update(status: "done with #{u.service}")
+      ActiveRecord::Base.connection_pool.with_connection do    
+        u.update(status: "done with #{u.service}")
+      end
 
       File.delete("#{temp_dir}/#{params[:record_id]}_jobdetails.json")
 

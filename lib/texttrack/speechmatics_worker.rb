@@ -15,15 +15,17 @@ module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
   class SpeechmaticsCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
-    faktory_options retry: 0
+    faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def perform(params_json, id, audio_type)
       params = JSON.parse(params_json, symbolize_names: true)
-
-      u = Caption.find(id)
-      u.update(status: 'finished audio conversion')
+      u = nil
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(status: 'finished audio conversion')
+      end
 
       # TODO
       # Need to handle locale here. What if we want to generate caption
@@ -41,8 +43,10 @@ module TTS
         "#{temp_dir}/jobID_#{params[:userID]}.json"
       )
       # rubocop:enable Naming/VariableName
-
-      u.update(status: "created job with #{u.service}")
+      
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(status: "created job with #{u.service}")
+      end
 
       TTS::SpeechmaticsGetJob.perform_async(params.to_json,
                                                    u.id,
@@ -56,7 +60,7 @@ module TTS
   # rubocop:disable Naming/ClassAndModuleCamelCase
   class SpeechmaticsGetJob # rubocop:disable Style/Documentation
     include Faktory::Job
-    faktory_options retry: 0
+    faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Naming/UncommunicativeMethodParamName
     # rubocop:disable Metrics/MethodLength
@@ -65,9 +69,11 @@ module TTS
     def perform(params_json, id, jobID)
       # rubocop:enable Naming/VariableName
       params = JSON.parse(params_json, symbolize_names: true)
-
-      u = Caption.find(id)
-      u.update(status: "waiting on job from #{u.service}")
+      u = nil
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(status: "waiting on job from #{u.service}")
+      end
 
       wait_time = 30
         
@@ -80,7 +86,7 @@ module TTS
           puts '-------------------'
           puts "wait time is #{wait_time} seconds"
           puts '-------------------'
-          SpeechmaticsGetJob.perform_in(wait_time, params.to_json, u.id, jobID)
+          SpeechmaticsGetJob.perform_in(wait_time, params.to_json, id, jobID)
           return
       end
 
@@ -91,8 +97,10 @@ module TTS
       )
 
       myarray = SpeechToText::SpeechmaticsS2T.create_array_speechmatic(callback)
-
-      u.update(status: "writing subtitle file from #{u.service}")
+      
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(status: "writing subtitle file from #{u.service}")
+      end
 
       current_time = (Time.now.to_f * 1000).to_i
 
@@ -108,8 +116,10 @@ module TTS
         timestamp: current_time,
         language: params[:caption_locale]
       )
-
-      u.update(status: "done with #{u.service}")
+        
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(status: "done with #{u.service}")
+      end
 
       temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
       temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
