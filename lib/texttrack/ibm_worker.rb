@@ -78,6 +78,9 @@ module TTS
           puts '-------------------'
           puts status_msg
           puts '-------------------'
+          ActiveRecord::Base.connection_pool.with_connection do
+            u.update(status: "failed")
+          end
           return
       elsif status != 'completed'
           puts '-------------------'
