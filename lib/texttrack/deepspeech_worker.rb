@@ -73,6 +73,9 @@ module TTS
           puts '-------------------'
           if status['message'] == 'No jobID found'
             puts 'Job does not exist'
+            ActiveRecord::Base.connection_pool.with_connection do
+                u.update(status: "failed")
+            end
             return
           end
           
