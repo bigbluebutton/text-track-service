@@ -43,10 +43,17 @@ module TTS
       ActiveRecord::Base.connection_pool.with_connection do
         u.update(status: "created job with #{u.service}")
       end
+        
+      transcript_id = SpeechToText::ThreePlaymediaS2T.order_transcript(
+        params[:provider][:auth_file_path],
+        job_id,
+        6
+      )
 
       TTS::ThreeplaymediaGetJob.perform_async(params.to_json,
-                                                    u.id,
-                                                    job_id)
+                                              u.id,
+                                              job_id,
+                                              transcript_id)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -59,7 +66,7 @@ module TTS
     faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
-    def perform(params_json, id, job_id) # rubocop:disable Metrics/AbcSize
+    def perform(params_json, id, job_id, transcript_id) # rubocop:disable Metrics/AbcSize
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
       ActiveRecord::Base.connection_pool.with_connection do
@@ -67,11 +74,11 @@ module TTS
         u.update(status: "waiting on job from #{u.service}")
       end
 
-      transcript_id = SpeechToText::ThreePlaymediaS2T.order_transcript(
-        params[:provider][:auth_file_path],
-        job_id,
-        6
-      )
+      #transcript_id = SpeechToText::ThreePlaymediaS2T.order_transcript(
+        #params[:provider][:auth_file_path],
+        #job_id,
+        #6
+      #)
         
       status = SpeechToText::ThreePlaymediaS2T.check_status(
         params[:provider][:auth_file_path],
@@ -88,7 +95,7 @@ module TTS
           puts status_msg
           puts '-------------------'
           
-          ThreeplaymediaGetJob.perform_in(30, params.to_json, id, job_id)
+          ThreeplaymediaGetJob.perform_in(30, params.to_json, id, job_id, transcript_id)
           return
       
 
