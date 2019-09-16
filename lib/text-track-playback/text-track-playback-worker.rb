@@ -29,6 +29,11 @@ module TTS
               "#{playback_dir}/#{params[:record_id]}.vtt",
               verbose: true)
         
+      captions_file_name = "#{playback_dir}/captions.json"
+      captions_file = File.open(captions_file_name,"w")
+      captions_file.puts ("[{\"localeName\": \"English (United States)\", \"locale\": \"#{params[:caption_locale]}\"]")
+      captions_file.close
+        
       FileUtils.remove_dir(temp_dir.to_s)
       
       ActiveRecord::Base.connection_pool.with_connection do
