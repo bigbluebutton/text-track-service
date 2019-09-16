@@ -7,6 +7,7 @@ require 'faktory'
 require 'securerandom'
 require 'speech_to_text'
 require 'sqlite3'
+require '../text-track-playback/text-track-playback-worker.rb'
 rails_environment_path =
   File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
@@ -136,7 +137,7 @@ module TTS
       #FileUtils.remove_dir(temp_dir.to_s)
         
       TTS::PlaybackPutJob.perform_async(params.to_json,
-                                          u.id,
+                                          id,
                                           temp_track_vtt)
         
     end
