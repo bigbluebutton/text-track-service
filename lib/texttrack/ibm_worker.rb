@@ -116,7 +116,7 @@ module TTS
       )
       
       ActiveRecord::Base.connection_pool.with_connection do
-        u.update(status: "done with #{u.service}")
+        u.update(status: "inbox updated with #{u.service}")
       end
 
       temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
@@ -133,7 +133,12 @@ module TTS
                    verbose: true)
       # , :force => true)
 
-      FileUtils.remove_dir(temp_dir.to_s)
+      #FileUtils.remove_dir(temp_dir.to_s)
+        
+      TTS::PlaybackPutJob.perform_async(params.to_json,
+                                          u.id,
+                                          temp_track_vtt)
+        
     end
     # rubocop:enable Metrics/MethodLength
   end

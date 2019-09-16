@@ -31,3 +31,9 @@ captions_inbox_dir: "/D/innovation/text-track-service/captions_test"
 
 #local_storage_dir
 temp_storage: "/D/innovation/text-track-service/captions_test"
+
+#playback_dir
+playback_dir: "/var/bigbluebutton/published/presentation"
+
+#local_playback_dir
+#playback_dir: "/D/innovation/text-track-service/captions_test"

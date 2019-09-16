@@ -20,6 +20,7 @@ require 'texttrack/deepspeech_worker'
 require 'texttrack/speechmatics_worker'
 require 'texttrack/threeplaymedia_worker'
 require 'texttrack/to_audio_worker'
+require 'text-track-playback/text-track-playback-worker'
 
 module TextTrack # rubocop:disable Style/Documentation
   def self.logger=(log)
