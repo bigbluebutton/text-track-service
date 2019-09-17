@@ -7,7 +7,7 @@ Environment=LANG=en_US.UTF-8
 User=texttrack
 Group=bigbluebutton
 WorkingDirectory=/usr/local/text-track-service
-ExecStart=/home/texttrack/.rbenv/shims/bundle exec rails s -e production -p 4000
+ExecStart=/home/texttrack/.rbenv/shims/bundle exec rails s -b 0.0.0.0 -e production -p 4000
 Restart=always
 [Install]
 WantedBy=multi-user.target
