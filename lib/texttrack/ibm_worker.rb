@@ -7,7 +7,7 @@ require 'faktory'
 require 'securerandom'
 require 'speech_to_text'
 require 'sqlite3'
-require_relative '../text-track-playback/text_track_playback_worker'
+#require_relative '../text-track-playback/text_track_playback_worker'
 rails_environment_path =
   File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
@@ -104,9 +104,9 @@ module TTS
       current_time = (Time.now.to_f * 1000).to_i
 
       SpeechToText::Util.write_to_webvtt(
-        "#{params[:temp_storage]}/#{params[:record_id]}",
-        "#{params[:record_id]}-#{current_time}-track.vtt",
-        myarray
+        vtt_file_path: "#{params[:temp_storage]}/#{params[:record_id]}",
+        vtt_file_name: "#{params[:record_id]}-#{current_time}-track.vtt",
+        myarray: myarray
       )
 
       SpeechToText::Util.recording_json(
@@ -134,13 +134,13 @@ module TTS
                    verbose: true)
       # , :force => true)
 
-      #FileUtils.remove_dir(temp_dir.to_s)
+      FileUtils.remove_dir(temp_dir.to_s)
       
-      TTP::PlaybackPutJob.perform_async(params.to_json,
-                                        id,
-                                        temp_track_vtt,
-                                        temp_track_json)
-        
+      #TTS::PlaybackPutJob.perform_async(params.to_json,
+                                        #id,
+                                        #temp_track_vtt,
+                                        #temp_track_json)
+          
     end
     # rubocop:enable Metrics/MethodLength
   end

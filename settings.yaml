@@ -12,7 +12,7 @@ log_to_file: false
 redis_list_namespace: "bbb_texttrack_service"
 redis_jobs_list_key: "bbb_texttrack_service:caption_recordings_job"
 
-default_provider: "ibm"
+default_provider: "deepspeech"
 
 # recording_dir: /path/to/recordings/dir/
 #recordings_dir: "/var/bigbluebutton/published/presentation"
