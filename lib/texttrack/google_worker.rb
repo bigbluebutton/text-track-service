@@ -79,7 +79,18 @@ module TTS
       end
       
       # Google will not return until check_job is done, occupies thread
-      callback = SpeechToText::GoogleS2T.check_job(operation_name)
+      status = SpeechToText::GoogleS2T.check_status(operation_name)
+        
+      status_msg = "status is #{status}"
+      if status == false
+          puts '-------------------'
+          puts status_msg
+          puts '-------------------'
+          GoogleGetJob.perform_in(30, params.to_json, id, operation_name, audio_type)
+          return
+      end
+      
+      callback = SpeechToText::GoogleS2T.get_words(operation_name)
       myarray = SpeechToText::GoogleS2T.create_array_google(callback['results'])
       
       ActiveRecord::Base.connection_pool.with_connection do
