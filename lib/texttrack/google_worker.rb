@@ -82,7 +82,15 @@ module TTS
       status = SpeechToText::GoogleS2T.check_status(operation_name)
         
       status_msg = "status is #{status}"
-      if status == false
+      if status == 'failed'
+          puts '-------------------'
+          puts status_msg
+          puts '-------------------'
+          ActiveRecord::Base.connection_pool.with_connection do
+            u.update(status: "failed")
+          end
+          return
+      elsif status != 'completed'
           puts '-------------------'
           puts status_msg
           puts '-------------------'

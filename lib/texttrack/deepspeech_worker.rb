@@ -7,7 +7,6 @@ require 'faktory'
 require 'securerandom'
 require 'speech_to_text'
 require 'sqlite3'
-require_relative '../text-track-playback/text_track_playback_worker'
 rails_environment_path =
   File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
@@ -131,12 +130,7 @@ module TTS
                    verbose: true)
       # , :force => true)
 
-      #FileUtils.remove_dir(temp_dir.to_s)
-        
-      TTS::PlaybackPutJob.perform_async(params.to_json,
-                                        id,
-                                        temp_track_vtt,
-                                        temp_track_json)
+      FileUtils.remove_dir(temp_dir.to_s)
     end
     # rubocop:enable Metrics/MethodLength
   end
