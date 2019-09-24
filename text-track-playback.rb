@@ -28,7 +28,7 @@ loop do
   caption_locale = job_entry["caption_locale"]
     
   FileUtils.cp("#{inbox_dir}/#{vtt_file}",
-               "#{presentation_dir}/caption_#{caption_locale}",
+               "#{presentation_dir}/#{record_id}/caption_#{caption_locale}",
                verbose: true)
     
   def captions_json(file_path:,
