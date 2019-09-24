@@ -79,7 +79,26 @@ module TTS
       end
       
       # Google will not return until check_job is done, occupies thread
-      callback = SpeechToText::GoogleS2T.check_job(operation_name)
+      status = SpeechToText::GoogleS2T.check_status(operation_name)
+        
+      status_msg = "status is #{status}"
+      if status == 'failed'
+          puts '-------------------'
+          puts status_msg
+          puts '-------------------'
+          ActiveRecord::Base.connection_pool.with_connection do
+            u.update(status: "failed")
+          end
+          return
+      elsif status != 'completed'
+          puts '-------------------'
+          puts status_msg
+          puts '-------------------'
+          GoogleGetJob.perform_in(30, params.to_json, id, operation_name, audio_type)
+          return
+      end
+      
+      callback = SpeechToText::GoogleS2T.get_words(operation_name)
       myarray = SpeechToText::GoogleS2T.create_array_google(callback['results'])
       
       ActiveRecord::Base.connection_pool.with_connection do
@@ -89,9 +108,9 @@ module TTS
       current_time = (Time.now.to_f * 1000).to_i
 
       SpeechToText::Util.write_to_webvtt(
-        "#{params[:temp_storage]}/#{params[:record_id]}",
-        "#{params[:record_id]}-#{current_time}-track.vtt",
-        myarray
+        vtt_file_path: "#{params[:temp_storage]}/#{params[:record_id]}",
+        vtt_file_name: "#{params[:record_id]}-#{current_time}-track.vtt",
+        myarray: myarray
       )
 
       SpeechToText::Util.recording_json(
@@ -126,6 +145,11 @@ module TTS
       # , :force => true)
 
       FileUtils.remove_dir(temp_dir.to_s)
+        
+      TTS::PlaybackWorker.perform_async(params.to_json,
+                                        temp_track_vtt,
+                                        temp_track_json,
+                                        "#{params[:captions_inbox_dir]}/inbox")
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength

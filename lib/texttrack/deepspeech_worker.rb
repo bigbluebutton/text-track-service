@@ -102,9 +102,9 @@ module TTS
       temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
 
       SpeechToText::Util.write_to_webvtt(
-        temp_dir.to_s,
-        temp_track_vtt.to_s,
-        myarray
+        vtt_file_path: temp_dir.to_s,
+        vtt_file_name: temp_track_vtt.to_s,
+        myarray: myarray
       )
 
       SpeechToText::Util.recording_json(
@@ -131,6 +131,11 @@ module TTS
       # , :force => true)
 
       FileUtils.remove_dir(temp_dir.to_s)
+        
+      TTS::PlaybackWorker.perform_async(params.to_json,
+                                        temp_track_vtt,
+                                        temp_track_json,
+                                        "#{params[:captions_inbox_dir]}/inbox")
     end
     # rubocop:enable Metrics/MethodLength
   end

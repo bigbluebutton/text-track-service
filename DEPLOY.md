@@ -61,6 +61,7 @@ Add texttrack user to bigbluebutton group
 ```
 cat /etc/group (check groups)
 sudo usermod -a -G bigbluebutton texttrack
+sudo usermod -a -G texttrack bigbluebutton
 ```
 
 Give access to texttrack to needed folders

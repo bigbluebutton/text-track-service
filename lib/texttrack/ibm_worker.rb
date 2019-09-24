@@ -103,9 +103,9 @@ module TTS
       current_time = (Time.now.to_f * 1000).to_i
 
       SpeechToText::Util.write_to_webvtt(
-        "#{params[:temp_storage]}/#{params[:record_id]}",
-        "#{params[:record_id]}-#{current_time}-track.vtt",
-        myarray
+        vtt_file_path: "#{params[:temp_storage]}/#{params[:record_id]}",
+        vtt_file_name: "#{params[:record_id]}-#{current_time}-track.vtt",
+        myarray: myarray
       )
 
       SpeechToText::Util.recording_json(
@@ -116,7 +116,7 @@ module TTS
       )
       
       ActiveRecord::Base.connection_pool.with_connection do
-        u.update(status: "done with #{u.service}")
+        u.update(status: "inbox updated with #{u.service}")
       end
 
       temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
@@ -134,6 +134,12 @@ module TTS
       # , :force => true)
 
       FileUtils.remove_dir(temp_dir.to_s)
+        
+      TTS::PlaybackWorker.perform_async(params.to_json,
+                                        temp_track_vtt,
+                                        temp_track_json,
+                                        "#{params[:captions_inbox_dir]}/inbox")
+          
     end
     # rubocop:enable Metrics/MethodLength
   end

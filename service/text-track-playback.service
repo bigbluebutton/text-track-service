@@ -1,0 +1,12 @@
+# text-track-playback.service
+[Unit]
+Description=Text Track Playback Script
+[Service]
+Environment=LANG=en_US.UTF-8
+User=bigbluebutton
+Group=bigbluebutton
+WorkingDirectory=/usr/local/text-track-service
+ExecStart=/usr/bin/ruby ./text-track-playback.rb
+Restart=always
+[Install]
+WantedBy=multi-user.target

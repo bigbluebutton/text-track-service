@@ -44,7 +44,7 @@ module TTS
 
       audio_type_hash = {
         'ibm' => 'mp3',
-        'google' => 'mp3',
+        'google' => 'flac',
         'speechmatics' => 'mp3',
         'threeplaymedia' => 'mp3',
         'deepspeech' => 'wav'
