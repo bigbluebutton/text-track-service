@@ -134,6 +134,11 @@ module TTS
       # , :force => true)
 
       FileUtils.remove_dir(temp_dir.to_s)
+        
+      TTS::PlaybackWorker.perform_async(params.to_json,
+                                        temp_track_vtt,
+                                        temp_track_json,
+                                        "#{params[:captions_inbox_dir]}/inbox")
           
     end
     # rubocop:enable Metrics/MethodLength

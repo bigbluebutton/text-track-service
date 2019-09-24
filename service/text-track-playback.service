@@ -1,12 +1,12 @@
 # text-track-playback.service
 [Unit]
-Description=Text Track Playback Worker
+Description=Text Track Playback Script
 [Service]
-Environment=LANG=en_US.UTF-8 FAKTORY_PROVIDER=FAKTORY_URL FAKTORY_URL=tcp://:06aa1602e3fcc580@localhost:7419
+Environment=LANG=en_US.UTF-8
 User=bigbluebutton
 Group=bigbluebutton
 WorkingDirectory=/usr/local/text-track-service
-ExecStart=/home/texttrack/.rbenv/shims/bundle exec faktory-worker  -r ./lib/text-track-playback/text-track-playback-worker.rb
+ExecStart=/usr/bin/ruby ./text-track-playback.rb
 Restart=always
 [Install]
 WantedBy=multi-user.target
