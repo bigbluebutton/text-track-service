@@ -42,7 +42,7 @@ loop do
   end
     
   captions_json(
-    file_path: inbox_dir,
+    file_path: "#{presentation_dir}/#{record_id}",
     file_name: "captions.json",
     localeName: "English (United States)",
     locale: caption_locale
