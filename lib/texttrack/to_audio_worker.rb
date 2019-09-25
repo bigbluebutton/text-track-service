@@ -25,21 +25,21 @@ module TTS
     def perform(param_json) # rubocop:disable Metrics/CyclomaticComplexity
       params = JSON.parse(param_json, symbolize_names: true)
       u = nil
-      #needed as activerecord leaves connection open when worker dies
+      # needed as activerecord leaves connection open when worker dies
       ActiveRecord::Base.connection_pool.with_connection do
-          if Caption.exists?(record_id: (params[:record_id]).to_s)
-            u = Caption.find_by(record_id: (params[:record_id]).to_s)
-            u.update(status: 'start_audio_conversion',
-                     service: (params[:provider][:name]).to_s,
-                     caption_locale: (params[:caption_locale]).to_s)
-          else
-            Caption.create(record_id: (params[:record_id]).to_s,
-                           status: 'started_audio_conversion',
-                           service: (params[:provider][:name]).to_s,
-                           caption_locale: (params[:caption_locale]).to_s)
-          end
-
+        if Caption.exists?(record_id: (params[:record_id]).to_s)
           u = Caption.find_by(record_id: (params[:record_id]).to_s)
+          u.update(status: 'start_audio_conversion',
+                   service: (params[:provider][:name]).to_s,
+                   caption_locale: (params[:caption_locale]).to_s)
+        else
+          Caption.create(record_id: (params[:record_id]).to_s,
+                         status: 'started_audio_conversion',
+                         service: (params[:provider][:name]).to_s,
+                         caption_locale: (params[:caption_locale]).to_s)
+        end
+
+        u = Caption.find_by(record_id: (params[:record_id]).to_s)
       end
 
       audio_type_hash = {
@@ -75,32 +75,32 @@ module TTS
       if params[:provider][:name] === 'google'
         # rubocop:enable Style/CaseEquality
         TTS::GoogleCreateJob.perform_async(params.to_json,
-                                                  u.id,
-                                                  audio_type)
+                                           u.id,
+                                           audio_type)
       # rubocop:disable Style/CaseEquality
       elsif params[:provider][:name] === 'ibm'
         # rubocop:enable Style/CaseEquality
         TTS::IbmCreateJob.perform_async(params.to_json,
-                                               u.id,
-                                               audio_type)
+                                        u.id,
+                                        audio_type)
       # rubocop:disable Style/CaseEquality
       elsif params[:provider][:name] === 'deepspeech'
         # rubocop:enable Style/CaseEquality
         TTS::DeepspeechCreateJob.perform_async(params.to_json,
-                                                      u.id,
-                                                      audio_type)
+                                               u.id,
+                                               audio_type)
       # rubocop:disable Style/CaseEquality
       elsif params[:provider][:name] === 'speechmatics'
         # rubocop:enable Style/CaseEquality
         TTS::SpeechmaticsCreateJob.perform_async(params.to_json,
-                                                        u.id,
-                                                        audio_type)
+                                                 u.id,
+                                                 audio_type)
       # rubocop:disable Style/CaseEquality
       elsif params[:provider][:name] === 'threeplaymedia'
         # rubocop:enable Style/CaseEquality
         TTS::ThreeplaymediaCreateJob.perform_async(params.to_json,
-                                                          u.id,
-                                                          audio_type)
+                                                   u.id,
+                                                   audio_type)
       end
     end
     # rubocop:enable Metrics/AbcSize

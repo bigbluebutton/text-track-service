@@ -12,7 +12,6 @@ rails_environment_path =
 require rails_environment_path
 
 module TTS
-  # rubocop:disable Naming/ClassAndModuleCamelCase
   class ThreeplaymediaCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0, concurrency: 1
@@ -39,11 +38,11 @@ module TTS
         job_name,
         "#{temp_dir}/job_file.json"
       )
-        
+
       ActiveRecord::Base.connection_pool.with_connection do
         u.update(status: "created job with #{u.service}")
       end
-        
+
       transcript_id = SpeechToText::ThreePlaymediaS2T.order_transcript(
         params[:provider][:auth_file_path],
         job_id,
@@ -58,15 +57,14 @@ module TTS
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
   end
-  # rubocop:enable Naming/ClassAndModuleCamelCase
 
-  # rubocop:disable Naming/ClassAndModuleCamelCase
   class ThreeplaymediaGetJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
-    def perform(params_json, id, job_id, transcript_id) # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/AbcSize
+    def perform(params_json, id, job_id, transcript_id)
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
       ActiveRecord::Base.connection_pool.with_connection do
@@ -74,35 +72,38 @@ module TTS
         u.update(status: "waiting on job from #{u.service}")
       end
 
-      #transcript_id = SpeechToText::ThreePlaymediaS2T.order_transcript(
-        #params[:provider][:auth_file_path],
-        #job_id,
-        #6
-      #)
-        
+      # transcript_id = SpeechToText::ThreePlaymediaS2T.order_transcript(
+      # params[:provider][:auth_file_path],
+      # job_id,
+      # 6
+      # )
+
       status = SpeechToText::ThreePlaymediaS2T.check_status(
         params[:provider][:auth_file_path],
         transcript_id
       )
       status_msg = "status is #{status}"
       if status == 'cancelled'
-          puts '-------------------'
-          puts status_msg
-          puts '-------------------'
-          ActiveRecord::Base.connection_pool.with_connection do
-            u.update(status: "failed")
-          end
-          return
+        puts '-------------------'
+        puts status_msg
+        puts '-------------------'
+        ActiveRecord::Base.connection_pool.with_connection do
+          u.update(status: 'failed')
+        end
+        return
       elsif status != 'complete'
-          puts '-------------------'
-          puts status_msg
-          puts '-------------------'
-          
-          ThreeplaymediaGetJob.perform_in(30, params.to_json, id, job_id, transcript_id)
-          return
-      
+        puts '-------------------'
+        puts status_msg
+        puts '-------------------'
 
-      elsif status == 'complete' # rubocop:disable Style/GuardClause
+        ThreeplaymediaGetJob.perform_in(30,
+                                        params.to_json,
+                                        id,
+                                        job_id,
+                                        transcript_id)
+        return
+
+      elsif status == 'complete'
 
         current_time = (Time.now.to_f * 1000).to_i
         SpeechToText::ThreePlaymediaS2T.get_vttfile(
@@ -119,39 +120,40 @@ module TTS
           timestamp: current_time,
           language: params[:caption_locale]
         )
-          
-        ActiveRecord::Base.connection_pool.with_connection do
-            u.update(status: "writing subtitle file from #{u.service}")
 
-            u.update(status: "done with #{u.service}")
+        ActiveRecord::Base.connection_pool.with_connection do
+          u.update(status: "writing subtitle file from #{u.service}")
+
+          u.update(status: "done with #{u.service}")
         end
 
         temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
         temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
         temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
+        inbox = "#{params[:captions_inbox_dir]}/inbox"
 
         File.delete("#{temp_dir}/job_file.json")
 
         FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
-                     "#{params[:captions_inbox_dir]}/inbox",
+                     inbox,
                      verbose: true)
         # , :force => true)
 
         FileUtils.mv("#{temp_dir}/#{temp_track_json}",
-                     "#{params[:captions_inbox_dir]}/inbox",
+                     inbox,
                      verbose: true)
         # , :force => true)
 
         FileUtils.remove_dir(temp_dir.to_s)
-          
+
         TTS::PlaybackWorker.perform_async(params.to_json,
-                                        temp_track_vtt,
-                                        temp_track_json,
-                                        "#{params[:captions_inbox_dir]}/inbox")
-          
+                                          temp_track_vtt,
+                                          temp_track_json,
+                                          inbox)
+
       end
     end
+    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
   end
-  # rubocop:enable Naming/ClassAndModuleCamelCase
 end

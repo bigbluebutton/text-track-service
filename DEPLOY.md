@@ -249,7 +249,7 @@ sudo journalctl --vacuum-time=1s
 ```
 Navigate to /usr/local/bigbluebutton/core/scripts/post_publish 
 
-gem install rest-client
+sudo gem install rest-client
 sudo mv post_publish.rb.example post_publish.rb
 sudo nano post_publish.rb
 
@@ -258,7 +258,7 @@ require "rest-client"
 
 response = RestClient::Request.execute(
     method: :get,
-    url:    "http://localhost:4000/caption/#{$meeting_id}/en-US",
+    url:    "http://localhost:4000/caption/#{meeting_id}/en-US",
 )
 
 if(response.code != 200)

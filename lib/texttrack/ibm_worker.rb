@@ -13,7 +13,7 @@ require rails_environment_path
 
 module TTS
   # rubocop:disable Style/Documentation
-  class IbmCreateJob # rubocop:disable Naming/ClassAndModuleCamelCase
+  class IbmCreateJob
     include Faktory::Job
     faktory_options retry: 0, concurrency: 1
 
@@ -37,19 +37,19 @@ module TTS
         content_type: audio_type,
         language_code: params[:caption_locale]
       )
-      
+
       ActiveRecord::Base.connection_pool.with_connection do
         u.update(status: "created job with #{u.service}")
       end
-        
-      #ActiveRecord::Base.connection_pool.with_connection do
-          #u = Caption.find(id)
-          #u.update(status: "waiting on job from #{u.service}")
-      #end
-        
+
+      # ActiveRecord::Base.connection_pool.with_connection do
+      # u = Caption.find(id)
+      # u.update(status: "waiting on job from #{u.service}")
+      # end
+
       TTS::IbmGetJob.perform_async(params.to_json,
-                                          u.id,
-                                          job_id)
+                                   u.id,
+                                   job_id)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -57,7 +57,7 @@ module TTS
   # rubocop:enable Style/Documentation
 
   # rubocop:disable Style/Documentation
-  class IbmGetJob # rubocop:disable Naming/ClassAndModuleCamelCase
+  class IbmGetJob
     include Faktory::Job
     faktory_options retry: 0, concurrency: 1
 
@@ -66,37 +66,37 @@ module TTS
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
       ActiveRecord::Base.connection_pool.with_connection do
-          u = Caption.find(id)
-          u.update(status: "waiting on job from #{u.service}")
+        u = Caption.find(id)
+        u.update(status: "waiting on job from #{u.service}")
       end
-        
+
       callback =
-          SpeechToText::IbmWatsonS2T.check_job(job_id, params[:provider][:auth_file_path])
+        SpeechToText::IbmWatsonS2T.check_job(job_id,
+                                             params[:provider][:auth_file_path])
       status = callback['status']
       status_msg = "status is #{status}"
       if status == 'failed'
-          puts '-------------------'
-          puts status_msg
-          puts '-------------------'
-          ActiveRecord::Base.connection_pool.with_connection do
-            u.update(status: "failed")
-          end
-          return
+        puts '-------------------'
+        puts status_msg
+        puts '-------------------'
+        ActiveRecord::Base.connection_pool.with_connection do
+          u.update(status: 'failed')
+        end
+        return
       elsif status != 'completed'
-          puts '-------------------'
-          puts status_msg
-          puts '-------------------'
-          IbmGetJob.perform_in(30, params.to_json, id, job_id)
-          return
+        puts '-------------------'
+        puts status_msg
+        puts '-------------------'
+        IbmGetJob.perform_in(30, params.to_json, id, job_id)
+        return
       end
-        
-      
-      #u = nil
+
+      # u = nil
       myarray =
         SpeechToText::IbmWatsonS2T.create_array_watson(callback['results'][0])
-      
+
       ActiveRecord::Base.connection_pool.with_connection do
-        #u = Caption.find(id)
+        # u = Caption.find(id)
         u.update(status: "writing subtitle file from #{u.service}")
       end
 
@@ -114,7 +114,7 @@ module TTS
         timestamp: current_time,
         language: params[:caption_locale]
       )
-      
+
       ActiveRecord::Base.connection_pool.with_connection do
         u.update(status: "inbox updated with #{u.service}")
       end
@@ -122,24 +122,24 @@ module TTS
       temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
       temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
       temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
+      inbox = "#{params[:captions_inbox_dir]}/inbox"
 
       FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
-                   "#{params[:captions_inbox_dir]}/inbox",
+                   inbox,
                    verbose: true)
       # , :force => true)
 
       FileUtils.mv("#{temp_dir}/#{temp_track_json}",
-                   "#{params[:captions_inbox_dir]}/inbox",
+                   inbox,
                    verbose: true)
       # , :force => true)
 
       FileUtils.remove_dir(temp_dir.to_s)
-        
+
       TTS::PlaybackWorker.perform_async(params.to_json,
                                         temp_track_vtt,
                                         temp_track_json,
-                                        "#{params[:captions_inbox_dir]}/inbox")
-          
+                                        inbox)
     end
     # rubocop:enable Metrics/MethodLength
   end

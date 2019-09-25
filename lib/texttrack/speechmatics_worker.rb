@@ -12,7 +12,6 @@ rails_environment_path =
 require rails_environment_path
 
 module TTS
-  # rubocop:disable Naming/ClassAndModuleCamelCase
   class SpeechmaticsCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0, concurrency: 1
@@ -43,21 +42,19 @@ module TTS
         "#{temp_dir}/jobID_#{params[:userID]}.json"
       )
       # rubocop:enable Naming/VariableName
-      
+
       ActiveRecord::Base.connection_pool.with_connection do
         u.update(status: "created job with #{u.service}")
       end
 
       TTS::SpeechmaticsGetJob.perform_async(params.to_json,
-                                                   u.id,
-                                                   jobID)
+                                            u.id,
+                                            jobID)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
   end
-  # rubocop:enable Naming/ClassAndModuleCamelCase
 
-  # rubocop:disable Naming/ClassAndModuleCamelCase
   class SpeechmaticsGetJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0, concurrency: 1
@@ -75,19 +72,19 @@ module TTS
         u.update(status: "waiting on job from #{u.service}")
       end
 
-      wait_time = 30
-        
+      # wait_time = 30
+
       wait_time = SpeechToText::SpeechmaticsS2T.check_job(
-          params[:provider][:userID],
-          jobID,
-          params[:provider][:apikey]
-        )
-      if wait_time != nil
-          puts '-------------------'
-          puts "wait time is #{wait_time} seconds"
-          puts '-------------------'
-          SpeechmaticsGetJob.perform_in(wait_time, params.to_json, id, jobID)
-          return
+        params[:provider][:userID],
+        jobID,
+        params[:provider][:apikey]
+      )
+      unless wait_time.nil?
+        puts '-------------------'
+        puts "wait time is #{wait_time} seconds"
+        puts '-------------------'
+        SpeechmaticsGetJob.perform_in(wait_time, params.to_json, id, jobID)
+        return
       end
 
       callback = SpeechToText::SpeechmaticsS2T.get_transcription(
@@ -97,7 +94,7 @@ module TTS
       )
 
       myarray = SpeechToText::SpeechmaticsS2T.create_array_speechmatic(callback)
-      
+
       ActiveRecord::Base.connection_pool.with_connection do
         u.update(status: "writing subtitle file from #{u.service}")
       end
@@ -116,7 +113,7 @@ module TTS
         timestamp: current_time,
         language: params[:caption_locale]
       )
-        
+
       ActiveRecord::Base.connection_pool.with_connection do
         u.update(status: "done with #{u.service}")
       end
@@ -124,28 +121,27 @@ module TTS
       temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
       temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
       temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
+      inbox = "#{params[:captions_inbox_dir]}/inbox"
 
       File.delete("#{temp_dir}/jobID_#{params[:userID]}.json")
 
       FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
-                   "#{params[:captions_inbox_dir]}/inbox",
+                   inbox,
                    verbose: true) # , :force => true)
 
       FileUtils.mv("#{temp_dir}/#{temp_track_json}",
-                   "#{params[:captions_inbox_dir]}/inbox",
+                   inbox,
                    verbose: true) # , :force => true)
 
       FileUtils.remove_dir(temp_dir.to_s)
-        
+
       TTS::PlaybackWorker.perform_async(params.to_json,
                                         temp_track_vtt,
                                         temp_track_json,
-                                        "#{params[:captions_inbox_dir]}/inbox")
-        
+                                        inbox)
     end
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Naming/UncommunicativeMethodParamName
     end
-  # rubocop:enable Naming/ClassAndModuleCamelCase
 end

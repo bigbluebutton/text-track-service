@@ -14,7 +14,6 @@ rails_environment_path =
 require rails_environment_path
 
 module TTS
-  # rubocop:disable Naming/ClassAndModuleCamelCase
   class GoogleCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0, concurrency: 1
@@ -48,23 +47,22 @@ module TTS
         params[:provider][:google_bucket_name],
         params[:caption_locale]
       )
-      
+
       ActiveRecord::Base.connection_pool.with_connection do
         u.update(status: "created job with #{u.service}")
       end
 
       TTS::GoogleGetJob.perform_async(params.to_json,
-                                             u.id,
-                                             operation_name,
-                                             audio_type)
+                                      u.id,
+                                      operation_name,
+                                      audio_type)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
   end
-  # rubocop:enable Naming/ClassAndModuleCamelCase
 
   # rubocop:disable Style/Documentation
-  class GoogleGetJob # rubocop:disable Naming/ClassAndModuleCamelCase
+  class GoogleGetJob
     include Faktory::Job
     faktory_options retry: 0, concurrency: 1
 
@@ -77,30 +75,34 @@ module TTS
         u = Caption.find(id)
         u.update(status: "waiting on job from #{u.service}")
       end
-      
+
       # Google will not return until check_job is done, occupies thread
       status = SpeechToText::GoogleS2T.check_status(operation_name)
-        
+
       status_msg = "status is #{status}"
       if status == 'failed'
-          puts '-------------------'
-          puts status_msg
-          puts '-------------------'
-          ActiveRecord::Base.connection_pool.with_connection do
-            u.update(status: "failed")
-          end
-          return
+        puts '-------------------'
+        puts status_msg
+        puts '-------------------'
+        ActiveRecord::Base.connection_pool.with_connection do
+          u.update(status: 'failed')
+        end
+        return
       elsif status != 'completed'
-          puts '-------------------'
-          puts status_msg
-          puts '-------------------'
-          GoogleGetJob.perform_in(30, params.to_json, id, operation_name, audio_type)
-          return
+        puts '-------------------'
+        puts status_msg
+        puts '-------------------'
+        GoogleGetJob.perform_in(30,
+                                params.to_json,
+                                id,
+                                operation_name,
+                                audio_type)
+        return
       end
-      
+
       callback = SpeechToText::GoogleS2T.get_words(operation_name)
       myarray = SpeechToText::GoogleS2T.create_array_google(callback['results'])
-      
+
       ActiveRecord::Base.connection_pool.with_connection do
         u.update(status: "writing subtitle file from #{u.service}")
       end
@@ -125,7 +127,7 @@ module TTS
         params[:record_id],
         audio_type
       )
-      
+
       ActiveRecord::Base.connection_pool.with_connection do
         u.update(status: "done with #{u.service}")
       end
@@ -133,23 +135,24 @@ module TTS
       temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
       temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
       temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
+      inbox = "#{params[:captions_inbox_dir]}/inbox"
 
       FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
-                   "#{params[:captions_inbox_dir]}/inbox",
+                   inbox,
                    verbose: true)
       # , :force => true)
 
       FileUtils.mv("#{temp_dir}/#{temp_track_json}",
-                   "#{params[:captions_inbox_dir]}/inbox",
+                   inbox,
                    verbose: true)
       # , :force => true)
 
       FileUtils.remove_dir(temp_dir.to_s)
-        
+
       TTS::PlaybackWorker.perform_async(params.to_json,
                                         temp_track_vtt,
                                         temp_track_json,
-                                        "#{params[:captions_inbox_dir]}/inbox")
+                                        inbox)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
