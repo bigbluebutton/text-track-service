@@ -57,6 +57,17 @@ module TTS
 
       FileUtils.remove_dir(temp_dir.to_s)
 
+      data = {
+        'record_id' => "#{record_id}",
+        'inbox' => data['inbox'],
+        'current_time' => data['current_time'],
+        'caption_locale' => data['caption_locale'],
+        'url' => 'url',
+        'checksum' => 'checksum'
+      }
+
+      #TTS::CallbackWorker.perform_async()
+
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
