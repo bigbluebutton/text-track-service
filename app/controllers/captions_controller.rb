@@ -11,7 +11,11 @@ class CaptionsController < ApplicationController
     record_id = params[:record_id]
     caption_locale = params[:caption_locale]
     provider = params[:provider]
+    site = params["site"]
+    secret = params["secret"]
 
+    puts "site -----------#{site}"
+    puts "secret = #{secret}..................."
     # Need to find how to get the key from settings.yaml
     # props = YAML::load(File.open('settings.yaml'))
     # provider = props["default_provider"]
