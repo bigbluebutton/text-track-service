@@ -89,55 +89,29 @@ module TTS
         SpeechToText::MozillaDeepspeechS2T.order_transcript(job_id,
                                                             auth_file_path)
 
-      ActiveRecord::Base.connection_pool.with_connection do
-        u.update(status: "writing subtitle file from #{u.service}")
-      end
-
       myarray =
         SpeechToText::MozillaDeepspeechS2T.create_mozilla_array(callback_json)
 
       current_time = (Time.now.to_f * 1000).to_i
 
-      temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
-      temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
-      temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
-      inbox = "#{params[:captions_inbox_dir]}/inbox"
+      data = {
+        'record_id' => "#{params[:record_id]}",
+        'temp_dir' => "#{params[:temp_storage]}/#{params[:record_id]}",
+        'temp_track_vtt' => "#{params[:record_id]}-#{current_time}-track.vtt",
+        'temp_track_json' => "#{params[:record_id]}-#{current_time}-track.json",
+        'inbox' => "#{params[:captions_inbox_dir]}/inbox",
+        'myarray' => myarray,
+        'current_time' => current_time,
+        'caption_locale' => "#{params[:caption_locale]}",
+        'database_id' => "#{id}"
+      }
 
-      SpeechToText::Util.write_to_webvtt(
-        vtt_file_path: temp_dir.to_s,
-        vtt_file_name: temp_track_vtt.to_s,
-        myarray: myarray
-      )
+      TTS::UtilWorker.perform_async(data.to_json)
 
-      SpeechToText::Util.recording_json(
-        file_path: temp_dir.to_s,
-        record_id: params[:record_id],
-        timestamp: current_time,
-        language: params[:caption_locale]
-      )
-
-      ActiveRecord::Base.connection_pool.with_connection do
-        u.update(status: "done with #{u.service}")
-      end
-
-      File.delete("#{temp_dir}/#{job_name}_jobdetails.json")
-
-      FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
-                   inbox,
-                   verbose: true)
-      # , :force => true)
-
-      FileUtils.mv("#{temp_dir}/#{temp_track_json}",
-                   inbox,
-                   verbose: true)
-      # , :force => true)
-
-      FileUtils.remove_dir(temp_dir.to_s)
-
-      TTS::PlaybackWorker.perform_async(params.to_json,
-                                        temp_track_vtt,
-                                        temp_track_json,
-                                        inbox)
+      #TTS::PlaybackWorker.perform_async(params.to_json,
+      #                                  temp_track_vtt,
+      #                                  temp_track_json,
+      #                                  inbox)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength

@@ -29,16 +29,6 @@ touch authorized_keys
 paste your public key in this file(authorized_keys)
 ```
 
-
-# Now install big blue button
-
-(Make sure you are root)
-
-Give access to texttrack to needed folders
-```
-sudo chmod g+wx /var/bigbluebutton/captions
-```
-
 # Now install big blue button
 
 Go home by typing cd and hitting enter, then enter the following command
@@ -61,7 +51,7 @@ Add texttrack user to bigbluebutton group
 ```
 cat /etc/group (check groups)
 sudo usermod -a -G bigbluebutton texttrack
-sudo usermod -a -G texttrack bigbluebutton
+sudo usermod -a -G texttrack bigbluebutton #######################
 ```
 
 Give access to texttrack to needed folders
@@ -75,7 +65,7 @@ Create temp folder for storage at /var/texttrackservice and give permissions
 cd /var
 sudo mkdir texttrackservice
 sudo chown -R texttrack:texttrack /var/texttrackservice (change ownership to texttrackservice)
-sudo chmod g+w /var/texttrackservice/ (give group permissions)
+sudo chmod g+w /var/texttrackservice/ (give group permissions) ###################
 ```
 
 # Install text-track-service rails app
@@ -135,7 +125,7 @@ git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 sudo apt-get install -y libssl-dev libreadline-dev
 rbenv install 2.5.3
 sudo chown -R texttrack.texttrack ~/.rbenv
-rbenv local 2.5.3
+rbenv local 2.5.3 ######################### rbenv global 2.5.3
 ruby -v
 
 gem install bundler
@@ -204,7 +194,7 @@ cd /usr/local/text-track-service/service/
 sudo cp *.service /etc/systemd/system
 ```
 
-# Start all services
+# Start all services (make sure faktory password in the files is correct)
 ```
 sudo systemctl enable text-track-rails
 sudo systemctl start text-track-rails
@@ -250,24 +240,14 @@ sudo journalctl --vacuum-time=1s
 Navigate to /usr/local/bigbluebutton/core/scripts/post_publish 
 
 sudo gem install rest-client
-sudo mv post_publish.rb.example post_publish.rb
-sudo nano post_publish.rb
+sudo cp /usr/local/text-track-service/post_publish.rb /usr/local/bigbluebutton/core/scripts/post_publish
 
-add the following code just above exit 0 at the bottom
-require "rest-client"
-
-response = RestClient::Request.execute(
-    method: :get,
-    url:    "http://localhost:4000/caption/#{meeting_id}/en-US",
-)
-
-if(response.code != 200)
-  BigBlueButton.logger.info("#{response.code} error")
-end
-
-ctrl x type y and hit enter to save and exit
+now do bbb-conf secret to find your secret
+copy that value into /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml as shared_secret: whatever_your_secret_is
 
 ```
+
+# 
 
 # If you make any changes to the code please run & keep code clean with Rubocop
 ```
