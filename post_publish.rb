@@ -55,8 +55,17 @@ bbb_props = YAML.load_file('../bigbluebutton.yml')
 
 site = bbb_props['playback_host']
 secret = bbb_props['shared_secret']
+kind = "subtitles"
+lang = "en_US"
+label = "English"
 
-RestClient.get 'http://localhost:4000/caption/#{$meeting_id}/en-US', {:params => {:site => "https://#{site}", :secret => '#{secret}'}}
+#original_filename = "captions_en-US.vtt"
+#temp_filename = "#{recordID}-#{current_time}-track.txt"
+request = "putRecordingTextTrackrecordID=#{meeting_id}&kind=#{kind}&lang=#{lang}&label=#{label}"
+request = request + secret
+checksum = Digest::SHA1.hexdigest(request)
+
+RestClient.get "http://localhost:4000/caption/#{meeting_id}/en-US", {:params => {:site => "https://#{site}", :checksum => "#{checksum}"}}
 
 #response = RestClient.get 'http://localhost:3000/caption/#{$meeting_id}/en-US'
 if(response.code != 200)
