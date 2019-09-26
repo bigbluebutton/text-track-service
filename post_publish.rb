@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-# encoding: UTF-8
+# frozen_string_literal: true
 
 #
 # BigBlueButton open source conferencing system - http://www.bigbluebutton.org/
@@ -20,62 +20,61 @@
 # with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 #
 
-require "trollop"
+require 'trollop'
 
-require File.expand_path('../../../lib/recordandplayback', __FILE__)
+require File.expand_path('../../lib/recordandplayback', __dir__)
 
-opts = Trollop::options do
-  opt :meeting_id, "Meeting id to archive", :type => String
+opts = Trollop.options do
+  opt :meeting_id, 'Meeting id to archive', type: String
 end
-$meeting_id = opts[:meeting_id]
+$meeting_id = opts[:meeting_id] # rubocop:disable Style/GlobalVars
 
-logger = Logger.new("/var/log/bigbluebutton/post_publish.log", 'weekly' )
+logger = Logger.new('/var/log/bigbluebutton/post_publish.log', 'weekly')
 logger.level = Logger::INFO
 BigBlueButton.logger = logger
 
+# rubocop:disable Style/GlobalVars
 $published_files = "/var/bigbluebutton/published/presentation/#{$meeting_id}"
+# rubocop:enable Style/GlobalVars
+# rubocop:disable Style/GlobalVars
 $archived_files = "/var/bigbluebutton/recording/raw/#{$meeting_id}"
+# rubocop:enable Style/GlobalVars
+# rubocop:disable Style/GlobalVars
 $meeting_metadata = BigBlueButton::Events.get_meeting_metadata("/var/bigbluebutton/recording/raw/#{$meeting_id}/events.xml")
-$events_xml = "#{$archived_files}/events.xml"
-$audio_dir = "#{$archived_files}/audio"
-#$published_files_video = "/var/bigbluebutton/published/presentation/#{$meeting_id}/video"
-#$scripts = "/usr/local/bigbluebutton/core/scripts/post_publish"
+# rubocop:enable Style/GlobalVars
+$events_xml = "#{$archived_files}/events.xml" # rubocop:disable Style/GlobalVars
+$audio_dir = "#{$archived_files}/audio" # rubocop:disable Style/GlobalVars
+# $published_files_video = "/var/bigbluebutton/published/presentation/#{$meeting_id}/video"
+# $scripts = "/usr/local/bigbluebutton/core/scripts/post_publish"
 
-############################CUSTOM SCRIPT STARTS HERE#######################################
-require "rest-client"
+# ###########################CUSTOM SCRIPT STARTS HERE#######################################
+require 'rest-client'
 require 'yaml'
-#[{"localeName": "English (United States)", "locale": "en-US"}]
+# [{"localeName": "English (United States)", "locale": "en-US"}]
 
-#response = RestClient::Request.execute(
-    #method: :get,
-    #url:    "http://localhost:4000/caption/#{$meeting_id}/en-US",
-#)
+# response = RestClient::Request.execute(
+# method: :get,
+# url:    "http://localhost:4000/caption/#{$meeting_id}/en-US",
+# )
 
 bbb_props = YAML.load_file('../bigbluebutton.yml')
 
 site = bbb_props['playback_host']
 secret = bbb_props['shared_secret']
-kind = "subtitles"
-lang = "en_US"
-label = "English"
+kind = 'subtitles'
+lang = 'en_US'
+label = 'English'
 
-#original_filename = "captions_en-US.vtt"
-#temp_filename = "#{recordID}-#{current_time}-track.txt"
+# original_filename = "captions_en-US.vtt"
+# temp_filename = "#{recordID}-#{current_time}-track.txt"
 request = "putRecordingTextTrackrecordID=#{meeting_id}&kind=#{kind}&lang=#{lang}&label=#{label}"
-request = request + secret
+request += secret
 checksum = Digest::SHA1.hexdigest(request)
 
-RestClient.get "http://localhost:4000/caption/#{meeting_id}/en-US", {:params => {:site => "https://#{site}", :checksum => "#{checksum}"}}
+RestClient.get "http://localhost:4000/caption/#{meeting_id}/en-US", params: { site: "https://#{site}", checksum: checksum.to_s }
 
-#response = RestClient.get 'http://localhost:3000/caption/#{$meeting_id}/en-US'
-if(response.code != 200)
-  BigBlueButton.logger.info("#{response.code} error")
-end
-#system("curl http://localhost:3000/caption/#{$meeting_id}/en-US")
-
-
+# response = RestClient.get 'http://localhost:3000/caption/#{$meeting_id}/en-US'
+BigBlueButton.logger.info("#{response.code} error") if response.code != 200
+# system("curl http://localhost:3000/caption/#{$meeting_id}/en-US")
 
 exit 0
-
-
-

@@ -7,12 +7,13 @@ class CaptionsController < ApplicationController
     # puts $redis.llen("foo")
   end
 
-  def caption_recording
+  # rubocop:disable Metrics/MethodLength
+  def caption_recording # rubocop:disable Metrics/AbcSize
     record_id = params[:record_id]
     caption_locale = params[:caption_locale]
     provider = params[:provider]
-    site = params["site"]
-    secret = params["secret"]
+    site = params['site']
+    checksum = params['checksum']
 
     puts "site -----------#{site}"
     puts "secret = #{secret}..................."
@@ -30,11 +31,14 @@ class CaptionsController < ApplicationController
 
     caption_job = { record_id: record_id,
                     caption_locale: caption_locale,
-                    provider: provider }
+                    provider: provider,
+                    site: site,
+                    checksum: checksum }
     # rubocop:disable Style/GlobalVars
     $redis.lpush('caption_recordings_job', caption_job.to_json)
     # rubocop:enable Style/GlobalVars
   end
+  # rubocop:enable Metrics/MethodLength
 
   def caption_status
     record_id = params[:record_id]
