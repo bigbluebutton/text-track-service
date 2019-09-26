@@ -16,7 +16,7 @@ class CaptionsController < ApplicationController
     checksum = params['checksum']
 
     puts "site -----------#{site}"
-    puts "secret = #{secret}..................."
+    puts "checksum = #{checksum}..................."
     # Need to find how to get the key from settings.yaml
     # props = YAML::load(File.open('settings.yaml'))
     # provider = props["default_provider"]
