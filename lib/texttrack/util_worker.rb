@@ -20,6 +20,8 @@ module TTS
       current_time = data['current_time']
       caption_locale = data['caption_locale']
       id = data['database_id']
+      bbb_url = data['bbb_url']
+      bbb_checksum = data['bbb_checksum']
 
       u = Caption.find(id)
       ActiveRecord::Base.connection_pool.with_connection do
@@ -58,14 +60,14 @@ module TTS
 
       data = {
         'record_id' => record_id.to_s,
-        'inbox' => data['inbox'],
-        'current_time' => data['current_time'],
-        'caption_locale' => data['caption_locale'],
-        'url' => 'url',
-        'checksum' => 'checksum'
+        'inbox' => inbox,
+        'current_time' => current_time,
+        'caption_locale' => caption_locale,
+        'bbb_url' => bbb_url,
+        'bbb_checksum' => bbb_checksum
       }
 
-      # TTS::CallbackWorker.perform_async()
+      TTS::CallbackWorker.perform_async(data.to_json)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
