@@ -27,29 +27,51 @@ require File.expand_path('../../../lib/recordandplayback', __FILE__)
 opts = Trollop::options do
   opt :meeting_id, "Meeting id to archive", :type => String
 end
-$meeting_id = opts[:meeting_id]
+meeting_id = opts[:meeting_id]
 
 logger = Logger.new("/var/log/bigbluebutton/post_publish.log", 'weekly' )
 logger.level = Logger::INFO
 BigBlueButton.logger = logger
 
-$published_files = "/var/bigbluebutton/published/presentation/#{$meeting_id}"
-$archived_files = "/var/bigbluebutton/recording/raw/#{$meeting_id}"
-$meeting_metadata = BigBlueButton::Events.get_meeting_metadata("/var/bigbluebutton/recording/raw/#{$meeting_id}/events.xml")
-$events_xml = "#{$archived_files}/events.xml"
-$audio_dir = "#{$archived_files}/audio"
+published_files = "/var/bigbluebutton/published/presentation/#{meeting_id}"
+archived_files = "/var/bigbluebutton/recording/raw/#{meeting_id}"
+meeting_metadata = BigBlueButton::Events.get_meeting_metadata("/var/bigbluebutton/recording/raw/#{meeting_id}/events.xml")
+events_xml = "#{archived_files}/events.xml"
+audio_dir = "#{archived_files}/audio"
 #$published_files_video = "/var/bigbluebutton/published/presentation/#{$meeting_id}/video"
 #$scripts = "/usr/local/bigbluebutton/core/scripts/post_publish"
 
 ############################CUSTOM SCRIPT STARTS HERE#######################################
 require "rest-client"
 require 'yaml'
+require "speech_to_text"
 #[{"localeName": "English (United States)", "locale": "en-US"}]
 
 #response = RestClient::Request.execute(
     #method: :get,
     #url:    "http://localhost:4000/caption/#{$meeting_id}/en-US",
 #)
+
+temp_storage = "/var/bigbluebutton/captions"
+
+final_dest_dir = "#{temp_storage}/#{meeting_id}"
+source_dir = "#{published_files}"
+audio_file = "#{meeting_id}.wav"
+unless Dir.exist?(final_dest_dir)
+  FileUtils.mkdir_p(final_dest_dir)
+  FileUtils.chmod('u=wrx,g=wrx,o=r', final_dest_dir)
+end
+
+unless File.exist?("#{final_dest_dir}/#{audio_file}")
+SpeechToText::Util.video_to_audio(
+  video_file_path: "#{published_files}/video",
+  video_name: 'webcams',
+  video_content_type: 'webm',
+  audio_file_path: final_dest_dir.to_s,
+  audio_name: meeting_id,
+  audio_content_type: "wav"
+)
+end
 
 bbb_props = YAML.load_file('../bigbluebutton.yml')
 
@@ -67,7 +89,7 @@ checksum = Digest::SHA1.hexdigest(request)
 request = RestClient::Request.new(
     method: :get, 
     url: "http://localhost:4000/caption/#{meeting_id}/en-US",
-    payload: { :file => File.open("/D/innovation/text-track-service/test2/test2.mp3", 'rb') }, 
+    payload: { :file => File.open("#{temp_storage}/#{meeting_id}/#{meeting_id}.wav", 'rb') }, 
     :params => {:bbb_url => "https://#{site}", :bbb_checksum => "#{checksum}", :kind => "#{kind}", :label => "#{label}"}
 )
 response = request.execute
