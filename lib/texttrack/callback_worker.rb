@@ -6,7 +6,7 @@ require 'faktory'
 module TTS
   class CallbackWorker # rubocop:disable Style/Documentation
     include Faktory::Job
-    faktory_options retry: 1, concurrency: 1
+    faktory_options retry: 0, concurrency: 1
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def perform(params)
@@ -19,15 +19,16 @@ module TTS
       bbb_checksum = data['bbb_checksum']
       kind = 'subtitles'
       label = 'English'
+      temp_dir = data['temp_dir']
 
       # prepare post data
-      uri = URI("https://#{bbb_url}/bigbluebutton/api/putRecordingTextTrack?recordID=#{record_id}&kind=#{kind}&lang=#{caption_locale}&label=#{label}&checksum=#{bbb_checksum}")
+      uri = URI("http://#{bbb_url}/bigbluebutton/api/putRecordingTextTrack?recordID=#{record_id}&kind=#{kind}&lang=#{caption_locale}&label=#{label}&checksum=#{bbb_checksum}")
       request = Net::HTTP::Post.new(uri)
-      form_data = [['file', File.open("#{inbox}/#{record_id}-#{current_time}-track.vtt")]] # or File.open() in case of local file
+      form_data = [['file', File.open("#{temp_dir}/#{record_id}-#{current_time}-track.vtt")]] # or File.open() in case of local file
       # form_data = [['file',File.open("#{inbox}/#{record_id}-#{current_time}-track.vtt") ]] # or File.open() in case of local file
 
       request.set_form form_data, 'multipart/form-data'
-      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http| # pay attention to use_ssl if you need it
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: false) do |http| # pay attention to use_ssl if you need it
         http.request(request)
       end
 

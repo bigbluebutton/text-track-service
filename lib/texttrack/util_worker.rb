@@ -46,14 +46,14 @@ module TTS
         u.update(status: "done with #{u.service}")
       end
 
-      FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
-                   inbox,
-                   verbose: true)
+      #FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
+                   #inbox,
+                   #verbose: true)
       # , :force => true)
 
-      FileUtils.mv("#{temp_dir}/#{temp_track_json}",
-                   inbox,
-                   verbose: true)
+      #FileUtils.mv("#{temp_dir}/#{temp_track_json}",
+                   #inbox,
+                   #verbose: true)
       # , :force => true)
 
       FileUtils.remove_dir(temp_dir.to_s)
@@ -65,6 +65,7 @@ module TTS
         'caption_locale' => caption_locale,
         'bbb_url' => bbb_url,
         'bbb_checksum' => bbb_checksum
+        'temp_dir' => temp_dir
       }
 
       TTS::CallbackWorker.perform_async(data.to_json)
