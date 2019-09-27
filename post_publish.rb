@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-# encoding: UTF-8
+# frozen_string_literal: true
 
 #
 # BigBlueButton open source conferencing system - http://www.bigbluebutton.org/
@@ -20,16 +20,17 @@
 # with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 #
 
-require "trollop"
+require 'trollop'
 
-require File.expand_path('../../../lib/recordandplayback', __FILE__)
+require File.expand_path('../../lib/recordandplayback', __dir__)
 
-opts = Trollop::options do
-  opt :meeting_id, "Meeting id to archive", :type => String
+opts = Trollop.options do
+  opt :meeting_id, 'Meeting id to archive', type: String
 end
+
 meeting_id = opts[:meeting_id]
 
-logger = Logger.new("/var/log/bigbluebutton/post_publish.log", 'weekly' )
+logger = Logger.new('/var/log/bigbluebutton/post_publish.log', 'weekly')
 logger.level = Logger::INFO
 BigBlueButton.logger = logger
 
@@ -38,8 +39,8 @@ archived_files = "/var/bigbluebutton/recording/raw/#{meeting_id}"
 meeting_metadata = BigBlueButton::Events.get_meeting_metadata("/var/bigbluebutton/recording/raw/#{meeting_id}/events.xml")
 events_xml = "#{archived_files}/events.xml"
 audio_dir = "#{archived_files}/audio"
-#$published_files_video = "/var/bigbluebutton/published/presentation/#{$meeting_id}/video"
-#$scripts = "/usr/local/bigbluebutton/core/scripts/post_publish"
+#published_files_video = "/var/bigbluebutton/published/presentation/#{$meeting_id}/video"
+#scripts = "/usr/local/bigbluebutton/core/scripts/post_publish"
 
 ############################CUSTOM SCRIPT STARTS HERE#######################################
 require "rest-client"
@@ -47,10 +48,11 @@ require 'yaml'
 require "speech_to_text"
 #[{"localeName": "English (United States)", "locale": "en-US"}]
 
-#response = RestClient::Request.execute(
-    #method: :get,
-    #url:    "http://localhost:4000/caption/#{$meeting_id}/en-US",
-#)
+
+# response = RestClient::Request.execute(
+# method: :get,
+# url:    "http://localhost:4000/caption/#{$meeting_id}/en-US",
+# )
 
 temp_storage = "/var/bigbluebutton/captions"
 
@@ -81,7 +83,7 @@ kind = "subtitles"
 lang = "en_US"
 label = "English"
 request = "putRecordingTextTrackrecordID=#{meeting_id}&kind=#{kind}&lang=#{lang}&label=#{label}"
-request = request + secret
+request += secret
 checksum = Digest::SHA1.hexdigest(request)
 
 #response = RestClient.get "http://localhost:4000/caption/#{meeting_id}/en-US", {:params => {:site => "https://#{site}", :checksum => "#{checksum}"}}
@@ -97,11 +99,5 @@ response = request.execute
 if(response.code != 200)
   BigBlueButton.logger.info("#{response.code} error")
 end
-#system("curl http://localhost:3000/caption/#{$meeting_id}/en-US")
-
-
 
 exit 0
-
-
-

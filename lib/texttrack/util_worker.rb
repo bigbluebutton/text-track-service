@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'connection_pool'
 require 'faktory'
 
@@ -5,12 +7,9 @@ module TTS
   class UtilWorker # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 5, concurrency: 1
-
-    # rubocop:disable Metrics/PerceivedComplexity
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
-    def perform(params) # rubocop:disable Metrics/CyclomaticComplexity
-
+    def perform(params)
       data = JSON.load params
       record_id = data['record_id']
       temp_dir = data['temp_dir']
@@ -21,6 +20,8 @@ module TTS
       current_time = data['current_time']
       caption_locale = data['caption_locale']
       id = data['database_id']
+      bbb_url = data['bbb_url']
+      bbb_checksum = data['bbb_checksum']
 
       u = Caption.find(id)
       ActiveRecord::Base.connection_pool.with_connection do
@@ -29,8 +30,8 @@ module TTS
       end
 
       SpeechToText::Util.write_to_webvtt(
-        vtt_file_path: "#{temp_dir}",
-        vtt_file_name: "#{temp_track_vtt}",
+        vtt_file_path: temp_dir.to_s,
+        vtt_file_name: temp_track_vtt.to_s,
         myarray: myarray
       )
 
@@ -57,9 +58,18 @@ module TTS
 
       FileUtils.remove_dir(temp_dir.to_s)
 
+      data = {
+        'record_id' => record_id.to_s,
+        'inbox' => inbox,
+        'current_time' => current_time,
+        'caption_locale' => caption_locale,
+        'bbb_url' => bbb_url,
+        'bbb_checksum' => bbb_checksum
+      }
+
+      TTS::CallbackWorker.perform_async(data.to_json)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/PerceivedComplexity
   end
 end

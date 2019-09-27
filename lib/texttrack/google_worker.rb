@@ -103,25 +103,27 @@ module TTS
       callback = SpeechToText::GoogleS2T.get_words(operation_name)
       myarray = SpeechToText::GoogleS2T.create_array_google(callback['results'])
       current_time = (Time.now.to_f * 1000).to_i
-      
+
       data = {
-        'record_id' => "#{params[:record_id]}",
+        'record_id' => (params[:record_id]).to_s,
         'temp_dir' => "#{params[:temp_storage]}/#{params[:record_id]}",
         'temp_track_vtt' => "#{params[:record_id]}-#{current_time}-track.vtt",
         'temp_track_json' => "#{params[:record_id]}-#{current_time}-track.json",
         'inbox' => "#{params[:captions_inbox_dir]}/inbox",
         'myarray' => myarray,
         'current_time' => current_time,
-        'caption_locale' => "#{params[:caption_locale]}",
-        'database_id' => "#{id}"
+        'caption_locale' => (params[:caption_locale]).to_s,
+        'database_id' => id.to_s,
+        'bbb_url' => params[:bbb_url],
+        'bbb_checksum' => params[:bbb_checksum]
       }
 
       TTS::UtilWorker.perform_async(data.to_json)
 
-    #  TTS::PlaybackWorker.perform_async(params.to_json,
-    #                                    temp_track_vtt,
-    #                                    temp_track_json,
-    #                                    inbox)
+      #  TTS::PlaybackWorker.perform_async(params.to_json,
+      #                                    temp_track_vtt,
+      #                                    temp_track_json,
+      #                                    inbox)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength

@@ -1,0 +1,40 @@
+# frozen_string_literal: true
+
+require 'connection_pool'
+require 'faktory'
+
+module TTS
+  class CallbackWorker # rubocop:disable Style/Documentation
+    include Faktory::Job
+    faktory_options retry: 1, concurrency: 1
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
+    def perform(params)
+      data = JSON.load params
+      record_id = data['record_id']
+      inbox = data['inbox']
+      caption_locale = data['caption_locale']
+      current_time = data['current_time']
+      bbb_url = data['bbb_url']
+      bbb_checksum = data['bbb_checksum']
+      kind = 'subtitles'
+      label = 'English'
+
+      # prepare post data
+      uri = URI("https://#{bbb_url}/bigbluebutton/api/putRecordingTextTrack?recordID=#{record_id}&kind=#{kind}&lang=#{caption_locale}&label=#{label}&checksum=#{bbb_checksum}")
+      request = Net::HTTP::Post.new(uri)
+      form_data = [['file', File.open("#{inbox}/#{record_id}-#{current_time}-track.vtt")]] # or File.open() in case of local file
+      # form_data = [['file',File.open("#{inbox}/#{record_id}-#{current_time}-track.vtt") ]] # or File.open() in case of local file
+
+      request.set_form form_data, 'multipart/form-data'
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http| # pay attention to use_ssl if you need it
+        http.request(request)
+      end
+
+      # print response
+      puts response.body.to_s
+    end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+  end
+end
