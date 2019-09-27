@@ -12,20 +12,20 @@ class CaptionsController < ApplicationController
     record_id = params[:record_id]
     caption_locale = params[:caption_locale]
     provider = params[:provider]
-    bbb_url = params['site']
-    bbb_checksum = params['checksum']
+    bbb_checksum = params[:bbb_checksum]
+    bbb_url = params[:bbb_url]
+    kind = params[:kind]
+    label = params[:label]
 
-    #bbb_url = 'ritz-tts3.freddixon.ca'
-    #kind = 'subtitles'
-    #label = 'English'
-    #record_id = '6e35e3b2778883f5db637d7a5dba0a427f692e91-1569435655142'
-    #secret = ''
-    #request = "putRecordingTextTrackrecordID=#{record_id}&kind=#{kind}&lang=#{caption_locale}&label=#{label}"
-    #request += secret
-    #bbb_checksum = Digest::SHA1.hexdigest(request)
+    Dir.chdir "#{Rails.root}/storage"
+    system("mkdir #{record_id}")
+    Dir.chdir "#{Rails.root}"
 
-    puts "inside controller site -----------#{bbb_url}"
-    puts "inside controller checksum = #{bbb_checksum}..................."
+    audio = params['file']
+    File.open("#{Rails.root}/storage/#{record_id}/audio.wav","wb") do |file|
+      file.write audio.read
+    end
+
     # Need to find how to get the key from settings.yaml
     # props = YAML::load(File.open('settings.yaml'))
     # provider = props["default_provider"]
@@ -42,7 +42,9 @@ class CaptionsController < ApplicationController
                     caption_locale: caption_locale,
                     provider: provider,
                     bbb_url: bbb_url,
-                    bbb_checksum: bbb_checksum }
+                    bbb_checksum: bbb_checksum,
+                    kind: kind,
+                    label: label }
     # rubocop:disable Style/GlobalVars
     $redis.lpush('caption_recordings_job', caption_job.to_json)
     # rubocop:enable Style/GlobalVars

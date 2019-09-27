@@ -28,9 +28,6 @@ module TTS
       provider_name = default_provider
       provider_name = params[:provider] unless params[:provider].nil?
 
-      puts "inside entry worker bbb_url -----------#{params[:bbb_url]}"
-      puts "inside entry worker bbb_checksum = #{params[:bbb_checksum]}..................."
-
       to_audio_params = { record_id: params[:record_id],
                           caption_locale: params[:caption_locale],
                           recordings_dir: recordings_dir,
@@ -38,7 +35,9 @@ module TTS
                           temp_storage: temp_storage,
                           playback_dir: playback_dir,
                           bbb_url: params[:bbb_url],
-                          bbb_checksum: params[:bbb_checksum]
+                          bbb_checksum: params[:bbb_checksum],
+                          kind: params[:kind],
+                          label: params[:label]
                          }
 
       provider = { name: provider_name }
