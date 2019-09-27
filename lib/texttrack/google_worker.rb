@@ -115,7 +115,9 @@ module TTS
         'caption_locale' => (params[:caption_locale]).to_s,
         'database_id' => id.to_s,
         'bbb_url' => params[:bbb_url],
-        'bbb_checksum' => params[:bbb_checksum]
+        'bbb_checksum' => params[:bbb_checksum],
+        'kind' => params[:kind],
+        'label' => params[:label]
       }
 
       TTS::UtilWorker.perform_async(data.to_json)

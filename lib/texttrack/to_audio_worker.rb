@@ -62,9 +62,9 @@ module TTS
 
       unless File.exist?("#{final_dest_dir}/#{audio_file}")
         SpeechToText::Util.video_to_audio(
-          video_file_path: "#{source_dir}/video",
-          video_name: 'webcams',
-          video_content_type: 'webm',
+          video_file_path: "#{Rails.root}/storage/#{params[:record_id]}",
+          video_name: 'audio',
+          video_content_type: 'wav',
           audio_file_path: final_dest_dir.to_s,
           audio_name: params[:record_id],
           audio_content_type: audio_type
