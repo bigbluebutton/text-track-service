@@ -15,4 +15,7 @@ test/
 info.json
 out.json
 *.vtt
+captions_test/*
+playback_test/*
+example.rb
 
