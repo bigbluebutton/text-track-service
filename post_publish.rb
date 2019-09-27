@@ -58,16 +58,20 @@ secret = bbb_props['shared_secret']
 kind = "subtitles"
 lang = "en_US"
 label = "English"
-
-#original_filename = "captions_en-US.vtt"
-#temp_filename = "#{recordID}-#{current_time}-track.txt"
 request = "putRecordingTextTrackrecordID=#{meeting_id}&kind=#{kind}&lang=#{lang}&label=#{label}"
 request = request + secret
 checksum = Digest::SHA1.hexdigest(request)
 
-RestClient.get "http://localhost:4000/caption/#{meeting_id}/en-US", {:params => {:site => "https://#{site}", :checksum => "#{checksum}"}}
+#response = RestClient.get "http://localhost:4000/caption/#{meeting_id}/en-US", {:params => {:site => "https://#{site}", :checksum => "#{checksum}"}}
 
-#response = RestClient.get 'http://localhost:3000/caption/#{$meeting_id}/en-US'
+request = RestClient::Request.new(
+    method: :get, 
+    url: "http://localhost:4000/caption/#{meeting_id}/en-US",
+    payload: { :file => File.open("/D/innovation/text-track-service/test2/test2.mp3", 'rb') }, 
+    :params => {:bbb_url => "https://#{site}", :bbb_checksum => "#{checksum}", :kind => "#{kind}", :label => "#{label}"}
+)
+response = request.execute
+
 if(response.code != 200)
   BigBlueButton.logger.info("#{response.code} error")
 end
