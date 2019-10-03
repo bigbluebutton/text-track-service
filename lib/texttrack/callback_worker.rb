@@ -2,6 +2,9 @@
 
 require 'connection_pool'
 require 'faktory'
+require 'net/http'
+require 'net/http/multipart'
+require 'httparty'
 
 module TTS
   class CallbackWorker # rubocop:disable Style/Documentation

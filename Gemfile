@@ -3,13 +3,15 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.6.3'
+ruby '2.5.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'activerecord'
 gem 'faktory_worker_ruby'
 gem 'google-cloud-speech'
 gem 'google-cloud-storage'
+gem 'httparty'
+
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
 

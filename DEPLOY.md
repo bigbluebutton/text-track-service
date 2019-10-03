@@ -132,7 +132,7 @@ git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 sudo apt-get install -y libssl-dev libreadline-dev
 rbenv install 2.5.3
 sudo chown -R texttrack.texttrack ~/.rbenv
-rbenv local 2.5.3 ######################### rbenv global 2.5.3
+rbenv local 2.5.3 ######################### rbenv rbenv global 2.5.3
 ruby -v
 
 gem install bundler
