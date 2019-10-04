@@ -26,13 +26,13 @@ module TTS
         u.update(status: 'finished audio conversion')
       end
 
-      temp_dir = "#{params[:storage_dir]}/#{params[:record_id]}"
+      storage_dir = "#{params[:storage_dir]}/#{params[:record_id]}"
 
       job_name = rand(36**8).to_s(36)
       job_id = SpeechToText::MozillaDeepspeechS2T.create_job(
-        "#{temp_dir}/audio.#{audio_type}",
+        "#{storage_dir}/audio.#{audio_type}",
         params[:provider][:auth_file_path],
-        "#{temp_dir}/#{job_name}_jobdetails.json"
+        "#{storage_dir}/#{job_name}_jobdetails.json"
       )
 
       ActiveRecord::Base.connection_pool.with_connection do
