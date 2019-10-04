@@ -72,7 +72,7 @@ Create temp folder for storage at /var/texttrackservice and give permissions
 cd /var
 sudo mkdir texttrackservice
 sudo chown -R texttrack:texttrack /var/texttrackservice (change ownership to texttrackservice)
-sudo chmod g+w /var/texttrackservice/ (give group permissions) ###################
+sudo chmod g+w /var/texttrackservice/ (give group permissions)
 ```
 
 # Install text-track-service rails app

@@ -64,7 +64,7 @@ module TTS
         'current_time' => current_time,
         'caption_locale' => caption_locale,
         'bbb_url' => bbb_url,
-        'bbb_checksum' => bbb_checksum
+        'bbb_checksum' => bbb_checksum,
         'temp_dir' => temp_dir
       }
 

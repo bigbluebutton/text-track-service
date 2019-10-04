@@ -90,7 +90,7 @@ checksum = Digest::SHA1.hexdigest(request)
 request = RestClient::Request.new(
     method: :get, 
     url: "http://localhost:4000/caption/#{meeting_id}/en-US",
-    payload: { :file => File.open("#{temp_storage}/#{meeting_id}/audio.wav", 'rb'), :bbb_url => "#{site}", :bbb_checksum => "#{checksum}", :kind => "#{kind}", :label => "#{label}" }
+    payload: { :file => File.open("#{temp_storage}/#{meeting_id}/audio.wav", 'rb'), :bbb_url => "http://#{site}", :bbb_checksum => "#{checksum}", :kind => "#{kind}", :label => "#{label}" }
 )
 response = request.execute
 
