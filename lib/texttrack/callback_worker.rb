@@ -12,22 +12,22 @@ module TTS
     def perform(params)
       data = JSON.load params
       record_id = data['record_id']
-      inbox = data['inbox']
+      storage_dir = data['storage_dir']
       caption_locale = data['caption_locale']
       current_time = data['current_time']
       bbb_url = data['bbb_url']
       bbb_checksum = data['bbb_checksum']
       kind = 'subtitles'
       label = 'English'
+      caption_locale = caption_locale.sub('-', '_')
+
 
       # prepare post data
-      uri = URI("https://#{bbb_url}/bigbluebutton/api/putRecordingTextTrack?recordID=#{record_id}&kind=#{kind}&lang=#{caption_locale}&label=#{label}&checksum=#{bbb_checksum}")
+      uri = URI("#{bbb_url}/bigbluebutton/api/putRecordingTextTrack?recordID=#{record_id}&kind=#{kind}&lang=#{caption_locale}&label=#{label}&checksum=#{bbb_checksum}")
       request = Net::HTTP::Post.new(uri)
-      form_data = [['file', File.open("#{inbox}/#{record_id}-#{current_time}-track.vtt")]] # or File.open() in case of local file
-      # form_data = [['file',File.open("#{inbox}/#{record_id}-#{current_time}-track.vtt") ]] # or File.open() in case of local file
-
+      form_data = [['file', File.open("#{storage_dir}/#{record_id}-#{current_time}-track.vtt")]] # or File.open() in case of local file
       request.set_form form_data, 'multipart/form-data'
-      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http| # pay attention to use_ssl if you need it
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: false) do |http| # pay attention to use_ssl if you need it
         http.request(request)
       end
 

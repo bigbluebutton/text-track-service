@@ -12,10 +12,9 @@ module TTS
     def perform(params)
       data = JSON.load params
       record_id = data['record_id']
-      temp_dir = data['temp_dir']
+      storage_dir = data['storage_dir']
       temp_track_vtt = data['temp_track_vtt']
       temp_track_json = data['temp_track_json']
-      inbox = data['inbox']
       myarray = data['myarray']
       current_time = data['current_time']
       caption_locale = data['caption_locale']
@@ -30,13 +29,13 @@ module TTS
       end
 
       SpeechToText::Util.write_to_webvtt(
-        vtt_file_path: temp_dir.to_s,
+        vtt_file_path: storage_dir.to_s,
         vtt_file_name: temp_track_vtt.to_s,
         myarray: myarray
       )
 
       SpeechToText::Util.recording_json(
-        file_path: temp_dir.to_s,
+        file_path: storage_dir.to_s,
         record_id: record_id,
         timestamp: current_time,
         language: data[:caption_locale]
@@ -46,21 +45,9 @@ module TTS
         u.update(status: "done with #{u.service}")
       end
 
-      FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
-                   inbox,
-                   verbose: true)
-      # , :force => true)
-
-      FileUtils.mv("#{temp_dir}/#{temp_track_json}",
-                   inbox,
-                   verbose: true)
-      # , :force => true)
-
-      FileUtils.remove_dir(temp_dir.to_s)
-
       data = {
         'record_id' => record_id.to_s,
-        'inbox' => inbox,
+        'storage_dir' => storage_dir,
         'current_time' => current_time,
         'caption_locale' => caption_locale,
         'bbb_url' => bbb_url,

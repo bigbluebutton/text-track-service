@@ -17,12 +17,15 @@ class CaptionsController < ApplicationController
     kind = params[:kind]
     label = params[:label]
 
-    Dir.chdir "#{Rails.root}/storage"
-    system("mkdir #{record_id}")
-    Dir.chdir "#{Rails.root}"
+    props = YAML.load_file('settings.yaml')
+    storage_dir = props['storage_dir']
+    record_dir = "#{storage_dir}/#{record_id}"
+    unless Dir.exist?(record_dir)
+      FileUtils.mkdir_p(record_dir)
+    end
 
     audio = params['file']
-    File.open("#{Rails.root}/storage/#{record_id}/audio.wav","wb") do |file|
+    File.open("#{record_dir}/audio_temp.wav","wb") do |file|
       file.write audio.read
     end
 

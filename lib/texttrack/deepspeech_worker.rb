@@ -26,11 +26,11 @@ module TTS
         u.update(status: 'finished audio conversion')
       end
 
-      temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
+      temp_dir = "#{params[:storage_dir]}/#{params[:record_id]}"
 
       job_name = rand(36**8).to_s(36)
       job_id = SpeechToText::MozillaDeepspeechS2T.create_job(
-        "#{temp_dir}/#{params[:record_id]}.#{audio_type}",
+        "#{temp_dir}/audio.#{audio_type}",
         params[:provider][:auth_file_path],
         "#{temp_dir}/#{job_name}_jobdetails.json"
       )
@@ -96,10 +96,9 @@ module TTS
 
       data = {
         'record_id' => (params[:record_id]).to_s,
-        'temp_dir' => "#{params[:temp_storage]}/#{params[:record_id]}",
+        'storage_dir' => "#{params[:storage_dir]}/#{params[:record_id]}",
         'temp_track_vtt' => "#{params[:record_id]}-#{current_time}-track.vtt",
         'temp_track_json' => "#{params[:record_id]}-#{current_time}-track.json",
-        'inbox' => "#{params[:captions_inbox_dir]}/inbox",
         'myarray' => myarray,
         'current_time' => current_time,
         'caption_locale' => (params[:caption_locale]).to_s,
