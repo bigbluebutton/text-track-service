@@ -2,11 +2,12 @@
 
 require 'connection_pool'
 require 'faktory'
+require 'httparty'
 
 module TTS
   class CallbackWorker # rubocop:disable Style/Documentation
     include Faktory::Job
-    faktory_options retry: 1, concurrency: 1
+    faktory_options retry: 0, concurrency: 1
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def perform(params)

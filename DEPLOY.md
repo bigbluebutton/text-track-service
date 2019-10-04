@@ -72,7 +72,7 @@ Create temp folder for storage at /var/texttrackservice and give permissions
 cd /var
 sudo mkdir texttrackservice
 sudo chown -R texttrack:texttrack /var/texttrackservice (change ownership to texttrackservice)
-sudo chmod g+w /var/texttrackservice/ (give group permissions) ###################
+sudo chmod g+w /var/texttrackservice/ (give group permissions)
 ```
 
 # Install text-track-service rails app
@@ -132,7 +132,7 @@ git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 sudo apt-get install -y libssl-dev libreadline-dev
 rbenv install 2.5.3
 sudo chown -R texttrack.texttrack ~/.rbenv
-rbenv local 2.5.3 ######################### rbenv global 2.5.3
+rbenv local 2.5.3 ######################### rbenv rbenv global 2.5.3
 ruby -v
 
 gem install bundler

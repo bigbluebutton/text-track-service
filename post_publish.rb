@@ -57,8 +57,7 @@ require "speech_to_text"
 temp_storage = "/var/bigbluebutton/captions"
 
 final_dest_dir = "#{temp_storage}/#{meeting_id}"
-source_dir = "#{published_files}"
-audio_file = "#{meeting_id}.wav"
+audio_file = "audio.wav"
 unless Dir.exist?(final_dest_dir)
   FileUtils.mkdir_p(final_dest_dir)
   FileUtils.chmod('u=wrx,g=wrx,o=r', final_dest_dir)
@@ -70,7 +69,7 @@ SpeechToText::Util.video_to_audio(
   video_name: 'webcams',
   video_content_type: 'webm',
   audio_file_path: final_dest_dir.to_s,
-  audio_name: meeting_id,
+  audio_name: audio,
   audio_content_type: "wav"
 )
 end
@@ -91,8 +90,7 @@ checksum = Digest::SHA1.hexdigest(request)
 request = RestClient::Request.new(
     method: :get, 
     url: "http://localhost:4000/caption/#{meeting_id}/en-US",
-    payload: { :file => File.open("#{temp_storage}/#{meeting_id}/#{meeting_id}.wav", 'rb') }, 
-    :params => {:bbb_url => "https://#{site}", :bbb_checksum => "#{checksum}", :kind => "#{kind}", :label => "#{label}"}
+    payload: { :file => File.open("#{temp_storage}/#{meeting_id}/audio.wav", 'rb'), :bbb_url => "http://#{site}", :bbb_checksum => "#{checksum}", :kind => "#{kind}", :label => "#{label}" }
 )
 response = request.execute
 

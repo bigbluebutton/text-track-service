@@ -10,6 +10,8 @@ gem 'activerecord'
 gem 'faktory_worker_ruby'
 gem 'google-cloud-speech'
 gem 'google-cloud-storage'
+gem 'httparty'
+
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
 
