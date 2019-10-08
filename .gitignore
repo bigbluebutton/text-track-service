@@ -20,3 +20,4 @@ playback_test/*
 example.rb
 storage/*
 test.rb
+development/*
