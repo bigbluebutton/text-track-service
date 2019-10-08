@@ -34,6 +34,7 @@ module TTS
 
       # print response
       puts response.body.to_s
+      File.delete("#{storage_dir}/audio_temp.wav")
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength

@@ -7,6 +7,8 @@ require 'faktory'
 require 'securerandom'
 require 'speech_to_text'
 require 'sqlite3'
+require 'json'
+
 rails_environment_path =
   File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
@@ -29,14 +31,14 @@ module TTS
       # TODO
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
-      temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
+      storage_dir = "#{params[:storage_dir]}/#{params[:record_id]}"
 
       job_name = rand(36**8).to_s(36)
       job_id = SpeechToText::ThreePlaymediaS2T.create_job(
         params[:provider][:auth_file_path],
-        "#{temp_dir}/#{params[:record_id]}.#{audio_type}",
+        "#{storage_dir}/audio.#{audio_type}",
         job_name,
-        "#{temp_dir}/job_file.json"
+        "#{storage_dir}/job_file.json"
       )
 
       ActiveRecord::Base.connection_pool.with_connection do
@@ -110,12 +112,12 @@ module TTS
           params[:provider][:auth_file_path],
           139,
           transcript_id,
-          "#{params[:temp_storage]}/#{params[:record_id]}",
+          "#{params[:storage_dir]}/#{params[:record_id]}",
           "#{params[:record_id]}-#{current_time}-track.vtt"
         )
 
         SpeechToText::Util.recording_json(
-          file_path: "#{params[:temp_storage]}/#{params[:record_id]}",
+          file_path: "#{params[:storage_dir]}/#{params[:record_id]}",
           record_id: params[:record_id],
           timestamp: current_time,
           language: params[:caption_locale]
@@ -127,30 +129,16 @@ module TTS
           u.update(status: "done with #{u.service}")
         end
 
-        temp_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
-        temp_track_vtt = "#{params[:record_id]}-#{current_time}-track.vtt"
-        temp_track_json = "#{params[:record_id]}-#{current_time}-track.json"
-        inbox = "#{params[:captions_inbox_dir]}/inbox"
+        data = {
+          'record_id' => params[:record_id].to_s,
+          'storage_dir' => "#{params[:storage_dir]}/#{params[:record_id]}",
+          'current_time' => current_time,
+          'caption_locale' => (params[:caption_locale]).to_s,
+          'bbb_url' => params[:bbb_url],
+          'bbb_checksum' => params[:bbb_checksum]
+        }
 
-        File.delete("#{temp_dir}/job_file.json")
-
-        FileUtils.mv("#{temp_dir}/#{temp_track_vtt}",
-                     inbox,
-                     verbose: true)
-        # , :force => true)
-
-        FileUtils.mv("#{temp_dir}/#{temp_track_json}",
-                     inbox,
-                     verbose: true)
-        # , :force => true)
-
-        FileUtils.remove_dir(temp_dir.to_s)
-
-        TTS::PlaybackWorker.perform_async(params.to_json,
-                                          temp_track_vtt,
-                                          temp_track_json,
-                                          inbox)
-
+        TTS::CallbackWorker.perform_async(data.to_json)
       end
     end
     # rubocop:enable Metrics/AbcSize
