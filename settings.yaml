@@ -17,26 +17,5 @@ playback_jobs_list_key: "bbb_playback:playback_job"
 
 default_provider: "deepspeech"
 
-# recording_dir: /path/to/recordings/dir/
-#recordings_dir: "/var/bigbluebutton/published/presentation"
-
-#local_test_dir
-recordings_dir: "/D/innovation/text-track-service"
-
-#removed /inbox
-#captions_inbox_dir: "/var/bigbluebutton/captions"
-
-#local_test_inbox
-captions_inbox_dir: "/D/innovation/text-track-service/captions_test"
-
-#temp_storage_dir
-#temp_storage: "/var/texttrackservice"
-
-#local_storage_dir
-temp_storage: "/D/innovation/text-track-service/captions_test"
-
-#playback_dir
-#playback_dir: "/var/bigbluebutton/published/presentation"
-
-#local_playback_dir
-playback_dir: "/D/innovation/text-track-service/captions_test"
+#storage_dir: "/D/innovation/text-track-service/captions_test"
+storage_dir: "/var/texttrackservice"

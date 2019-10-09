@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-# encoding: UTF-8
+# frozen_string_literal: true
 
 #
 # BigBlueButton open source conferencing system - http://www.bigbluebutton.org/
@@ -20,36 +20,59 @@
 # with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 #
 
-require "trollop"
+require 'trollop'
 
-require File.expand_path('../../../lib/recordandplayback', __FILE__)
+require File.expand_path('../../lib/recordandplayback', __dir__)
 
-opts = Trollop::options do
-  opt :meeting_id, "Meeting id to archive", :type => String
+opts = Trollop.options do
+  opt :meeting_id, 'Meeting id to archive', type: String
 end
-$meeting_id = opts[:meeting_id]
 
-logger = Logger.new("/var/log/bigbluebutton/post_publish.log", 'weekly' )
+meeting_id = opts[:meeting_id]
+
+logger = Logger.new('/var/log/bigbluebutton/post_publish.log', 'weekly')
 logger.level = Logger::INFO
 BigBlueButton.logger = logger
 
-$published_files = "/var/bigbluebutton/published/presentation/#{$meeting_id}"
-$archived_files = "/var/bigbluebutton/recording/raw/#{$meeting_id}"
-$meeting_metadata = BigBlueButton::Events.get_meeting_metadata("/var/bigbluebutton/recording/raw/#{$meeting_id}/events.xml")
-$events_xml = "#{$archived_files}/events.xml"
-$audio_dir = "#{$archived_files}/audio"
-#$published_files_video = "/var/bigbluebutton/published/presentation/#{$meeting_id}/video"
-#$scripts = "/usr/local/bigbluebutton/core/scripts/post_publish"
+published_files = "/var/bigbluebutton/published/presentation/#{meeting_id}"
+archived_files = "/var/bigbluebutton/recording/raw/#{meeting_id}"
+meeting_metadata = BigBlueButton::Events.get_meeting_metadata("/var/bigbluebutton/recording/raw/#{meeting_id}/events.xml")
+events_xml = "#{archived_files}/events.xml"
+audio_dir = "#{archived_files}/audio"
+#published_files_video = "/var/bigbluebutton/published/presentation/#{$meeting_id}/video"
+#scripts = "/usr/local/bigbluebutton/core/scripts/post_publish"
 
 ############################CUSTOM SCRIPT STARTS HERE#######################################
 require "rest-client"
 require 'yaml'
+require "speech_to_text"
 #[{"localeName": "English (United States)", "locale": "en-US"}]
 
-#response = RestClient::Request.execute(
-    #method: :get,
-    #url:    "http://localhost:4000/caption/#{$meeting_id}/en-US",
-#)
+
+# response = RestClient::Request.execute(
+# method: :get,
+# url:    "http://localhost:4000/caption/#{$meeting_id}/en-US",
+# )
+
+temp_storage = "/var/bigbluebutton/captions"
+
+final_dest_dir = "#{temp_storage}/#{meeting_id}"
+audio_file = "#{meeting_id}.wav"
+unless Dir.exist?(final_dest_dir)
+  FileUtils.mkdir_p(final_dest_dir)
+  FileUtils.chmod('u=wrx,g=wrx,o=r', final_dest_dir)
+end
+
+unless File.exist?("#{final_dest_dir}/#{audio_file}")
+SpeechToText::Util.video_to_audio(
+  video_file_path: "#{published_files}/video",
+  video_name: 'webcams',
+  video_content_type: 'webm',
+  audio_file_path: final_dest_dir.to_s,
+  audio_name: audio,
+  audio_content_type: "wav"
+)
+end
 
 bbb_props = YAML.load_file('../bigbluebutton.yml')
 
@@ -58,24 +81,21 @@ secret = bbb_props['shared_secret']
 kind = "subtitles"
 lang = "en_US"
 label = "English"
-
-#original_filename = "captions_en-US.vtt"
-#temp_filename = "#{recordID}-#{current_time}-track.txt"
 request = "putRecordingTextTrackrecordID=#{meeting_id}&kind=#{kind}&lang=#{lang}&label=#{label}"
-request = request + secret
+request += secret
 checksum = Digest::SHA1.hexdigest(request)
 
-RestClient.get "http://localhost:4000/caption/#{meeting_id}/en-US", {:params => {:site => "https://#{site}", :checksum => "#{checksum}"}}
+#response = RestClient.get "http://localhost:4000/caption/#{meeting_id}/en-US", {:params => {:site => "https://#{site}", :checksum => "#{checksum}"}}
 
-#response = RestClient.get 'http://localhost:3000/caption/#{$meeting_id}/en-US'
+request = RestClient::Request.new(
+    method: :get, 
+    url: "http://localhost:4000/caption/#{meeting_id}/en-US",
+    payload: { :file => File.open("#{temp_storage}/#{meeting_id}/audio.wav", 'rb'), :bbb_url => "http://#{site}", :bbb_checksum => "#{checksum}", :kind => "#{kind}", :label => "#{label}" }
+)
+response = request.execute
+
 if(response.code != 200)
   BigBlueButton.logger.info("#{response.code} error")
 end
-#system("curl http://localhost:3000/caption/#{$meeting_id}/en-US")
-
-
 
 exit 0
-
-
-

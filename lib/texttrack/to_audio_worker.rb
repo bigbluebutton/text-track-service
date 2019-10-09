@@ -52,9 +52,8 @@ module TTS
 
       audio_type = audio_type_hash[params[:provider][:name]]
 
-      final_dest_dir = "#{params[:temp_storage]}/#{params[:record_id]}"
-      source_dir = "#{params[:recordings_dir]}/#{params[:record_id]}"
-      audio_file = "#{params[:record_id]}.#{audio_type}"
+      final_dest_dir = "#{params[:storage_dir]}/#{params[:record_id]}"
+      audio_file = "audio.#{audio_type}"
       unless Dir.exist?(final_dest_dir)
         FileUtils.mkdir_p(final_dest_dir)
         FileUtils.chmod('u=wrx,g=wrx,o=r', final_dest_dir)
@@ -62,11 +61,11 @@ module TTS
 
       unless File.exist?("#{final_dest_dir}/#{audio_file}")
         SpeechToText::Util.video_to_audio(
-          video_file_path: "#{source_dir}/video",
-          video_name: 'webcams',
-          video_content_type: 'webm',
+          video_file_path: final_dest_dir.to_s,
+          video_name: 'audio_temp',
+          video_content_type: 'wav',
           audio_file_path: final_dest_dir.to_s,
-          audio_name: params[:record_id],
+          audio_name: 'audio',
           audio_content_type: audio_type
         )
       end
