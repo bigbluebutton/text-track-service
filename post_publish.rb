@@ -57,7 +57,7 @@ require "speech_to_text"
 temp_storage = "/var/bigbluebutton/captions"
 
 final_dest_dir = "#{temp_storage}/#{meeting_id}"
-audio_file = "audio.wav"
+audio_file = "#{meeting_id}.wav"
 unless Dir.exist?(final_dest_dir)
   FileUtils.mkdir_p(final_dest_dir)
   FileUtils.chmod('u=wrx,g=wrx,o=r', final_dest_dir)
