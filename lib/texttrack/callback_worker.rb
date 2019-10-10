@@ -18,8 +18,8 @@ module TTS
       current_time = data['current_time']
       bbb_url = data['bbb_url']
       bbb_checksum = data['bbb_checksum']
-      kind = 'subtitles'
-      label = 'English'
+      kind = data['kind']
+      label = data['label']
       caption_locale = caption_locale.sub('-', '_')
 
 
@@ -34,7 +34,6 @@ module TTS
 
       # print response
       puts response.body.to_s
-      File.delete("#{storage_dir}/audio_temp.wav")
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
