@@ -11,6 +11,7 @@ log_to_file: false
 #
 redis_list_namespace: "bbb_texttrack_service"
 redis_jobs_list_key: "bbb_texttrack_service:caption_recordings_job"
+redis_edit_jobs_list_key: "bbb_texttrack_service:caption_editing_job"
 
 playback_list_namespace: "bbb_playback"
 playback_jobs_list_key: "bbb_playback:playback_job"
@@ -18,4 +19,5 @@ playback_jobs_list_key: "bbb_playback:playback_job"
 default_provider: "deepspeech"
 
 #storage_dir: "/D/innovation/text-track-service/captions_test"
+#storage_dir: "/home/ubuntu/tts/text-track-service/storage"
 storage_dir: "/var/texttrackservice"

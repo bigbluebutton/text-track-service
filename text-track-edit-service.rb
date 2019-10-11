@@ -21,15 +21,15 @@ redis = if ENV['REDIS_URL'].nil?
           Redis.new(url: ENV['REDIS_URL'])
         end
 
-RECORDINGS_JOB_LIST_KEY = props['redis_jobs_list_key']
-puts RECORDINGS_JOB_LIST_KEY
-num_entries = redis.llen(RECORDINGS_JOB_LIST_KEY)
-puts "num_entries  = #{num_entries}"
+RECORDINGS_EDIT_JOB_LIST_KEY = props['redis_edit_jobs_list_key']
+puts RECORDINGS_EDIT_JOB_LIST_KEY
+num_entries = redis.llen(RECORDINGS_EDIT_JOB_LIST_KEY)
+puts "num_edit_entries  = #{num_entries}"
 loop do
   # for i in 1..num_entries do
-  _list, element = redis.blpop(RECORDINGS_JOB_LIST_KEY)
+  _list, element = redis.blpop(RECORDINGS_EDIT_JOB_LIST_KEY)
   TextTrack.logger.info("Processing analytics for recording #{element}")
   job_entry = JSON.parse(element)
   puts job_entry
-  TTS::EntryWorker.perform_async(job_entry.to_json)
+  TTS::CallbackWorker.perform_async(job_entry.to_json)
 end
