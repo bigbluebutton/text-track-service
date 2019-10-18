@@ -18,6 +18,5 @@ playback_jobs_list_key: "bbb_playback:playback_job"
 
 default_provider: "deepspeech"
 
-#storage_dir: "/D/innovation/text-track-service/captions_test"
-#storage_dir: "/home/ubuntu/tts/text-track-service/storage"
-storage_dir: "/var/texttrackservice"
+storage_dir: "/D/innovation/text-track-service/captions_test"
+#storage_dir: "/var/texttrackservice"
