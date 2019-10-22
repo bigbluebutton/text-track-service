@@ -9,7 +9,7 @@ services:
   redis_db:
     image: 'redis:4.0-alpine'
     container_name: redis_db
-    command: redis-server --requirepass yourpassword
+    #command: redis-server --requirepass yourpassword
     volumes:
       - 'redis:/data'
       
