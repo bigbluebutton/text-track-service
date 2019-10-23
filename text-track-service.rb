@@ -4,7 +4,7 @@ require 'logger'
 require './lib/texttrack'
 require 'speech_to_text'
 
-props = YAML.load_file('settings.yaml')
+props = YAML.load_file('./settings.yaml')
 
 if props['log_to_file']
   log_dir = '/var/log/text-track-service'
@@ -14,7 +14,7 @@ else
 end
 
 TextTrack.logger = logger
-ENV['REDIS_URL'] = "redis://redis_db:6379"
+#ENV['REDIS_URL'] = "redis://redis_db:6379"
 redis = if ENV['REDIS_URL'].nil?
           Redis.new
         else

@@ -16,40 +16,47 @@ services:
   faktory:
     image: contribsys/faktory
     container_name: faktory
-    command: ./faktory -b :7419 -w :7420 -l debug
+    command: /faktory -b :7419 -w :7420 #-l debug
     ports:
       - "7419:7419"
       - "7420:7420"
     volumes:
       - 'faktory:/data'
       
-  website:
+  website: &web_base
     #container_name: website
+    stdin_open: true
+    tty: true
     build: .
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
       - .:/text-track-service
     ports:
       - "3000:3000"
-    #environment:
-      #FAKTORY_URL: tcp://faktory:7419
+    environment:
+      PORT: "3000"
+      PGHOST: "db"
+      PGUSER: "postgres"
+      PGDBNAME: "text_track_db"
+      FAKTORY_URL: tcp://faktory:7419
     depends_on:
       - db
       
     
   service:
     build: .
-    command: bash -c "./development/start-service.sh"
+    command: './development/start-service.sh'
     depends_on:
       - redis_db
       
   worker:
-    build: .
-    command: bash -c "./development/start-worker.sh"
+    <<: *web_base
+    command: bundle exec faktory-worker
+    ports: []
     depends_on:
       - website
       
 volumes:
   redis:
-  postgres:
+  db:
   faktory:
