@@ -9,7 +9,7 @@ services:
   redis_db:
     image: 'redis:4.0-alpine'
     container_name: redis_db
-    command: redis-server --requirepass yourpassword
+    command: redis-server #--requirepass yourpassword
     volumes:
       - 'redis:/data'
       
@@ -20,6 +20,8 @@ services:
     ports:
       - "7419:7419"
       - "7420:7420"
+    volumes:
+      - 'faktory:/data'
       
   website:
     #container_name: website
@@ -29,9 +31,25 @@ services:
       - .:/text-track-service
     ports:
       - "3000:3000"
+    #environment:
+      #FAKTORY_URL: tcp://faktory:7419
     depends_on:
       - db
+      
+    
+  service:
+    build: .
+    command: bash -c "./development/start-service.sh"
+    depends_on:
+      - redis_db
+      
+  worker:
+    build: .
+    command: bash -c "./development/start-worker.sh"
+    depends_on:
+      - website
       
 volumes:
   redis:
   postgres:
+  faktory:
