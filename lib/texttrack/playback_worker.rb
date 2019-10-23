@@ -6,7 +6,7 @@ require 'connection_pool'
 require 'faktory'
 require 'securerandom'
 require 'speech_to_text'
-#require 'sqlite3'
+
 rails_environment_path =
   File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
 require rails_environment_path
