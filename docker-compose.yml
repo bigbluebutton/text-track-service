@@ -10,28 +10,48 @@ services:
     image: 'redis:4.0-alpine'
     container_name: redis_db
     #command: redis-server --requirepass yourpassword
+    command: redis-server
     volumes:
       - 'redis:/data'
-      
+
   faktory:
-    image: contribsys/faktory
-    container_name: faktory
-    command: ./faktory -b :7419 -w :7420 -l debug
+    image: contribsys/faktory:latest
+    command: /faktory -b :7419 -w :7420
     ports:
       - "7419:7419"
       - "7420:7420"
-      
-  website:
+
+  service:
+    build: .
+    command: './development/start-service.sh'
+    depends_on: 
+      - redis_db
+
+  website: &web_base
+    stdin_open: true
+    tty: true
     #container_name: website
     build: .
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
-      - .:/myapp
+      - .:/text-track-service
     ports:
       - "3000:3000"
+    environment:
+      PORT: "3000"
+      PGHOST: "db"
+      PGUSER: "postgres"
+      PGDBNAME: "yourdbname"
+      FAKTORY_URL: tcp://faktory:7419
     depends_on:
       - db
+
+  worker:
+    <<: *web_base
+    command: bundle exec faktory-worker && './development/start-worker.sh'
+    ports: []
+    depends_on:
+      - website
       
 volumes:
   redis:
-  postgres:

@@ -14,7 +14,7 @@ else
 end
 
 TextTrack.logger = logger
-
+ENV['REDIS_URL'] = 'redis://redis_db:6379'
 redis = if ENV['REDIS_URL'].nil?
           Redis.new
         else
