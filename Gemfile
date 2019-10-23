@@ -27,6 +27,7 @@ gem 'rubocop', require: false
 
 gem 'sequel'
 gem 'speech_to_text'
+
 # Use sqlite3 as the database for Active Record
 #gem 'sqlite3'
 gem 'table_print'

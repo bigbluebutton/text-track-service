@@ -3,7 +3,7 @@
 require 'logger'
 require './lib/texttrack'
 
-props = YAML.load_file('settings.yaml')
+props = YAML.load_file('./settings.yaml')
 
 if props['log_to_file']
   log_dir = '/var/log/text-track-service'

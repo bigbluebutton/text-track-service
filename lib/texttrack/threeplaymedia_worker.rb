@@ -6,7 +6,6 @@ require 'connection_pool'
 require 'faktory'
 require 'securerandom'
 require 'speech_to_text'
-
 require 'json'
 
 rails_environment_path =
