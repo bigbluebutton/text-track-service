@@ -14,11 +14,8 @@ else
 end
 
 TextTrack.logger = logger
-<<<<<<< HEAD
-#ENV['REDIS_URL'] = "redis://redis_db:6379"
-=======
 ENV['REDIS_URL'] = 'redis://redis_db:6379'
->>>>>>> 169165c0771fca28e05876c4015f36bd286e6b61
+
 redis = if ENV['REDIS_URL'].nil?
           Redis.new
         else
@@ -35,5 +32,6 @@ loop do
   TextTrack.logger.info("Processing analytics for recording #{element}")
   job_entry = JSON.parse(element)
   puts job_entry
+    
   TTS::EntryWorker.perform_async(job_entry.to_json)
 end

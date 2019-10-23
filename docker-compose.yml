@@ -1,3 +1,4 @@
+version: '3'
 services:
   db:
     image: postgres
@@ -12,17 +13,22 @@ services:
     command: redis-server
     volumes:
       - 'redis:/data'
+
   faktory:
     image: contribsys/faktory:latest
     command: /faktory -b :7419 -w :7420
     ports:
       - "7419:7419"
       - "7420:7420"
+    #volumes:
+      #- 'faktory:/data'
+
   service:
     build: .
-    command: './development/start-service.sh'
+    command: bash -c './development/start-service.sh'
     depends_on: 
       - redis_db
+
   website: &web_base
     stdin_open: true
     tty: true
@@ -41,6 +47,7 @@ services:
       FAKTORY_URL: tcp://faktory:7419
     depends_on:
       - db
+
   worker:
     <<: *web_base
     command: bundle exec faktory-worker && './development/start-worker.sh'
@@ -50,7 +57,4 @@ services:
       
 volumes:
   redis:
-Collapse
-
-
-
+  faktory:
