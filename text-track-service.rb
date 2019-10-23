@@ -33,7 +33,7 @@ loop do
   job_entry = JSON.parse(element)
   puts job_entry
   # schedule a job to execute ASAP
-SomeWorker.perform_async(1,2,3)
+#  SomeWorker.perform_async(1,2,3)
 # schedule a bunch of jobs to execute a few seconds in the future
 #10.times {|idx| SomeWorker.perform_in(idx, 1, 2, 3) }
 

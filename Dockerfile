@@ -5,7 +5,6 @@ WORKDIR /text-track-service
 COPY Gemfile /text-track-service/Gemfile
 COPY Gemfile.lock /text-track-service/Gemfile.lock
 RUN bundle install
-CMD ["apt", "install", "ffmpeg"]
 COPY . /text-track-service
 
 # Add a script to be executed every time the container starts.

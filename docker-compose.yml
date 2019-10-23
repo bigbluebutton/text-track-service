@@ -47,10 +47,13 @@ services:
     depends_on: 
       - redis_db
 
+  #ffmpeg:
+   # image: jrottenberg/ffmpeg
+
   worker:
     #<<: *web_base
     build: .
-    command: "bundle exec faktory-worker"
+    command: "bundle exec faktory-worker -r ./text-track-worker.rb"
     environment:
       FAKTORY_PASSWORD: "parthik"
       FAKTORY_PROVIDER: FAKTORY_URL
