@@ -31,14 +31,6 @@ loop do
   TextTrack.logger.info("Processing analytics for recording #{element}")
   job_entry = JSON.parse(element)
   puts job_entry
-<<<<<<< HEAD
-
-  # schedule a job to execute ASAP
-#  SomeWorker.perform_async(1,2,3)
-# schedule a bunch of jobs to execute a few seconds in the future
-#10.times {|idx| SomeWorker.perform_in(idx, 1, 2, 3) }
-=======
->>>>>>> 60e916af270aabc3b6a3b2383e013b4a288a1910
 
   TTS::EntryWorker.perform_async(job_entry.to_json)
 end
