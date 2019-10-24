@@ -19,5 +19,7 @@ captions_test/*
 playback_test/*
 example.rb
 storage/*
+systemd/*
+service/*
 test.rb
 test2.rb
