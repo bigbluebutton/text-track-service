@@ -39,7 +39,7 @@ services:
   service:
     build: .
     #command: bash -c './development/start-service.sh'
-    command: "bundle exec ruby ./text-track-service.rb"
+    command: "bundle exec faktory-worker && ruby ./text-track-service.rb"
     environment:
       FAKTORY_PASSWORD: "parthik"
       FAKTORY_PROVIDER: FAKTORY_URL
