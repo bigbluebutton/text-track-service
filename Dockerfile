@@ -1,11 +1,11 @@
 FROM ruby:2.5
 RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
+RUN apt-get install -y ffmpeg
 RUN mkdir /text-track-service
 WORKDIR /text-track-service
 COPY Gemfile /text-track-service/Gemfile
 COPY Gemfile.lock /text-track-service/Gemfile.lock
 RUN bundle install
-CMD ["apt", "install", "ffmpeg"]
 COPY . /text-track-service
 
 # Add a script to be executed every time the container starts.

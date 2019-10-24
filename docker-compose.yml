@@ -30,7 +30,7 @@ services:
     build: .
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
-      - .:/text-track-service
+      - 'website:/text-track-service'
     ports:
       - "3000:3000"
     depends_on:
@@ -47,10 +47,13 @@ services:
     depends_on: 
       - redis_db
 
+  #ffmpeg:
+    #image: jrottenberg/ffmpeg
+
   worker:
     #<<: *web_base
     build: .
-    command: "bundle exec faktory-worker"
+    command: "bundle exec faktory-worker -r ./text-track-worker.rb"
     environment:
       FAKTORY_PASSWORD: "parthik"
       FAKTORY_PROVIDER: FAKTORY_URL
@@ -59,3 +62,4 @@ services:
 volumes:
   redis:
   faktory:
+  website:

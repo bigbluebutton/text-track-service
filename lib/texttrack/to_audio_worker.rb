@@ -54,6 +54,9 @@ module TTS
 
       final_dest_dir = "#{params[:storage_dir]}/#{params[:record_id]}"
       audio_file = "audio.#{audio_type}"
+      final_dest_dir = "#{Rails.root}/storage/#{params[:record_id]}"
+      puts "#{Rails.root}/storage/#{params[:record_id]}...................................................."
+      
       unless Dir.exist?(final_dest_dir)
         FileUtils.mkdir_p(final_dest_dir)
         FileUtils.chmod('u=wrx,g=wrx,o=r', final_dest_dir)
