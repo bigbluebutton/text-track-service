@@ -38,7 +38,6 @@ services:
   
   service:
     build: .
-    #command: bash -c './development/start-service.sh'
     command: "bundle exec ruby ./text-track-service.rb"
     environment:
       FAKTORY_PASSWORD: "parthik"
@@ -47,8 +46,17 @@ services:
     depends_on: 
       - redis_db
 
+  edit_service:
+    build: .
+    command: "bundle exec ruby ./text-track-edit-service.rb"
+    environment:
+      FAKTORY_PASSWORD: "parthik"
+      FAKTORY_PROVIDER: FAKTORY_URL
+      FAKTORY_URL: tcp://:parthik@faktory:7419
+    depends_on: 
+      - redis_db
+
   worker:
-    #<<: *web_base
     build: .
     command: "bundle exec faktory-worker -r ./text-track-worker.rb"
     environment:

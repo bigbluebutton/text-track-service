@@ -2,7 +2,6 @@
 
 require 'logger'
 require './lib/texttrack'
-require './lib/app.rb'
 
 #props = YAML.load_file('./settings.yaml')
 
