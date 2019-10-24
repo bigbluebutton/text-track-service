@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 services:
   db:
     image: postgres
@@ -58,6 +58,8 @@ services:
       FAKTORY_PASSWORD: "parthik"
       FAKTORY_PROVIDER: FAKTORY_URL
       FAKTORY_URL: tcp://:parthik@faktory:7419
+    volumes_from: 
+      - website 
 
 volumes:
   redis:
