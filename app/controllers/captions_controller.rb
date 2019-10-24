@@ -19,7 +19,9 @@ class CaptionsController < ApplicationController
 
     props = YAML.load_file('settings.yaml')
     storage_dir = props['storage_dir']
+    storage_dir = "#{Rails.root}/storage"
     record_dir = "#{storage_dir}/#{record_id}"
+    system(" /data")
     unless Dir.exist?(record_dir)
       FileUtils.mkdir_p(record_dir)
     end

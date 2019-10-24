@@ -8,7 +8,7 @@ require 'securerandom'
 require 'google/cloud/speech'
 require 'google/cloud/storage'
 require 'speech_to_text'
-require 'sqlite3'
+
 require 'active_record'
 rails_environment_path =
   File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
@@ -54,6 +54,7 @@ module TTS
 
       final_dest_dir = "#{params[:storage_dir]}/#{params[:record_id]}"
       audio_file = "audio.#{audio_type}"
+      
       unless Dir.exist?(final_dest_dir)
         FileUtils.mkdir_p(final_dest_dir)
         FileUtils.chmod('u=wrx,g=wrx,o=r', final_dest_dir)

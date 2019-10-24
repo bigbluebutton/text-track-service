@@ -4,7 +4,7 @@ require 'logger'
 require './lib/texttrack'
 require 'speech_to_text'
 
-props = YAML.load_file('settings.yaml')
+props = YAML.load_file('./settings.yaml')
 
 if props['log_to_file']
   log_dir = '/var/log/text-track-service'
@@ -14,6 +14,7 @@ else
 end
 
 TextTrack.logger = logger
+ENV['REDIS_URL'] = 'redis://redis_db:6379'
 
 redis = if ENV['REDIS_URL'].nil?
           Redis.new
@@ -26,10 +27,10 @@ puts RECORDINGS_JOB_LIST_KEY
 num_entries = redis.llen(RECORDINGS_JOB_LIST_KEY)
 puts "num_entries  = #{num_entries}"
 loop do
-  # for i in 1..num_entries do
   _list, element = redis.blpop(RECORDINGS_JOB_LIST_KEY)
   TextTrack.logger.info("Processing analytics for recording #{element}")
   job_entry = JSON.parse(element)
   puts job_entry
+
   TTS::EntryWorker.perform_async(job_entry.to_json)
 end

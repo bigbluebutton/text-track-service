@@ -1,5 +1,6 @@
 ---
-redis_host: 127.0.0.1
+#redis_host: 127.0.0.1
+redis_host: "redis://redis_db"
 redis_port: 6379
 # Uncomment and set password if redis require it.
 # redis_password: changeme
@@ -18,6 +19,6 @@ playback_jobs_list_key: "bbb_playback:playback_job"
 
 default_provider: "deepspeech"
 
+storage_dir: "/text-track-service/storage"
 #storage_dir: "/D/innovation/text-track-service/captions_test"
-#storage_dir: "/home/ubuntu/tts/text-track-service/storage"
-storage_dir: "/var/texttrackservice"
+#storage_dir: "/var/texttrackservice"

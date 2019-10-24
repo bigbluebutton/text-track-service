@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.6.3'
+ruby '2.5.7'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'activerecord'
@@ -13,6 +13,7 @@ gem 'google-cloud-storage'
 gem 'httparty'
 
 # Use Puma as the app server
+gem "pg"
 gem 'puma', '~> 3.11'
 
 gem 'rails', '~> 5.2.3'
@@ -25,9 +26,10 @@ gem 'redis-rails'
 gem 'rubocop', require: false
 
 gem 'sequel'
-gem 'speech_to_text', git: 'https://github.com/parthikmodi/speech_to_text.git'
+gem 'speech_to_text'
+
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+#gem 'sqlite3'
 gem 'table_print'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
