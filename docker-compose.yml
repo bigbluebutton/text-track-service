@@ -39,16 +39,13 @@ services:
   service:
     build: .
     #command: bash -c './development/start-service.sh'
-    command: "bundle exec faktory-worker && ruby ./text-track-service.rb"
+    command: "bundle exec ruby ./text-track-service.rb"
     environment:
       FAKTORY_PASSWORD: "parthik"
       FAKTORY_PROVIDER: FAKTORY_URL
       FAKTORY_URL: tcp://:parthik@faktory:7419
     depends_on: 
       - redis_db
-
-  #ffmpeg:
-    #image: jrottenberg/ffmpeg
 
   worker:
     #<<: *web_base
