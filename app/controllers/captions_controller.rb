@@ -21,7 +21,6 @@ class CaptionsController < ApplicationController
     storage_dir = props['storage_dir']
     storage_dir = "#{Rails.root}/storage"
     record_dir = "#{storage_dir}/#{record_id}"
-    puts "#{storage_dir}............"
     system(" /data")
     unless Dir.exist?(record_dir)
       FileUtils.mkdir_p(record_dir)

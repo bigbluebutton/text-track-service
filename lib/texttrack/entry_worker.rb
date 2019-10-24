@@ -12,7 +12,6 @@ module TTS
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def perform(params_json) # rubocop:disable Metrics/CyclomaticComplexity
-      puts ".....................Entry worker called..................."
       params = JSON.parse(params_json, symbolize_names: true)
 
       TextTrack.logger.info("Processing analytics for #{params[:record_id]}")
