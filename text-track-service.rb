@@ -2,7 +2,6 @@
 
 require 'logger'
 require './lib/texttrack'
-require './lib/app.rb'
 require 'speech_to_text'
 
 props = YAML.load_file('settings.yaml')
@@ -27,15 +26,10 @@ puts RECORDINGS_JOB_LIST_KEY
 num_entries = redis.llen(RECORDINGS_JOB_LIST_KEY)
 puts "num_entries  = #{num_entries}"
 loop do
-  # for i in 1..num_entries do
   _list, element = redis.blpop(RECORDINGS_JOB_LIST_KEY)
   TextTrack.logger.info("Processing analytics for recording #{element}")
   job_entry = JSON.parse(element)
   puts job_entry
-  # schedule a job to execute ASAP
-#  SomeWorker.perform_async(1,2,3)
-# schedule a bunch of jobs to execute a few seconds in the future
-#10.times {|idx| SomeWorker.perform_in(idx, 1, 2, 3) }
 
   TTS::EntryWorker.perform_async(job_entry.to_json)
 end
