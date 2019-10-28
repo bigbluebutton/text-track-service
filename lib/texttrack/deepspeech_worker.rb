@@ -21,12 +21,12 @@ module TTS
     def perform(params_json, id, audio_type)
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
-      Thread.new do
-          ActiveRecord::Base.connection_pool.with_connection do
-            u = Caption.find(id)
-            u.update(status: 'finished audio conversion')
-          end
-      end.join
+      
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(status: 'finished audio conversion')
+      end
+      
 
       storage_dir = "#{params[:storage_dir]}/#{params[:record_id]}"
 
@@ -37,11 +37,11 @@ module TTS
         "#{storage_dir}/#{job_name}_jobdetails.json"
       )
       
-      Thread.new do
-          ActiveRecord::Base.connection_pool.with_connection do
-            u.update(status: "created job with #{u.service}")
-          end
-      end.join
+      
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(status: "created job with #{u.service}")
+      end
+      
 
       TTS::DeepspeechGetJob.perform_async(params.to_json,
                                           u.id,
@@ -62,12 +62,12 @@ module TTS
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
         
-      Thread.new do
-          ActiveRecord::Base.connection_pool.with_connection do
-            u = Caption.find(id)
-            u.update(status: "waiting on job from #{u.service}")
-          end
-      end.join
+      
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(status: "waiting on job from #{u.service}")
+      end
+      
 
       auth_file_path = params[:provider][:auth_file_path]
 

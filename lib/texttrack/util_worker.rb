@@ -25,12 +25,12 @@ module TTS
       label = data['label']
 
       u = Caption.find(id)
-      Thread.new do
-          ActiveRecord::Base.connection_pool.with_connection do
-            # u = Caption.find(id)
-            u.update(status: "writing subtitle file from #{u.service}")
-          end
-      end.join
+      
+      ActiveRecord::Base.connection_pool.with_connection do
+        # u = Caption.find(id)
+        u.update(status: "writing subtitle file from #{u.service}")
+      end
+      
 
       delete_files(storage_dir)
       SpeechToText::Util.write_to_webvtt(
@@ -46,11 +46,11 @@ module TTS
       #  language: data[:caption_locale]
       #)
       
-      Thread.new do
-          ActiveRecord::Base.connection_pool.with_connection do
-            u.update(status: "done with #{u.service}")
-          end
-      end.join
+      
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(status: "done with #{u.service}")
+      end
+      
 
       data = {
         'record_id' => record_id.to_s,
