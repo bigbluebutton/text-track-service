@@ -26,21 +26,23 @@ module TTS
       params = JSON.parse(param_json, symbolize_names: true)
       u = nil
       # needed as activerecord leaves connection open when worker dies
-      ActiveRecord::Base.connection_pool.with_connection do
-        if Caption.exists?(record_id: (params[:record_id]).to_s)
-          u = Caption.find_by(record_id: (params[:record_id]).to_s)
-          u.update(status: 'start_audio_conversion',
-                   service: (params[:provider][:name]).to_s,
-                   caption_locale: (params[:caption_locale]).to_s)
-        else
-          Caption.create(record_id: (params[:record_id]).to_s,
-                         status: 'started_audio_conversion',
-                         service: (params[:provider][:name]).to_s,
-                         caption_locale: (params[:caption_locale]).to_s)
-        end
+      Thread.new do
+          ActiveRecord::Base.connection_pool.with_connection do
+            if Caption.exists?(record_id: (params[:record_id]).to_s)
+              u = Caption.find_by(record_id: (params[:record_id]).to_s)
+              u.update(status: 'start_audio_conversion',
+                       service: (params[:provider][:name]).to_s,
+                       caption_locale: (params[:caption_locale]).to_s)
+            else
+              Caption.create(record_id: (params[:record_id]).to_s,
+                             status: 'started_audio_conversion',
+                             service: (params[:provider][:name]).to_s,
+                             caption_locale: (params[:caption_locale]).to_s)
+            end
 
-        u = Caption.find_by(record_id: (params[:record_id]).to_s)
-      end
+            u = Caption.find_by(record_id: (params[:record_id]).to_s)
+          end
+      end.join
 
       audio_type_hash = {
         'ibm' => 'mp3',
