@@ -42,7 +42,6 @@ module TTS
 
         u = Caption.find_by(record_id: (params[:record_id]).to_s)
       end
-      
 
       audio_type_hash = {
         'ibm' => 'mp3',
