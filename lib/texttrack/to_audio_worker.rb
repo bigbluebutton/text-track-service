@@ -26,6 +26,7 @@ module TTS
       params = JSON.parse(param_json, symbolize_names: true)
       u = nil
       # needed as activerecord leaves connection open when worker dies
+      
       ActiveRecord::Base.connection_pool.with_connection do
         if Caption.exists?(record_id: (params[:record_id]).to_s)
           u = Caption.find_by(record_id: (params[:record_id]).to_s)
