@@ -14,14 +14,14 @@ services:
     volumes:
       - 'redis:/data'
 
-  faktory:
+  tts_faktory:
     image: contribsys/faktory:latest
     command: /faktory -b :7419 -w :7420
     ports:
       - "7419:7419"
       - "7420:7420"
     environment:
-      FAKTORY_PASSWORD: "parthik"
+      FAKTORY_PASSWORD: "${PASSWORD}"
     volumes:
       - 'faktory:/data'
 
@@ -40,9 +40,9 @@ services:
     build: .
     command: "bundle exec ruby ./text-track-service.rb"
     environment:
-      FAKTORY_PASSWORD: "parthik"
+      #FAKTORY_PASSWORD: "parthik"
       FAKTORY_PROVIDER: FAKTORY_URL
-      FAKTORY_URL: tcp://:parthik@faktory:7419
+      FAKTORY_URL: tcp://:${PASSWORD}@tts_faktory:7419
     depends_on: 
       - redis_db
 
@@ -50,9 +50,9 @@ services:
     build: .
     command: "bundle exec ruby ./text-track-edit-service.rb"
     environment:
-      FAKTORY_PASSWORD: "parthik"
+      #FAKTORY_PASSWORD: "parthik"
       FAKTORY_PROVIDER: FAKTORY_URL
-      FAKTORY_URL: tcp://:parthik@faktory:7419
+      FAKTORY_URL: tcp://:${PASSWORD}@tts_faktory:7419
     depends_on: 
       - redis_db
 
@@ -60,9 +60,9 @@ services:
     build: .
     command: "bundle exec faktory-worker -r ./text-track-worker.rb"
     environment:
-      FAKTORY_PASSWORD: "parthik"
+      #FAKTORY_PASSWORD: "parthik"
       FAKTORY_PROVIDER: FAKTORY_URL
-      FAKTORY_URL: tcp://:parthik@faktory:7419
+      FAKTORY_URL: tcp://:${PASSWORD}@tts_faktory:7419
     volumes_from: 
       - website 
 
