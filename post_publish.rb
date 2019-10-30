@@ -74,7 +74,7 @@ SpeechToText::Util.video_to_audio(
 )
 end
 
-bbb_props = YAML.load_file('../bigbluebutton.yml')
+bbb_props = YAML.load_file('/usr/local/bigbluebutton/core/scripts/bigbluebutton.yml')
 
 site = bbb_props['playback_host']
 secret = bbb_props['shared_secret']

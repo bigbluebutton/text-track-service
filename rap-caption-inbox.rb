@@ -108,15 +108,20 @@ caption_file_notify = proc do |json_filename|
       tmp_dest = File.join(captions_work, dest_filename)
       final_dest_dir = File.join(captions_dir, record_id)
       final_dest = File.join(final_dest_dir, dest_filename)
+        
       presentation_dir = props['presentation_dir']
       presentation_dest_dir = "#{presentation_dir}/#{record_id}/caption_en-US.vtt"
       caption_json_file = "#{presentation_dir}/#{record_id}/captions.json"
       
-      captions_info['lang'] = captions_info['lang'].sub('-', '_')
+      # en-US need by presentation 
+      new_caption_info['lang'] = new_caption_info['lang'].sub('_', '-')
         
       file =  File.open(caption_json_file, 'w')
-      file.puts "[{\"localeName\": #{captions_info['label']}, \"locale\": #{captions_info['lang']}}]"
+      file.puts "[{\"localeName\": \"#{new_caption_info['label']}\", \"locale\": \"#{new_caption_info['lang']}\"}]"
       file.close
+        
+      # resetting en-US to en_US
+      new_caption_info['lang'] = new_caption_info['lang'].sub('-', '_')
 
       # Convert the received caption file to WebVTT
       ffmpeg_cmd = [
