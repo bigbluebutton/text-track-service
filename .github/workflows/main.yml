@@ -7,9 +7,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@docker
+    - uses: actions/checkout@master
     - name: Publish to Docker Repository
-      uses: elgohr/Publish-Docker-Github-Action@docker
+      uses: elgohr/Publish-Docker-Github-Action@master
       with:
         name: silentflame/tts-docker
         username: ${{ secrets.DOCKER_USERNAME }}
