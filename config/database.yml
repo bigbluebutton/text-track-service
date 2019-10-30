@@ -4,26 +4,26 @@ default: &default
   host: db
   username: postgres
   password:
-  pool: <%= ENV['DB_POOL'] %>
-  timeout: <%= ENV['DB_TIMEOUT'] %>
+  pool: 1000
+  timeout: 100000
   #pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
   <<: *default
   database: myapp_development
-  pool: <%= ENV['DB_POOL'] %>
-  timeout: <%= ENV['DB_TIMEOUT'] %>
+  pool: 1000
+  timeout: 100000
 
 test:
   <<: *default
   database: myapp_test
-  pool: <%= ENV['DB_POOL'] %>
-  timeout: <%= ENV['DB_TIMEOUT'] %>
+  pool: 1000
+  timeout: 100000
 
 production:
   <<: *default
   database: myapp_production
   username: myapp
   password: <%= ENV['MYAPP_DATABASE_PASSWORD'] %>
-  pool: <%= ENV['DB_POOL'] %>
-  timeout: <%= ENV['DB_TIMEOUT'] %>
+  pool: 1000
+  timeout: 100000
