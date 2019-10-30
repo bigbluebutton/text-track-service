@@ -1,0 +1,16 @@
+name: Build and Publish TTS-Docker
+on:
+  push:
+    branches:
+      - docker
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@docker
+    - name: Publish to Docker Repository
+      uses: elgohr/Publish-Docker-Github-Action@docker
+      with:
+        name: silentflame/tts-docker
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
