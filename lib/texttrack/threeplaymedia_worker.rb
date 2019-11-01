@@ -35,7 +35,7 @@ module TTS
       job_name = rand(36**8).to_s(36)
       job_id = SpeechToText::ThreePlaymediaS2T.create_job(
         params[:provider][:auth_file_path],
-        "#{storage_dir}/audio.#{audio_type}",
+        "#{storage_dir}/#{params[:record_id]}.#{audio_type}",
         job_name,
         "#{storage_dir}/job_file.json"
       )
