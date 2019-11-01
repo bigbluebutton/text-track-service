@@ -67,7 +67,7 @@ module TTS
           video_name: 'audio_temp',
           video_content_type: 'wav',
           audio_file_path: final_dest_dir.to_s,
-          audio_name: 'audio',
+          audio_name: params[:record_id],
           audio_content_type: audio_type
         )
       end
