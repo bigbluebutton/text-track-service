@@ -260,3 +260,133 @@ copy that value into /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml as 
 ```
 rubocop --safe-auto-correct --disable-uncorrectable
 ```
+
+# Docker side changes
+Install docker & docker-compose
+```
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add –
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu  $(lsb_release -cs)  stable"
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.23.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+docker ps (to check if anything is running nothing should be)
+```
+
+Create appropriate dir
+```
+/var/docker
+git clone -b docker https://github.com/SilentFlameCR/text-track-service/tree/docker
+```
+
+don't forget
+```
+create your credentials file
+auth/google_auth_file and add file name to settings.yml
+```
+
+Create private/public key and encrypt on the computer your developing from (NOT SERVER - ONLY FOR CI CD)
+```
+cd /var/docker/text-track-service
+ssh-keygen -f deploy_key
+add the private key inside deploy_key to the authorized keys on the server (This enables travis-ci to ssh into the server for ci cd)
+travis encrypt-file deploy_key --add
+sudo mv deploy_file deploy_file.pub ..
+```
+
+Add to sudoers file
+```
+sudo visudo
+
+Add the following line to the end of the file:
+texttrack ALL = NOPASSWD: /var/docker/text-track-service/deploy.sh
+```
+
+Move and start systemctl files
+```
+cd /var/docker/text-track-service
+sudo cp tts-docker.service /etc/systemd/system
+sudo systemctl enable tts-docker
+sudo systemctl start tts-docker
+sudo journalctl -u tts-docker -f (see tailed logs)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
