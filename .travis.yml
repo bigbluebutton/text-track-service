@@ -9,7 +9,7 @@ env:
   global:
   - IMAGE_NAME=SilentFlameCR/text-track-service
 
-#script:
+script:
   #- docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   #- docker build -t text-track-service .
   #- docker images
@@ -17,6 +17,7 @@ env:
   #- git commit -m "commit from travis-ci"
   #- docker tag text-track-service $DOCKER_USERNAME/text-track-service
   #- docker push $DOCKER_USERNAME/text-track-service
+  - bundle install
 
 before_install:
 - openssl aes-256-cbc -K $encrypted_cac985c273c2_key -iv $encrypted_cac985c273c2_iv -in deploy_key.enc -out deploy_key -d
