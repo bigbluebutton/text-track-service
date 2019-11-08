@@ -1,0 +1,16 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    docker: 
+    steps:
+      - checkout
+      - run: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      - run: docker build -t text-track-service ./
+      - run: docker images
+      - run: docker tag tts $DOCKER_USERNAME/text-track-service
+      - run: docker push $DOCKER_USERNAME/text-track-service
+      - run: 
+          name: Deploy app to Digital Ocean Server via Docker
+          command: |
+            ssh -o StrictHostKeyChecking=no texttrack@ritz-tts5.freddixon.ca sudo /var/docker/text-track-service/deploy.sh
