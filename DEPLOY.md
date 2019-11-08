@@ -275,6 +275,7 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.23.1/docker-
 sudo chmod +x /usr/local/bin/docker-compose
 docker-compose --version
 docker ps (to check if anything is running nothing should be)
+add texttrack to docker group via sudo usermod -a -G docker texttrack
 ```
 
 Create appropriate dir
@@ -308,6 +309,20 @@ sudo visudo
 
 Add the following line to the end of the file:
 texttrack ALL = NOPASSWD: /var/docker/text-track-service/deploy.sh
+```
+
+Setup db
+```
+cd /var/docker/text-track-service
+sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:reset
+cd /var/docker/text-track-service/db
+sudo chmod -R a+rX *
+sudo chmod ugo+rwx /var/docker/text-track-service/log/
+cd /var/docker/text-track-service/log/
+mkdir development.log
+sudo chmod ugo+rwx /var/docker/text-track-service/log/development.log
+sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:migrate
+sudo service docker restart
 ```
 
 Move and start systemctl files
