@@ -14,7 +14,7 @@ require rails_environment_path
 module TTS
   class SpeechmaticsCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
-    faktory_options retry: 0, concurrency: 1
+    faktory_options retry: 5, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize

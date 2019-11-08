@@ -14,7 +14,7 @@ require rails_environment_path
 module TTS
   class PlaybackWorker # rubocop:disable Style/Documentation
     include Faktory::Job
-    faktory_options retry: 0, concurrency: 1
+    faktory_options retry: 5, concurrency: 1
     def perform(params_json, temp_track_vtt, temp_track_json, _inbox_dir)
       params = JSON.parse(params_json, symbolize_names: true)
 

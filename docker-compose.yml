@@ -12,7 +12,8 @@ services:
     #command: redis-server --requirepass yourpassword
     command: redis-server
     volumes:
-      - 'redis:/data'
+      #- 'redis:/data'
+      - ./tmp/redis:/text-track-service/tmp/redis
 
   tts_faktory:
     image: contribsys/faktory:latest
@@ -23,7 +24,8 @@ services:
     environment:
       FAKTORY_PASSWORD: "${PASSWORD}"
     volumes:
-      - 'faktory:/data'
+      #- 'faktory:/data'
+      - ./tmp/faktory:/text-track-service/tmp/faktory
 
   website: &web_base
     #container_name: website
@@ -67,6 +69,6 @@ services:
       - website 
 
 volumes:
-  redis:
-  faktory:
+  #redis:
+  #faktory:
   website:

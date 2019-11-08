@@ -15,7 +15,7 @@ module TTS
   # rubocop:disable Style/Documentation
   class IbmCreateJob
     include Faktory::Job
-    faktory_options retry: 0, concurrency: 1
+    faktory_options retry: 5, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
