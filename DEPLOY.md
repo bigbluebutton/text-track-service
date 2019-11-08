@@ -23,9 +23,9 @@ sudo ls -la /root
 Add public key to texttrack user at /home/texttrack/.ssh/authorized_users
 ```
 cd /home/texttrack
-mkdir .ssh
+sudo mkdir .ssh
 cd .ssh
-touch authorized_keys
+sudo touch authorized_keys
 paste your public key in this file(authorized_keys)
 ```
 
@@ -265,9 +265,11 @@ rubocop --safe-auto-correct --disable-uncorrectable
 Install docker & docker-compose
 ```
 sudo apt-get update
-sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add –
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu  $(lsb_release -cs)  stable"
+sudo apt-get remove docker docker-engine docker.io
+sudo apt install docker.io
+sudo systemctl start docker
+sudo systemctl enable docker
+docker --version
 
 sudo curl -L "https://github.com/docker/compose/releases/download/1.23.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
@@ -277,14 +279,18 @@ docker ps (to check if anything is running nothing should be)
 
 Create appropriate dir
 ```
-/var/docker
-git clone -b docker https://github.com/SilentFlameCR/text-track-service/tree/docker
+cd /var
+sudo mkdir docker
+sudo chown texttrack:textrack /var/docker
+cd docker
+git clone -b docker https://github.com/SilentFlameCR/text-track-service
+cd text-track-service
 ```
 
-don't forget
+don't forget to
 ```
 create your credentials file
-auth/google_auth_file and add file name to settings.yml
+create auth/google_auth_file and add file name to settings.yml
 ```
 
 Create private/public key and encrypt on the computer your developing from (NOT SERVER - ONLY FOR CI CD)
@@ -296,7 +302,7 @@ travis encrypt-file deploy_key --add
 sudo mv deploy_file deploy_file.pub ..
 ```
 
-Add to sudoers file
+Add to sudoers file(Again for CI CD)
 ```
 sudo visudo
 
@@ -306,7 +312,7 @@ texttrack ALL = NOPASSWD: /var/docker/text-track-service/deploy.sh
 
 Move and start systemctl files
 ```
-cd /var/docker/text-track-service
+cd /var/docker/text-track-service/systemd
 sudo cp tts-docker.service /etc/systemd/system
 sudo systemctl enable tts-docker
 sudo systemctl start tts-docker
