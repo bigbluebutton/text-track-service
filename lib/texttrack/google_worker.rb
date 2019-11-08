@@ -37,7 +37,7 @@ module TTS
       SpeechToText::GoogleS2T.set_environment(auth_file)
       SpeechToText::GoogleS2T.google_storage(
         "#{params[:storage_dir]}/#{params[:record_id]}",
-        'audio',
+        params[:record_id],
         audio_type,
         params[:provider][:google_bucket_name]
       )

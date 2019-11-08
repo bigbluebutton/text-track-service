@@ -23,9 +23,9 @@ sudo ls -la /root
 Add public key to texttrack user at /home/texttrack/.ssh/authorized_users
 ```
 cd /home/texttrack
-mkdir .ssh
+sudo mkdir .ssh
 cd .ssh
-touch authorized_keys
+sudo touch authorized_keys
 paste your public key in this file(authorized_keys)
 ```
 
@@ -260,3 +260,157 @@ copy that value into /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml as 
 ```
 rubocop --safe-auto-correct --disable-uncorrectable
 ```
+
+# Docker side changes
+Install docker & docker-compose
+```
+sudo apt-get update
+sudo apt-get remove docker docker-engine docker.io
+sudo apt install docker.io
+sudo systemctl start docker
+sudo systemctl enable docker
+docker --version
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.23.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+docker ps (to check if anything is running nothing should be)
+add texttrack to docker group via sudo usermod -a -G docker texttrack
+```
+
+Create appropriate dir
+```
+cd /var
+sudo mkdir docker
+sudo chown texttrack:textrack /var/docker
+cd docker
+git clone -b docker https://github.com/SilentFlameCR/text-track-service
+cd text-track-service
+```
+
+don't forget to
+```
+create your credentials file
+create auth/google_auth_file and add file name to settings.yml
+```
+
+Create private/public key and encrypt on the computer your developing from (NOT SERVER - ONLY FOR CI CD)
+```
+cd /var/docker/text-track-service
+ssh-keygen -f deploy_key
+add the private key inside deploy_key to the authorized keys on the server (This enables travis-ci to ssh into the server for ci cd)
+travis encrypt-file deploy_key --add
+sudo mv deploy_file deploy_file.pub ..
+```
+
+Add to sudoers file(Again for CI CD)
+```
+sudo visudo
+
+Add the following line to the end of the file:
+texttrack ALL = NOPASSWD: /var/docker/text-track-service/deploy.sh
+```
+
+Setup db
+```
+cd /var/docker/text-track-service
+sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:reset
+cd /var/docker/text-track-service/db
+sudo chmod -R a+rX *
+sudo chmod ugo+rwx /var/docker/text-track-service/log/
+cd /var/docker/text-track-service/log/
+mkdir development.log
+sudo chmod ugo+rwx /var/docker/text-track-service/log/development.log
+sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:migrate
+sudo service docker restart
+```
+
+Move and start systemctl files
+```
+cd /var/docker/text-track-service/systemd
+sudo cp tts-docker.service /etc/systemd/system
+sudo systemctl enable tts-docker
+sudo systemctl start tts-docker
+
+sudo chmod -R a+rX /var/docker/text-track-service/tmp/*
+
+sudo journalctl -u tts-docker -f (see tailed logs)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

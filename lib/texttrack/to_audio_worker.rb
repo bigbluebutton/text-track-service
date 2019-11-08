@@ -54,7 +54,7 @@ module TTS
       audio_type = audio_type_hash[params[:provider][:name]]
 
       final_dest_dir = "#{params[:storage_dir]}/#{params[:record_id]}"
-      audio_file = "audio.#{audio_type}"
+      audio_file = "#{params[:record_id]}.#{audio_type}"
       
       unless Dir.exist?(final_dest_dir)
         FileUtils.mkdir_p(final_dest_dir)
@@ -67,7 +67,7 @@ module TTS
           video_name: 'audio_temp',
           video_content_type: 'wav',
           audio_file_path: final_dest_dir.to_s,
-          audio_name: 'audio',
+          audio_name: params[:record_id],
           audio_content_type: audio_type
         )
       end

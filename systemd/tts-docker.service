@@ -5,12 +5,12 @@ Requires=docker.service
 After=docker.service
 [Service]
 Restart=always
-User=root
+User=texttrack
 # Shutdown container (if running) when unit is stopped
-ExecStartPre=/usr/bin/docker-compose -f /home/ubuntu/tts/rahul/text-track-service/docker-compose.yml down -v
+ExecStartPre=/usr/local/bin/docker-compose -f /var/docker/text-track-service/docker-compose.yml down -v
 # Start container when unit is started
-ExecStart=/usr/bin/docker-compose -f /home/ubuntu/tts/rahul/text-track-service/docker-compose.yml up
+ExecStart=/usr/local/bin/docker-compose -f /var/docker/text-track-service/docker-compose.yml up --build
 # Stop container when unit is stopped
-ExecStop=/usr/bin/docker-compose -f /home/ubuntu/tts/rahul/text-track-service/docker-compose.yml down -v
+ExecStop=/usr/local/bin/docker-compose -f /var/docker/text-track-service/docker-compose.yml down -v
 [Install]
 WantedBy=multi-user.target

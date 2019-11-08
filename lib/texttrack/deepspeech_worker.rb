@@ -31,7 +31,7 @@ module TTS
 
       job_name = rand(36**8).to_s(36)
       job_id = SpeechToText::MozillaDeepspeechS2T.create_job(
-        "#{storage_dir}/audio.#{audio_type}",
+        "#{storage_dir}/#{params[:record_id]}.#{audio_type}",
         params[:provider][:auth_file_path],
         "#{storage_dir}/#{job_name}_jobdetails.json"
       )

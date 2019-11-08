@@ -21,5 +21,7 @@ example.rb
 storage/*
 systemd/*
 service/*
+.env
+bigbluebutton.yml
 test.rb
 test2.rb

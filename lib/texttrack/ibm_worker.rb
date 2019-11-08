@@ -33,7 +33,7 @@ module TTS
       job_id = SpeechToText::IbmWatsonS2T.create_job(
         audio_file_path: "#{params[:storage_dir]}/#{params[:record_id]}",
         apikey: params[:provider][:auth_file_path],
-        audio: 'audio',
+        audio: params[:record_id],
         content_type: audio_type,
         language_code: params[:caption_locale]
       )

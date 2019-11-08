@@ -42,8 +42,8 @@ module TTS
         provider[:auth_file_path] =
           props_keys['providers'][provider_name]['auth_file_path']
       elsif provider_name == 'ibm'
-        provider[:google_bucket_name] =
-          props_keys['providers'][provider_name]['bucket']
+        #provider[:google_bucket_name] =
+          #props_keys['providers'][provider_name]['bucket']
         provider[:auth_file_path] =
           props_keys['providers'][provider_name]['auth_file_path']
       elsif provider_name == 'speechmatics'

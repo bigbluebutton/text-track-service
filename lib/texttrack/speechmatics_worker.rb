@@ -34,7 +34,7 @@ module TTS
       storage_dir = "#{params[:storage_dir]}/#{params[:record_id]}"
       jobID = SpeechToText::SpeechmaticsS2T.create_job(
         "#{params[:storage_dir]}/#{params[:record_id]}",
-        'audio',
+        params[:record_id],
         audio_type,
         params[:provider][:userID],
         params[:provider][:apikey],
