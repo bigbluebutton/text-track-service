@@ -331,6 +331,9 @@ cd /var/docker/text-track-service/systemd
 sudo cp tts-docker.service /etc/systemd/system
 sudo systemctl enable tts-docker
 sudo systemctl start tts-docker
+
+sudo chmod -R a+rX /var/docker/text-track-service/tmp/*
+
 sudo journalctl -u tts-docker -f (see tailed logs)
 ```
 

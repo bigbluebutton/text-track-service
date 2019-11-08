@@ -71,8 +71,6 @@ module TTS
           audio_content_type: audio_type
         )
       end
-        
-      puts "------------------TESTING-----------------------"
 
       # rubocop:disable Style/CaseEquality
       if params[:provider][:name] === 'google'
