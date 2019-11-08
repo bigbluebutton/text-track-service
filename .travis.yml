@@ -25,6 +25,6 @@ deploy:
   provider: script
   skip_cleanup: true
   script: chmod 600 deploy_key && ssh -o StrictHostKeyChecking=no -i ./deploy_key
-    texttrack@68.183.197.37 sudo /var/docker/text-track-service/deploy.sh
+    texttrack@157.245.15.35 sudo /var/docker/text-track-service/deploy.sh
   on:
     branch: docker
