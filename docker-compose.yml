@@ -13,7 +13,7 @@ services:
     command: redis-server
     volumes:
       #- 'redis:/data'
-      - ./tmp/redis:/text-track-service/tmp/redis
+      - 'redis:/text-track-service/tmp/redis'
 
   tts_faktory:
     image: contribsys/faktory:latest
@@ -25,14 +25,14 @@ services:
       FAKTORY_PASSWORD: "${PASSWORD}"
     volumes:
       #- 'faktory:/data'
-      - ./tmp/faktory:/text-track-service/tmp/faktory
+      - 'faktory:/text-track-service/tmp/faktory'
 
   website: &web_base
     #container_name: website
     build: .
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
-      - 'website:/text-track-service'
+      - .:/text-track-service
     ports:
       - "3000:3000"
     depends_on:
@@ -69,6 +69,6 @@ services:
       - website 
 
 volumes:
-  #redis:
-  #faktory:
-  website:
+  redis:
+  faktory:
+  #website:

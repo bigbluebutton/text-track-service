@@ -26,6 +26,7 @@ RECORDINGS_JOB_LIST_KEY = props['redis_jobs_list_key']
 puts RECORDINGS_JOB_LIST_KEY
 num_entries = redis.llen(RECORDINGS_JOB_LIST_KEY)
 puts "num_entries  = #{num_entries}"
+TTS::RepairWorker.perform_async()
 loop do
   _list, element = redis.blpop(RECORDINGS_JOB_LIST_KEY)
   TextTrack.logger.info("Processing analytics for recording #{element}")

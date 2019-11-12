@@ -20,6 +20,7 @@ module TTS
       bbb_checksum = data['bbb_checksum']
       kind = data['kind']
       label = data['label']
+      id = data['id']
       caption_locale = caption_locale.sub('-', '_')
 
 
@@ -32,6 +33,10 @@ module TTS
         http.request(request)
       end
 
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(status: "uploaded to #{u.bbb_url}")
+      end
       # print response
       puts response.body.to_s
     end
