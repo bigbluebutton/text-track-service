@@ -90,8 +90,8 @@ class CaptionsController < ApplicationController
     # TODO:  pass locale as param
     processed_jobs = Caption.where('status LIKE ?', 'uploaded%')
 
-    caption.each do |c|
-        tp c
+    processed_jobs.each do |p|
+        tp p
     end
   end
     
@@ -99,8 +99,8 @@ class CaptionsController < ApplicationController
     # TODO:  pass locale as param
     failed_jobs = Caption.where.not('status LIKE ?', 'uploaded%')
 
-    caption.each do |c|
-        tp c
+    failed_jobs.each do |f|
+        tp f
     end
   end
 
