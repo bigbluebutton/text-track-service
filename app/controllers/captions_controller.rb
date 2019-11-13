@@ -65,6 +65,39 @@ class CaptionsController < ApplicationController
     caption = Caption.where(record_id: record_id)
     tp caption
   end
+    
+  def caption_all_status
+    #record_id = params[:record_id]
+    #caption_locale = params[:caption_locale]
+    #caption_job = { record_id: record_id,
+                    caption_locale: caption_locale }
+    # TODO:  pass locale as param
+    caption = Caption.all
+    caption.each do |c|
+        tp c
+    end
+    #tp caption
+  end
+    
+  def caption_processed_status
+    #record_id = params[:record_id]
+    #caption_locale = params[:caption_locale]
+    #caption_job = { record_id: record_id,
+                    caption_locale: caption_locale }
+    # TODO:  pass locale as param
+    caption = Caption.where(status: record_id)
+    tp caption
+  end
+    
+  def caption_failed_status
+    record_id = params[:record_id]
+    caption_locale = params[:caption_locale]
+    caption_job = { record_id: record_id,
+                    caption_locale: caption_locale }
+    # TODO:  pass locale as param
+    caption = Caption.where(record_id: record_id)
+    tp caption
+  end
 
   private
 
