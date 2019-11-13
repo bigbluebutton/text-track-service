@@ -23,6 +23,7 @@ require 'texttrack/to_audio_worker'
 require 'texttrack/util_worker'
 require 'texttrack/callback_worker'
 require 'texttrack/playback_worker'
+require 'texttrack/repair_worker'
 
 module TextTrack # rubocop:disable Style/Documentation
   def self.logger=(log)

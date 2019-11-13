@@ -55,7 +55,8 @@ module TTS
         'bbb_url' => bbb_url,
         'bbb_checksum' => bbb_checksum,
         'kind' => kind,
-        'label' => label
+        'label' => label,
+        'id' => id
       }
 
       TTS::CallbackWorker.perform_async(data.to_json)
