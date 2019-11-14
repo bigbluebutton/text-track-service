@@ -87,7 +87,7 @@ module TTS
         end
 
         # break if status['message'] == 'No jobID found'
-        DeepspeechGetJob.perform_in(30, params.to_json, id, job_id, job_name)
+        DeepspeechGetJob.perform_in(30, params.to_json, id, job_id, job_name, start_time)
         return
       end
 
