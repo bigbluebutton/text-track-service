@@ -67,7 +67,7 @@ module TTS
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
-    def perform(params_json, id, job_id, transcript_id)
+    def perform(params_json, id, job_id, transcript_id, start_time)
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
       ActiveRecord::Base.connection_pool.with_connection do

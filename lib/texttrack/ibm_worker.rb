@@ -65,7 +65,7 @@ module TTS
     faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
-    def perform(params_json, id, job_id) # rubocop:disable Metrics/AbcSize
+    def perform(params_json, id, job_id, start_time) # rubocop:disable Metrics/AbcSize
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
       ActiveRecord::Base.connection_pool.with_connection do

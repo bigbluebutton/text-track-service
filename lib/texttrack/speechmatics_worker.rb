@@ -66,7 +66,7 @@ module TTS
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     # rubocop:disable Naming/VariableName
-    def perform(params_json, id, jobID)
+    def perform(params_json, id, jobID, start_time)
       # rubocop:enable Naming/VariableName
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
