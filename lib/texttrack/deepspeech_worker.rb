@@ -30,6 +30,8 @@ module TTS
       storage_dir = "#{params[:storage_dir]}/#{params[:record_id]}"
 
       job_name = rand(36**8).to_s(36)
+      start_time = Time.now.getutc.to_i
+        
       job_id = SpeechToText::MozillaDeepspeechS2T.create_job(
         "#{storage_dir}/#{params[:record_id]}.#{audio_type}",
         params[:provider][:auth_file_path],
@@ -43,7 +45,8 @@ module TTS
       TTS::DeepspeechGetJob.perform_async(params.to_json,
                                           u.id,
                                           job_id,
-                                          job_name)
+                                          job_name,
+                                          start_time)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -55,7 +58,7 @@ module TTS
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
-    def perform(params_json, id, job_id, job_name)
+    def perform(params_json, id, job_id, job_name, start_time)
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
         
@@ -93,6 +96,13 @@ module TTS
 
       myarray =
         SpeechToText::MozillaDeepspeechS2T.create_mozilla_array(callback_json)
+        
+      end_time = Time.now.getutc.to_i
+      processing_time = end_time - start_time
+        
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(processing_time: "#{processing_time} seconds")
+      end
 
       current_time = (Time.now.to_f * 1000).to_i
 
