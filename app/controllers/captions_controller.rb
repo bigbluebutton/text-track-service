@@ -81,9 +81,8 @@ class CaptionsController < ApplicationController
     # TODO:  pass locale as param
     caption = Caption.all
     caption.each do |c|
-        tp c
+        render json: c.as_json
     end
-    render response: caption.as_json
     #tp caption
   end
     
