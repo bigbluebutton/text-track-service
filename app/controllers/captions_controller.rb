@@ -75,31 +75,31 @@ class CaptionsController < ApplicationController
     # TODO:  pass locale as param
     caption = Caption.where(record_id: record_id)
       
-    @caption = caption.as_json
-    render json: JSON.pretty_generate(@caption)
+    caption = caption.as_json
+    render json: JSON.pretty_generate(caption)
   end
     
   def caption_all_status
     # TODO:  pass locale as param
     caption = Caption.all
-    @caption = caption.as_json
-    render json: JSON.pretty_generate(@caption)
+    caption = caption.as_json
+    render json: JSON.pretty_generate(caption)
   end
     
   def caption_processed_status
     # TODO:  pass locale as param
     processed_jobs = Caption.where('status LIKE ?', 'uploaded%')
       
-    @caption = processed_jobs.as_json
-    render json: JSON.pretty_generate(@caption)
+    processed_jobs = processed_jobs.as_json
+    render json: JSON.pretty_generate(processed_jobs)
   end
     
   def caption_failed_status
     # TODO:  pass locale as param
     failed_jobs = Caption.where.not('status LIKE ?', 'uploaded%')
       
-    @caption = failed_jobs.as_json
-    render json: JSON.pretty_generate(@caption)
+    failed_jobs = failed_jobs.as_json
+    render json: JSON.pretty_generate(failed_jobs)
   end
 
   private

@@ -127,13 +127,14 @@ module TTS
           
         end_time = Time.now.getutc.to_i
         processing_time = end_time - start_time
+        processing_time =  SpeechToText::Util.seconds_to_timestamp(processing_time)
 
         ActiveRecord::Base.connection_pool.with_connection do
-            u.update(processtime: "#{processing_time.to_s} seconds")
+            u.update(processtime: "#{processing_time}")
         end
 
         puts '-------------------'
-        puts "Processing time: #{processing_time} seconds"
+        puts "Processing time: #{processing_time} hr:min:sec.millsec"
         puts '-------------------'
 
         ActiveRecord::Base.connection_pool.with_connection do
