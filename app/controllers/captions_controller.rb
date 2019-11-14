@@ -73,34 +73,34 @@ class CaptionsController < ApplicationController
     caption_job = { record_id: record_id,
                     caption_locale: caption_locale }
     # TODO:  pass locale as param
-    caption = Caption.where(record_id: record_id)
-    tp caption
+    @caption = Caption.where(record_id: record_id)
+    tp @caption
   end
     
   def caption_all_status
     # TODO:  pass locale as param
-    caption = Caption.all
-    caption.each do |c|
+    @caption = Caption.all
+    @caption.each do |c|
         tp c
     end
-    return caption.to_json
+    render :json => @caption
     #tp caption
   end
     
   def caption_processed_status
     # TODO:  pass locale as param
-    processed_jobs = Caption.where('status LIKE ?', 'uploaded%')
+    @processed_jobs = Caption.where('status LIKE ?', 'uploaded%')
 
-    processed_jobs.each do |p|
+    @processed_jobs.each do |p|
         tp p
     end
   end
     
   def caption_failed_status
     # TODO:  pass locale as param
-    failed_jobs = Caption.where.not('status LIKE ?', 'uploaded%')
+    @failed_jobs = Caption.where.not('status LIKE ?', 'uploaded%')
 
-    failed_jobs.each do |f|
+    @failed_jobs.each do |f|
         tp f
     end
   end
