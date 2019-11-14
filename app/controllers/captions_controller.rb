@@ -83,6 +83,7 @@ class CaptionsController < ApplicationController
     caption.each do |c|
         tp c
     end
+    render response: caption.as_json
     #tp caption
   end
     
