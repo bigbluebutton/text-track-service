@@ -25,6 +25,8 @@ module TTS
         u = Caption.find(id)
         u.update(status: 'finished audio conversion')
       end
+        
+      start_time = Time.now.getutc.to_i
 
       # TODO
       # Need to handle locale here. What if we want to generate caption
@@ -49,7 +51,8 @@ module TTS
 
       TTS::SpeechmaticsGetJob.perform_async(params.to_json,
                                             u.id,
-                                            jobID)
+                                            jobID,
+                                            start_time)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -63,7 +66,7 @@ module TTS
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     # rubocop:disable Naming/VariableName
-    def perform(params_json, id, jobID)
+    def perform(params_json, id, jobID, start_time)
       # rubocop:enable Naming/VariableName
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
@@ -83,7 +86,11 @@ module TTS
         puts '-------------------'
         puts "wait time is #{wait_time} seconds"
         puts '-------------------'
-        SpeechmaticsGetJob.perform_in(wait_time, params.to_json, id, jobID)
+        SpeechmaticsGetJob.perform_in(wait_time, 
+                                      params.to_json, 
+                                      id, 
+                                      jobID, 
+                                      start_time)
         return
       end
 
@@ -94,6 +101,18 @@ module TTS
       )
 
       myarray = SpeechToText::SpeechmaticsS2T.create_array_speechmatic(callback)
+        
+      end_time = Time.now.getutc.to_i
+      processing_time = end_time - start_time
+        
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(processtime: "#{processing_time.to_s} seconds")
+      end
+        
+      puts '-------------------'
+      puts "Processing time: #{processing_time} seconds"
+      puts '-------------------'
+        
       current_time = (Time.now.to_f * 1000).to_i
 
       data = {

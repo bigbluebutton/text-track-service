@@ -42,7 +42,7 @@ module TTS
         u.update(status: "created job with #{u.service}")
       end
 
-      puts "start time...........#{start_time}..............."
+      #puts "start time...........#{start_time}..............."
       TTS::DeepspeechGetJob.perform_async(params.to_json,
                                           u.id,
                                           job_id,
@@ -104,7 +104,11 @@ module TTS
       ActiveRecord::Base.connection_pool.with_connection do
         u.update(processtime: "#{processing_time.to_s} seconds")
       end
-
+        
+      puts '-------------------'
+      puts "Processing time: #{processing_time} seconds"
+      puts '-------------------'
+          
       current_time = (Time.now.to_f * 1000).to_i
 
       data = {
