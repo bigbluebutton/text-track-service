@@ -26,7 +26,8 @@ module TTS
         u = Caption.find(id)
         u.update(status: 'finished audio conversion')
       end
-
+        
+      start_time = Time.now.getutc.to_i
       # TODO
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
@@ -53,7 +54,8 @@ module TTS
       TTS::ThreeplaymediaGetJob.perform_async(params.to_json,
                                               u.id,
                                               job_id,
-                                              transcript_id)
+                                              transcript_id,
+                                              start_time)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -101,7 +103,8 @@ module TTS
                                         params.to_json,
                                         id,
                                         job_id,
-                                        transcript_id)
+                                        transcript_id,
+                                        start_time)
         return
 
       elsif status == 'complete'
@@ -121,6 +124,17 @@ module TTS
           timestamp: current_time,
           language: params[:caption_locale]
         )
+          
+        end_time = Time.now.getutc.to_i
+        processing_time = end_time - start_time
+
+        ActiveRecord::Base.connection_pool.with_connection do
+            u.update(processtime: "#{processing_time.to_s} seconds")
+        end
+
+        puts '-------------------'
+        puts "Processing time: #{processing_time} seconds"
+        puts '-------------------'
 
         ActiveRecord::Base.connection_pool.with_connection do
           u.update(status: "writing subtitle file from #{u.service}")

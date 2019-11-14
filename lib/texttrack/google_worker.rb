@@ -31,6 +31,8 @@ module TTS
       # TODO
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
+        
+      start_time = Time.now.getutc.to_i
 
       auth_file = params[:provider][:auth_file_path]
 
@@ -55,7 +57,8 @@ module TTS
       TTS::GoogleGetJob.perform_async(params.to_json,
                                       u.id,
                                       operation_name,
-                                      audio_type)
+                                      audio_type,
+                                      start_time)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -96,12 +99,25 @@ module TTS
                                 params.to_json,
                                 id,
                                 operation_name,
-                                audio_type)
+                                audio_type,
+                                start_time)
         return
       end
 
       callback = SpeechToText::GoogleS2T.get_words(operation_name)
       myarray = SpeechToText::GoogleS2T.create_array_google(callback['results'])
+        
+      end_time = Time.now.getutc.to_i
+      processing_time = end_time - start_time
+        
+      ActiveRecord::Base.connection_pool.with_connection do
+        u.update(processtime: "#{processing_time.to_s} seconds")
+      end
+        
+      puts '-------------------'
+      puts "Processing time: #{processing_time} seconds"
+      puts '-------------------'
+        
       current_time = (Time.now.to_f * 1000).to_i
 
       data = {
