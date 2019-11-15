@@ -23,10 +23,6 @@ module TTS
     def perform(params_json, id, audio_type)
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: 'finished audio conversion')
-      end
 
       # TODO
       # Need to handle locale here. What if we want to generate caption
@@ -51,6 +47,7 @@ module TTS
       )
 
       ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
         u.update(status: "created job with #{u.service}")
       end
 
@@ -74,10 +71,6 @@ module TTS
     def perform(params_json, id, operation_name, audio_type, start_time)
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: "waiting on job from #{u.service}")
-      end
 
       # Google will not return until check_job is done, occupies thread
       status = SpeechToText::GoogleS2T.check_status(operation_name)
@@ -88,6 +81,7 @@ module TTS
         puts status_msg
         puts '-------------------'
         ActiveRecord::Base.connection_pool.with_connection do
+          u = Caption.find(id)
           u.update(status: 'failed')
         end
         return
@@ -112,6 +106,7 @@ module TTS
       processing_time =  SpeechToText::Util.seconds_to_timestamp(processing_time)
         
       ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
         u.update(processtime: "#{processing_time}")
       end
         

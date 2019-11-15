@@ -21,10 +21,6 @@ module TTS
     def perform(params_json, id, audio_type)
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: 'finished audio conversion')
-      end
         
       start_time = Time.now.getutc.to_i
 
@@ -46,6 +42,7 @@ module TTS
       # rubocop:enable Naming/VariableName
 
       ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
         u.update(status: "created job with #{u.service}")
       end
 
@@ -70,10 +67,6 @@ module TTS
       # rubocop:enable Naming/VariableName
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: "waiting on job from #{u.service}")
-      end
 
       # wait_time = 30
 
@@ -107,6 +100,7 @@ module TTS
       processing_time =  SpeechToText::Util.seconds_to_timestamp(processing_time)
         
       ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
         u.update(processtime: "#{processing_time}")
       end
         

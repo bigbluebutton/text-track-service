@@ -22,10 +22,7 @@ module TTS
     def perform(params_json, id, audio_type)
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: 'finished audio conversion')
-      end
+      
       # TODO
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
@@ -41,13 +38,9 @@ module TTS
       )
 
       ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
         u.update(status: "created job with #{u.service}")
       end
-
-      # ActiveRecord::Base.connection_pool.with_connection do
-      # u = Caption.find(id)
-      # u.update(status: "waiting on job from #{u.service}")
-      # end
 
       TTS::IbmGetJob.perform_async(params.to_json,
                                    u.id,
@@ -68,10 +61,6 @@ module TTS
     def perform(params_json, id, job_id, start_time) # rubocop:disable Metrics/AbcSize
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: "waiting on job from #{u.service}")
-      end
 
       callback =
         SpeechToText::IbmWatsonS2T.check_job(job_id,
@@ -83,6 +72,7 @@ module TTS
         puts status_msg
         puts '-------------------'
         ActiveRecord::Base.connection_pool.with_connection do
+          u = Caption.find(id)
           u.update(status: 'failed')
         end
         return
@@ -103,6 +93,7 @@ module TTS
       processing_time =  SpeechToText::Util.seconds_to_timestamp(processing_time)
         
       ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
         u.update(processtime: "#{processing_time}")
       end
         

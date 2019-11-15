@@ -22,10 +22,6 @@ module TTS
     def perform(params_json, id, audio_type)
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: 'finished audio conversion')
-      end
         
       start_time = Time.now.getutc.to_i
       # TODO
@@ -42,6 +38,7 @@ module TTS
       )
 
       ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
         u.update(status: "created job with #{u.service}")
       end
 
@@ -70,16 +67,6 @@ module TTS
     def perform(params_json, id, job_id, transcript_id, start_time)
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: "waiting on job from #{u.service}")
-      end
-
-      # transcript_id = SpeechToText::ThreePlaymediaS2T.order_transcript(
-      # params[:provider][:auth_file_path],
-      # job_id,
-      # 6
-      # )
 
       status = SpeechToText::ThreePlaymediaS2T.check_status(
         params[:provider][:auth_file_path],
@@ -91,6 +78,7 @@ module TTS
         puts status_msg
         puts '-------------------'
         ActiveRecord::Base.connection_pool.with_connection do
+          u = Caption.find(id)
           u.update(status: 'failed')
         end
         return
@@ -130,6 +118,7 @@ module TTS
         processing_time =  SpeechToText::Util.seconds_to_timestamp(processing_time)
 
         ActiveRecord::Base.connection_pool.with_connection do
+            u = Caption.find(id)
             u.update(processtime: "#{processing_time}")
         end
 
@@ -138,8 +127,6 @@ module TTS
         puts '-------------------'
 
         ActiveRecord::Base.connection_pool.with_connection do
-          u.update(status: "writing subtitle file from #{u.service}")
-
           u.update(status: "done with #{u.service}")
         end
 

@@ -22,10 +22,10 @@ module TTS
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
       
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: 'finished audio conversion')
-      end
+      #ActiveRecord::Base.connection_pool.with_connection do
+        #u = Caption.find(id)
+        #u.update(status: 'finished audio conversion')
+      #end
 
       storage_dir = "#{params[:storage_dir]}/#{params[:record_id]}"
 
@@ -39,10 +39,10 @@ module TTS
       )
       
       ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
         u.update(status: "created job with #{u.service}")
       end
 
-      #puts "start time...........#{start_time}..............."
       TTS::DeepspeechGetJob.perform_async(params.to_json,
                                           u.id,
                                           job_id,
@@ -63,10 +63,10 @@ module TTS
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
         
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: "waiting on job from #{u.service}")
-      end
+      #ActiveRecord::Base.connection_pool.with_connection do
+        #u = Caption.find(id)
+        #u.update(status: "waiting on job from #{u.service}")
+      #end
 
       auth_file_path = params[:provider][:auth_file_path]
 
@@ -81,6 +81,7 @@ module TTS
         if status['message'] == 'No jobID found'
           puts 'Job does not exist'
           ActiveRecord::Base.connection_pool.with_connection do
+            u = Caption.find(id)
             u.update(status: 'failed')
           end
           return
@@ -103,6 +104,7 @@ module TTS
       processing_time =  SpeechToText::Util.seconds_to_timestamp(processing_time)
         
       ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
         u.update(processtime: "#{processing_time}")
       end
         

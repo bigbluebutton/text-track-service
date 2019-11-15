@@ -24,9 +24,9 @@ module TTS
       kind = data['kind']
       label = data['label']
 
-      u = Caption.find(id)            
+      u = nil       
       ActiveRecord::Base.connection_pool.with_connection do
-        #u = Caption.find(id)
+        u = Caption.find(id)
         u.update(status: "writing subtitle file from #{u.service}")
       end
 
