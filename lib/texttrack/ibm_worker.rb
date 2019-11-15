@@ -15,21 +15,20 @@ module TTS
   # rubocop:disable Style/Documentation
   class IbmCreateJob
     include Faktory::Job
-    faktory_options retry: 0, concurrency: 1
+    faktory_options retry: 5, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def perform(params_json, id, audio_type)
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: 'finished audio conversion')
-      end
+      
       # TODO
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
-
+        
+      start_time = Time.now.getutc.to_i
+        
       job_id = SpeechToText::IbmWatsonS2T.create_job(
         audio_file_path: "#{params[:storage_dir]}/#{params[:record_id]}",
         apikey: params[:provider][:auth_file_path],
@@ -39,17 +38,14 @@ module TTS
       )
 
       ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
         u.update(status: "created job with #{u.service}")
       end
 
-      # ActiveRecord::Base.connection_pool.with_connection do
-      # u = Caption.find(id)
-      # u.update(status: "waiting on job from #{u.service}")
-      # end
-
       TTS::IbmGetJob.perform_async(params.to_json,
                                    u.id,
-                                   job_id)
+                                   job_id,
+                                   start_time)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -62,13 +58,9 @@ module TTS
     faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
-    def perform(params_json, id, job_id) # rubocop:disable Metrics/AbcSize
+    def perform(params_json, id, job_id, start_time) # rubocop:disable Metrics/AbcSize
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: "waiting on job from #{u.service}")
-      end
 
       callback =
         SpeechToText::IbmWatsonS2T.check_job(job_id,
@@ -80,6 +72,7 @@ module TTS
         puts status_msg
         puts '-------------------'
         ActiveRecord::Base.connection_pool.with_connection do
+          u = Caption.find(id)
           u.update(status: 'failed')
         end
         return
@@ -87,13 +80,27 @@ module TTS
         puts '-------------------'
         puts status_msg
         puts '-------------------'
-        IbmGetJob.perform_in(30, params.to_json, id, job_id)
+        IbmGetJob.perform_in(30, params.to_json, id, job_id, start_time)
         return
       end
 
       # u = nil
       myarray =
         SpeechToText::IbmWatsonS2T.create_array_watson(callback['results'][0])
+        
+      end_time = Time.now.getutc.to_i
+      processing_time = end_time - start_time
+      processing_time =  SpeechToText::Util.seconds_to_timestamp(processing_time)
+        
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(processtime: "#{processing_time}")
+      end
+        
+      puts '-------------------'
+      puts "Processing time: #{processing_time} hr:min:sec.millsec"
+      puts '-------------------'
+        
       current_time = (Time.now.to_f * 1000).to_i
 
       data = {

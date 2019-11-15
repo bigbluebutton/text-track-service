@@ -16,21 +16,19 @@ require rails_environment_path
 module TTS
   class GoogleCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
-    faktory_options retry: 0, concurrency: 1
+    faktory_options retry: 5, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def perform(params_json, id, audio_type)
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: 'finished audio conversion')
-      end
 
       # TODO
       # Need to handle locale here. What if we want to generate caption
       # for pt-BR, etc. instead of en-US?
+        
+      start_time = Time.now.getutc.to_i
 
       auth_file = params[:provider][:auth_file_path]
 
@@ -49,13 +47,15 @@ module TTS
       )
 
       ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
         u.update(status: "created job with #{u.service}")
       end
 
       TTS::GoogleGetJob.perform_async(params.to_json,
                                       u.id,
                                       operation_name,
-                                      audio_type)
+                                      audio_type,
+                                      start_time)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -68,13 +68,9 @@ module TTS
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
-    def perform(params_json, id, operation_name, audio_type)
+    def perform(params_json, id, operation_name, audio_type, start_time)
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: "waiting on job from #{u.service}")
-      end
 
       # Google will not return until check_job is done, occupies thread
       status = SpeechToText::GoogleS2T.check_status(operation_name)
@@ -85,6 +81,7 @@ module TTS
         puts status_msg
         puts '-------------------'
         ActiveRecord::Base.connection_pool.with_connection do
+          u = Caption.find(id)
           u.update(status: 'failed')
         end
         return
@@ -96,12 +93,27 @@ module TTS
                                 params.to_json,
                                 id,
                                 operation_name,
-                                audio_type)
+                                audio_type,
+                                start_time)
         return
       end
 
       callback = SpeechToText::GoogleS2T.get_words(operation_name)
       myarray = SpeechToText::GoogleS2T.create_array_google(callback['results'])
+        
+      end_time = Time.now.getutc.to_i
+      processing_time = end_time - start_time
+      processing_time =  SpeechToText::Util.seconds_to_timestamp(processing_time)
+        
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(processtime: "#{processing_time}")
+      end
+        
+      puts '-------------------'
+      puts "Processing time: #{processing_time} hr:min:sec.millsec"
+      puts '-------------------'
+        
       current_time = (Time.now.to_f * 1000).to_i
 
       data = {

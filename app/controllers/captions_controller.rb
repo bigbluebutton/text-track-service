@@ -17,6 +17,10 @@ class CaptionsController < ApplicationController
     kind = params[:kind]
     label = params[:label]
 
+    if provider.nil?
+      provider = "deepspeech"
+    end                    
+    
     props = YAML.load_file('settings.yaml')
     storage_dir = props['storage_dir']
     storage_dir = "#{Rails.root}/storage"
@@ -31,18 +35,6 @@ class CaptionsController < ApplicationController
       file.write audio.read
     end
 
-    # Need to find how to get the key from settings.yaml
-    # props = YAML::load(File.open('settings.yaml'))
-    # provider = props["default_provider"]
-
-    # if(params[:provider].present?)
-    # provider = params[:provider]
-    # end
-    # puts "REDIS HOST=#{redis_host} PORT=#{redis_port} PASS=#{redis_password}"
-
-    # redis_namespace = props["redis_list_namespace"]
-    #
-
     caption_job = { record_id: record_id,
                     caption_locale: caption_locale,
                     provider: provider,
@@ -50,6 +42,25 @@ class CaptionsController < ApplicationController
                     bbb_checksum: bbb_checksum,
                     kind: kind,
                     label: label }
+    
+
+    ActiveRecord::Base.connection_pool.with_connection do
+      if Caption.exists?(record_id: record_id)
+        u = Caption.find_by(record_id: record_id)
+        u.update(status: 'in queue',
+                 service: provider,
+                 caption_locale: caption_locale)
+      else
+        Caption.create(record_id: record_id,
+                       status: 'in queue',
+                       service: provider,
+                       caption_locale: caption_locale,
+                       bbb_url: bbb_url,
+                       bbb_checksum: bbb_checksum,
+                       kind: kind,
+                       label: label)
+      end        
+    end            
     # rubocop:disable Style/GlobalVars
     $redis.lpush('caption_recordings_job', caption_job.to_json)
     # rubocop:enable Style/GlobalVars
@@ -63,7 +74,32 @@ class CaptionsController < ApplicationController
                     caption_locale: caption_locale }
     # TODO:  pass locale as param
     caption = Caption.where(record_id: record_id)
-    tp caption
+      
+    caption = caption.as_json
+    render json: JSON.pretty_generate(caption)
+  end
+    
+  def caption_all_status
+    # TODO:  pass locale as param
+    caption = Caption.all
+    caption = caption.as_json
+    render json: JSON.pretty_generate(caption)
+  end
+    
+  def caption_processed_status
+    # TODO:  pass locale as param
+    processed_jobs = Caption.where('status LIKE ?', 'uploaded%')
+      
+    processed_jobs = processed_jobs.as_json
+    render json: JSON.pretty_generate(processed_jobs)
+  end
+    
+  def caption_failed_status
+    # TODO:  pass locale as param
+    failed_jobs = Caption.where.not('status LIKE ?', 'uploaded%')
+      
+    failed_jobs = failed_jobs.as_json
+    render json: JSON.pretty_generate(failed_jobs)
   end
 
   private
