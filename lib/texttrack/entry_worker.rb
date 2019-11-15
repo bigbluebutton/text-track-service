@@ -31,7 +31,9 @@ module TTS
                           bbb_url: params[:bbb_url],
                           bbb_checksum: params[:bbb_checksum],
                           kind: params[:kind],
-                          label: params[:label]
+                          label: params[:label],
+                          start_time: params[:start_time],
+                          duration: params[:duration]
                          }
 
       provider = { name: provider_name }

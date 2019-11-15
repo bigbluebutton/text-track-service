@@ -16,6 +16,9 @@ class CaptionsController < ApplicationController
     bbb_url = params[:bbb_url]
     kind = params[:kind]
     label = params[:label]
+      
+    start_time = params[:start_time]
+    duration = params[:duration]
 
     if provider.nil?
       provider = "deepspeech"
@@ -41,7 +44,9 @@ class CaptionsController < ApplicationController
                     bbb_url: bbb_url,
                     bbb_checksum: bbb_checksum,
                     kind: kind,
-                    label: label }
+                    label: label,
+                    start_time: start_time,
+                    duration: duration}
     
 
     ActiveRecord::Base.connection_pool.with_connection do
@@ -58,7 +63,9 @@ class CaptionsController < ApplicationController
                        bbb_url: bbb_url,
                        bbb_checksum: bbb_checksum,
                        kind: kind,
-                       label: label)
+                       label: label,
+                       start_time: start_time.to_s,
+                       duration: duration.to_s)
       end        
     end            
     # rubocop:disable Style/GlobalVars
