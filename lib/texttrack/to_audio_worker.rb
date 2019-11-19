@@ -61,32 +61,36 @@ module TTS
         FileUtils.chmod('u=wrx,g=wrx,o=r', final_dest_dir)
       end
 
-      unless File.exist?("#{final_dest_dir}/#{audio_file}")
-        if params[:start_time].nil? && params[:duration].nil?
-            
-            SpeechToText::Util.video_to_audio(
-              video_file_path: final_dest_dir.to_s,
-              video_name: 'audio_temp',
-              video_content_type: 'wav',
-              audio_file_path: final_dest_dir.to_s,
-              audio_name: params[:record_id],
-              audio_content_type: audio_type
-            )
-            
-        else
-            
-           SpeechToText::Util.video_to_audio(
-              video_file_path: final_dest_dir.to_s,
-              video_name: 'audio_temp',
-              video_content_type: 'wav',
-              audio_file_path: final_dest_dir.to_s,
-              audio_name: params[:record_id],
-              audio_content_type: audio_type,
-              start_time: params[:start_time],
-              end_time: params[:duration]
-            )
-            
-        end
+      if params[:start_time].nil? && params[:duration].nil?
+          SpeechToText::Util.video_to_audio(
+            video_file_path: final_dest_dir.to_s,
+            video_name: 'audio_temp',
+            video_content_type: 'wav',
+            audio_file_path: final_dest_dir.to_s,
+            audio_name: params[:record_id],
+            audio_content_type: audio_type
+          )
+      elsif params[:start_time].nil?
+        SpeechToText::Util.video_to_audio(
+            video_file_path: final_dest_dir.to_s,
+            video_name: 'audio_temp',
+            video_content_type: 'wav',
+            audio_file_path: final_dest_dir.to_s,
+            audio_name: params[:record_id],
+            audio_content_type: audio_type,
+            duration: params[:duration]
+          )
+      else
+         SpeechToText::Util.video_to_audio(
+            video_file_path: final_dest_dir.to_s,
+            video_name: 'audio_temp',
+            video_content_type: 'wav',
+            audio_file_path: final_dest_dir.to_s,
+            audio_name: params[:record_id],
+            audio_content_type: audio_type,
+            start_time: params[:start_time],
+            duration: params[:duration]
+          )
       end
 
       # rubocop:disable Style/CaseEquality
