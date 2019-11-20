@@ -33,7 +33,7 @@ module TTS
                           kind: params[:kind],
                           label: params[:label],
                           start_time: params[:start_time],
-                          duration: params[:duration]
+                          end_time: params[:end_time]
                          }
 
       provider = { name: provider_name }

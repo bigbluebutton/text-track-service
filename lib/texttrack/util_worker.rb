@@ -23,6 +23,7 @@ module TTS
       bbb_checksum = data['bbb_checksum']
       kind = data['kind']
       label = data['label']
+      start_time = data['start_time']
 
       u = nil       
       ActiveRecord::Base.connection_pool.with_connection do
@@ -34,7 +35,8 @@ module TTS
       SpeechToText::Util.write_to_webvtt(
           vtt_file_path: storage_dir.to_s,
           vtt_file_name: temp_track_vtt.to_s,
-          myarray: myarray
+          myarray: myarray,
+          start_time: start_time
         )
 
       #SpeechToText::Util.recording_json(

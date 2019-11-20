@@ -61,7 +61,7 @@ module TTS
         FileUtils.chmod('u=wrx,g=wrx,o=r', final_dest_dir)
       end
 
-      if params[:start_time].nil? && params[:duration].nil?
+      if params[:start_time].nil? && params[:end_time].nil?
           SpeechToText::Util.video_to_audio(
             video_file_path: final_dest_dir.to_s,
             video_name: 'audio_temp',
@@ -79,10 +79,14 @@ module TTS
             audio_name: params[:record_id],
             audio_content_type: audio_type,
             start_time: params[:start_time],
-            duration: params[:duration]
+            end_time: params[:end_time]
           )
       end
-
+      
+      if params[:start_time].nil?
+        params[:start_time] = '0'
+      end
+      
       # rubocop:disable Style/CaseEquality
       if params[:provider][:name] === 'google'
         # rubocop:enable Style/CaseEquality
