@@ -54,7 +54,13 @@ class CaptionsController < ApplicationController
         u = Caption.find_by(record_id: record_id)
         u.update(status: 'in queue',
                  service: provider,
-                 caption_locale: caption_locale)
+                 caption_locale: caption_locale.
+                 bbb_url: bbb_url,
+                 bbb_checksum: bbb_checksum,
+                 kind: kind,
+                 label: label,
+                 start_time: start_time.to_s,
+                 end_time: end_time.to_s)
       else
         Caption.create(record_id: record_id,
                        status: 'in queue',
