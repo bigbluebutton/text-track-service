@@ -39,7 +39,7 @@ docker-compose --version
 sudo usermod -a -G docker texttrack
 ```
 
-TO varify docker
+To verify docker
 ```
 sudo docker run hello-world
 ```
@@ -87,7 +87,7 @@ sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:migrate
 sudo service docker restart
 ```
 
-Everything is up and runnig. Now change post_publish file on bbb server. 
+Everything is up and running. Now change post_publish file on bbb server. 
 Edit post_publish file(for automatic captions)
 ```
 Navigate to /usr/local/bigbluebutton/core/scripts/post_publish 
