@@ -9,6 +9,13 @@ class CreateCaptions < ActiveRecord::Migration[5.2]
       t.string :status
       t.string :caption_locale
       t.string :error
+      t.string :bbb_url
+      t.string :bbb_checksum
+      t.string :kind
+      t.string :label
+      t.string :processtime
+      t.string :start_time
+      t.string :end_time
 
       t.timestamps
     end

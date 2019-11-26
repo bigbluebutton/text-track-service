@@ -3,6 +3,7 @@
 require 'connection_pool'
 require 'faktory'
 require 'httparty'
+require 'json'
 
 module TTS
   class CallbackWorker # rubocop:disable Style/Documentation
