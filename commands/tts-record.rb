@@ -20,7 +20,7 @@ length = ARGV.length
 record_id = ''
 if length == 1
   record_id = ARGV[0]
-elseif length == 2
+elsif length == 2
   if ARGV[0] == '-r'
     record_id = ARGV[1]
   end
@@ -28,8 +28,13 @@ else
 
 end
 
+cmd = ''
+if record_id.nil?
+  cmd = "curl http://localhost:3000/caption/record_id > tts-record.json"  
+else
+  cmd = "curl http://localhost:3000/caption/record_id/#{ARGV[0]} > tts-record.json"
+end
 
-cmd = "curl http://localhost:3000/caption/record_id/#{ARGV[0]} > tts-record.json"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
