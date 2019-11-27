@@ -115,6 +115,26 @@ class CaptionsController < ApplicationController
     render json: JSON.pretty_generate(failed_jobs)
   end
 
+  def caption_find_record
+    # TODO:  pass locale as param
+    record_id = params[:record_id]
+    if record_id.nil?
+      data = '{"message" : "no record_id found"}'
+      render :json=>data
+      return
+    end
+    
+    record = Caption.find_by(record_id: record_id)
+    if record.nil?
+      data = '{"message" : "no database record found"}'
+      render :json=>data
+      return
+    end
+    
+    json_record = record.as_json
+    render json: JSON.pretty_generate(json_record)
+  end
+
   private
 
   def find_record_by_id
