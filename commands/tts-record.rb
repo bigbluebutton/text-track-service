@@ -32,7 +32,7 @@ cmd = ''
 if record_id.nil?
   cmd = "curl http://localhost:3000/caption/record_id > tts-record.json"  
 else
-  cmd = "curl http://localhost:3000/caption/record_id/#{ARGV[0]} > tts-record.json"
+  cmd = "curl http://localhost:3000/caption/record_id/#{record_id} > tts-record.json"
 end
 
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
