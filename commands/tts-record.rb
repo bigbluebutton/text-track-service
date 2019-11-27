@@ -21,7 +21,7 @@ record_id = ''
 if length == 1
   record_id = ARGV[0]
 elseif length == 2
-  if ARGV[0] == '--recordid'
+  if ARGV[0] == '-r'
     record_id = ARGV[1]
   end
 else

@@ -110,3 +110,14 @@ now do bbb-conf secret to find your secret
 copy that value into /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml as shared_secret: whatever_your_secret_is
 ```
 
+Some useful commands 
+```
+tts-all #List all the records from database
+tts-processed #Get all the processed records
+tts-failed #Get failed records
+
+#get information for specific record
+tts-record <record_id >
+#or
+tts-record -r <record_id>
+```
