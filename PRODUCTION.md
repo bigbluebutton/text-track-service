@@ -1,7 +1,7 @@
 Check if you have docker installed
 ```
 #command to check docker version
-docker --vesrion
+docker --version
 ```
 
 If you don't have docker installed please follow the steps given below or go to https://docs.docker.com/install/linux/docker-ce/ubuntu/ for more information.
@@ -35,7 +35,9 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.23.1/docker-
 sudo chmod +x /usr/local/bin/docker-compose
 docker-compose --version
 
-# Add texttrack(user) to docker group
+# Create and Add texttrack(user) to docker group
+adduser texttrack
+su texttrack (switch to texttrack user)
 sudo usermod -a -G docker texttrack
 ```
 
@@ -84,8 +86,17 @@ cd /usr/local/text-track-service/log/
 mkdir development.log
 sudo chmod ugo+rwx /usr/local/text-track-service/log/development.log
 sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:migrate
-sudo service docker restart
+
+sudo visudo
+
+Add the following line to the end of the file:
+texttrack ALL = NOPASSWD: /var/docker/text-track-service/deploy.sh
+
+./deploy.sh
+
 ```
+
+
 
 Everything is up and running. Now change post_publish file on bbb server. 
 Edit post_publish file(for automatic captions)
