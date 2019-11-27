@@ -169,6 +169,7 @@ GEM
     nio4r (2.5.2)
     nokogiri (1.10.5)
       mini_portile2 (~> 2.4.0)
+    open3 (0.1.0)
     os (1.0.1)
     parallel (1.19.0)
     parser (2.6.5.0)
@@ -294,6 +295,7 @@ DEPENDENCIES
   google-cloud-storage
   httparty
   listen (>= 3.0.5, < 3.2)
+  open3
   pg
   puma (~> 3.11)
   rails (~> 5.2.3)
