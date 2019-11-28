@@ -54,11 +54,16 @@ sudo usermod -a -G bigbluebutton texttrack
 sudo usermod -a -G texttrack bigbluebutton #######################
 ```
 
-Add your secret to bigbluebutton.yml file
+Add some information to bigbluebutton.yml file
 ```
-bbb-conf -secret
-sudo vim /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
-add shared_secret: your_secret value on a new line
+cd /usr/local/bigbluebutton/core/scripts/
+sudo vim bigbluebutton.yml
+
+presentation_dir: /var/bigbluebutton/published/presentation
+shared_secret: secret
+temp_storage: /var/bigbluebutton/captions
+
+To find your secret: bbb-conf -secret
 ```
 
 Give access to texttrack to needed folders
