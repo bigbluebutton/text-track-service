@@ -48,4 +48,22 @@ Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   end
 end
 
-tp data
+i = 0
+myarray = []
+
+while i < data.length
+  value = {"id" => "#{data[i]['id']}", 
+           "record_id" => "#{data[i]['record_id']}", 
+           "service" => "#{data[i]['service']}", 
+           "status" => "#{data[i]['status']}", 
+           "caption_locale" => "#{data[i]['caption_locale']}", 
+           "processtime" => "#{data[i]['processtime']}", 
+           "error" => "#{data[i]['error']}", 
+           "start_time" => "#{data[i]['start_time']}",
+           "end_time" => "#{data[i]['end_time']}"
+         }
+  myarray[i] = value
+  i += 1
+end
+
+tp myarray
