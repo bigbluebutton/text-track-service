@@ -96,7 +96,17 @@ texttrack ALL = NOPASSWD: /var/docker/text-track-service/deploy.sh
 
 ```
 
+Add some information to bigbluebutton.yml file on bbb server
+```
+cd /usr/local/bigbluebutton/core/scripts/
+sudo vim bigbluebutton.yml
 
+presentation_dir: /var/bigbluebutton/published/presentation
+shared_secret: secret
+temp_storage: /var/bigbluebutton/captions
+
+To find your secret: bbb-conf -secret
+```
 
 Everything is up and running. Now change post_publish file on bbb server. 
 Edit post_publish file(for automatic captions)
