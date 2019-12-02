@@ -9,16 +9,18 @@ class CaptionsController < ApplicationController
 
   # rubocop:disable Metrics/MethodLength
   def caption_recording # rubocop:disable Metrics/AbcSize
+    
     record_id = params[:record_id]
     caption_locale = params[:caption_locale]
-    provider = params[:provider]
-    bbb_checksum = params[:bbb_checksum]
-    bbb_url = params[:bbb_url]
-    kind = params[:kind]
-    label = params[:label]
-      
-    start_time = params[:start_time]
-    end_time = params[:end_time]
+    token = params[:token]
+    decoded_token = JWT.decode token, 'tts-parthik', true, {algorithm: 'HS256'}
+    provider = decoded_token[0]['provider']
+    bbb_checksum = decoded_token[0]['bbb_checksum']
+    bbb_url = decoded_token[0]['bbb_url']
+    kind = decoded_token[0]['kind']
+    label = decoded_token[0]['label']
+    start_time = decoded_token[0]['start_time']
+    end_time = decoded_token[0]['end_time']
 
     if provider.nil?
       provider = "deepspeech"

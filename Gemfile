@@ -11,7 +11,7 @@ gem 'faktory_worker_ruby'
 gem 'google-cloud-speech'
 gem 'google-cloud-storage'
 gem 'httparty'
-
+gem 'jwt'
 # Use Puma as the app server
 gem "pg"
 gem 'puma', '~> 3.11'
@@ -27,7 +27,6 @@ gem 'rubocop', require: false
 
 gem 'sequel'
 gem 'speech_to_text', '0.1.5'
-
 # Use sqlite3 as the database for Active Record
 #gem 'sqlite3'
 gem 'table_print'
