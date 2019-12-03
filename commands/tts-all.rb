@@ -3,7 +3,7 @@ require 'json'
 require 'open3'
 require 'yaml'
 
-cmd = "sudo chmod u+w ."
+cmd = "sudo chmod uog+wrx ."
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
