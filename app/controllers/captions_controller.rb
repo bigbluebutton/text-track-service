@@ -13,7 +13,9 @@ class CaptionsController < ApplicationController
     record_id = params[:record_id]
     caption_locale = params[:caption_locale]
     token = params[:token]
-    decoded_token = JWT.decode token, 'tts-parthik', true, {algorithm: 'HS256'}
+    props = YAML.load_file('credentials.yaml')
+    tts_secret = props['tts_secret']
+    decoded_token = JWT.decode token, tts_secret, true, {algorithm: 'HS256'}
     provider = decoded_token[0]['provider']
     bbb_checksum = decoded_token[0]['bbb_checksum']
     bbb_url = decoded_token[0]['bbb_url']
