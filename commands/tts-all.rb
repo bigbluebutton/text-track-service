@@ -1,6 +1,7 @@
 require 'table_print'
 require 'json'
 require 'open3'
+require 'yaml'
 
 cmd = "sudo chmod u+w ."
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
@@ -16,7 +17,9 @@ Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   end
 end
 
-cmd = "curl http://localhost:3000/status/all > tts-all.json"
+props = YAML.load_file('/var/docker/text-track-service/credentials.yaml')
+tts_secret = props['tts_secret']
+cmd = "curl -X POST http://localhost:3000/status/all/'#{tts_secret}' > tts-all.json"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
@@ -34,33 +37,7 @@ file = File.open('tts-all.json', 'r')
 data = JSON.load file
 file.close
 
-cmd = "rm tts-all.json"
-Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
-  while line = stdout_err.gets
-    puts "#{line}"
-  end
 
-  exit_status = wait_thr.value
-  unless exit_status.success?
-    puts '---------------------'
-    puts "FAILED to execute --> #{cmd}"
-    puts '---------------------'
-  end
-end
-
-class String
-  def to_hash(arr_sep=',', key_sep=':')
-    array = self.split(arr_sep)
-    hash = {}
-
-    array.each do |e|
-      key_value = e.split(key_sep)
-      hash[key_value[0]] = key_value[1]
-    end
-
-    return hash
-  end
-end
 
 i = 0
 myarray = []
