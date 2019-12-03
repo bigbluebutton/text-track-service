@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   root 'captions#index'
   get '/', to: 'captions#index', as: :captions_index
-  get '/caption/record_id(/:record_id)', to: 'info#caption_find_record'
+  get '/caption/record_id/:record_id', to: 'info#caption_find_record'
   
   
   post '/status/all/:password', to: 'info#caption_all_status', as: :caption_all_status
