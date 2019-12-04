@@ -78,6 +78,7 @@ Setup db after starting application
 ```
 cd /usr/local/text-track-service
 # if you are creating first time then use db:create instead of db:reset
+sudo chmod -R a+rX *
 sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:reset
 cd /usr/local/text-track-service/db
 sudo chmod -R a+rX *
@@ -85,6 +86,7 @@ sudo chmod ugo+rwx /usr/local/text-track-service/log/
 cd /usr/local/text-track-service/log/
 mkdir development.log
 sudo chmod ugo+rwx /usr/local/text-track-service/log/development.log
+sudo chmod -R a+rX *
 sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:migrate
 
 sudo visudo
@@ -122,6 +124,7 @@ copy that value into /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml as 
 ```
 
 Some useful commands 
+before running commands navigate to /var/docker/text-track-service/commands and run ./config.sh
 ```
 tts-all #List all the records from database
 tts-processed #Get all the processed records
@@ -131,4 +134,7 @@ tts-failed #Get failed records
 tts-record <record_id >
 #or
 tts-record -r <record_id>
+
+tts-delete-all
+tts-delete record_id
 ```
