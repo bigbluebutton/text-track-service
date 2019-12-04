@@ -104,6 +104,7 @@ sudo vim bigbluebutton.yml
 presentation_dir: /var/bigbluebutton/published/presentation
 shared_secret: secret
 temp_storage: /var/bigbluebutton/captions
+tts_shared_secret: egUE@#IY@&*h82uioh#EN@H$#*orhdo8234hO@HoH$@ORHF#$*r@W
 
 To find your secret: bbb-conf -secret
 ```
