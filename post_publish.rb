@@ -46,6 +46,7 @@ audio_dir = "#{archived_files}/audio"
 require "rest-client"
 require 'yaml'
 require "speech_to_text"
+require "jwt"
 #[{"localeName": "English (United States)", "locale": "en-US"}]
 
 
@@ -76,7 +77,7 @@ end
 
 bbb_props = YAML.load_file('/usr/local/bigbluebutton/core/scripts/bigbluebutton.yml')
 
-site = bbb_props['playback_host']
+site = "http://#{bbb_props['playback_host']}"
 secret = bbb_props['shared_secret']
 kind = "subtitles"
 lang = "en_US"
@@ -85,12 +86,31 @@ request = "putRecordingTextTrackrecordID=#{meeting_id}&kind=#{kind}&lang=#{lang}
 request += secret
 checksum = Digest::SHA1.hexdigest(request)
 
-#response = RestClient.get "http://localhost:4000/caption/#{meeting_id}/en-US", {:params => {:site => "https://#{site}", :checksum => "#{checksum}"}}
+start_time = nil
+end_time = nil
 
+tts_secret = bbb_props['tts_shared_secret']
+
+payload = { :bbb_url => site, 
+            :bbb_checksum => checksum, 
+            :kind => kind,
+            :label => label,
+            :start_time => start_time,
+            :end_time => end_time
+          }
+
+token = JWT.encode payload, "#{tts_secret}", 'HS256'
+
+#request = RestClient::Request.new(
+    #method: :get, 
+    #url: "http://localhost:3000/caption/#{meeting_id}/en-US",
+    #payload: { :file => File.open("#{temp_storage}/#{meeting_id}/audio.wav", 'rb'), :bbb_url => "http://#{site}", :bbb_checksum => "#{checksum}", :kind => "#{kind}", :label => "#{label}" }
+#)
 request = RestClient::Request.new(
     method: :get, 
-    url: "http://localhost:4000/caption/#{meeting_id}/en-US",
-    payload: { :file => File.open("#{temp_storage}/#{meeting_id}/audio.wav", 'rb'), :bbb_url => "http://#{site}", :bbb_checksum => "#{checksum}", :kind => "#{kind}", :label => "#{label}" }
+    url: "http://localhost:3000/caption/#{meeting_id}/en-US",
+    payload: { :file => File.open("#{temp_storage}/#{meeting_id}/audio.wav", 'rb'),
+               :token => token }
 )
 response = request.execute
 
