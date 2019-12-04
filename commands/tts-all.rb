@@ -71,8 +71,8 @@ Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   end
 end
 
-#tp myarray
-tp myarray, :include => [:record_id => {:width => 60}, :status => {:width => 60}]
+tp.set :max_width, 60
+tp myarray
 
 
 

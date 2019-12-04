@@ -80,4 +80,5 @@ while i < data.length
   i += 1
 end
 
-tp myarray, :include => [:record_id => {:width => 60}, :status => {:width => 60}]
+tp.set :max_width, 60
+tp myarray
