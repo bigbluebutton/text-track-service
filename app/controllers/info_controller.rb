@@ -14,9 +14,8 @@ class InfoController < ApplicationController
   def caption_all_status
     password = params[:password]
     props = YAML.load_file('credentials.yaml')
-    tts_password = props['tts_secret']
-    
-    if (password == tts_password)
+    tts_shared_secret = props['tts_shared_secret']
+    if (password == tts_shared_secret)
       caption = Caption.all  
       caption = caption.as_json
       render json: JSON.pretty_generate(caption)
@@ -66,8 +65,8 @@ class InfoController < ApplicationController
     password = params[:password]
     props = YAML.load_file('credentials.yaml')
 
-    tts_secret = props['tts_secret']
-    if (password == tts_secret)
+    tts_shared_secret = props['tts_shared_secret']
+    if (password == tts_shared_secret)
       Caption.destroy_all
     else
       data = '{"message" : "incorrect password"}'

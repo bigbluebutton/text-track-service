@@ -14,8 +14,8 @@ class CaptionsController < ApplicationController
     caption_locale = params[:caption_locale]
     token = params[:token]
     props = YAML.load_file('credentials.yaml')
-    tts_secret = props['tts_secret']
-    decoded_token = JWT.decode token, tts_secret, true, {algorithm: 'HS256'}
+    tts_shared_secret = props['tts_shared_secret']
+    decoded_token = JWT.decode token, tts_shared_secret, true, {algorithm: 'HS256'}
     provider = decoded_token[0]['provider']
     bbb_checksum = decoded_token[0]['bbb_checksum']
     bbb_url = decoded_token[0]['bbb_url']

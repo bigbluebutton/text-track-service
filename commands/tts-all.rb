@@ -17,10 +17,10 @@ Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   end
 end
 
-#props = YAML.load_file('/var/docker/text-track-service/credentials.yaml')
-props = YAML.load_file('/home/parthik/tts/final/text-track-service/credentials.yaml')
-tts_secret = props['tts_secret']
-cmd = "curl -X POST http://localhost:3000/status/all/'#{tts_secret}' > tts-all.json"
+props = YAML.load_file('/var/docker/text-track-service/credentials.yaml')
+#props = YAML.load_file('/home/parthik/tts/final/text-track-service/credentials.yaml')
+tts_shared_secret = props['tts_shared_secret']
+cmd = "curl -X POST http://localhost:3000/status/all/'#{tts_shared_secret}' > tts-all.json"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
