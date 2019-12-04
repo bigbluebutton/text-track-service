@@ -80,4 +80,4 @@ while i < data.length
   i += 1
 end
 
-tp myarray
+tp myarray, :include => [:record_id => {:width => 60}, :status => {:width => 60}]
