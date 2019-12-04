@@ -23,7 +23,7 @@ module TTS
       label = data['label']
       id = data['id']
       caption_locale = caption_locale.sub('-', '_')
-
+        
 
       # prepare post data
       uri = URI("#{bbb_url}/bigbluebutton/api/putRecordingTextTrack?recordID=#{record_id}&kind=#{kind}&lang=#{caption_locale}&label=#{label}&checksum=#{bbb_checksum}")

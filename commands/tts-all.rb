@@ -57,6 +57,8 @@ unless data.nil?
   end
 end
 
+file.delete
+
 tp myarray
 
 

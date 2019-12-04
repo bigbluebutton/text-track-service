@@ -1,6 +1,6 @@
 sudo chmod uog+rwx /bin
-#working_dir=/var/docker/text-track-service
-working_dir=/home/parthik/tts/final/text-track-service
+working_dir=/var/docker/text-track-service
+#working_dir=/home/parthik/tts/final/text-track-service
 
 FILE=/bin/tts-all
 if test -f "$FILE"; then
