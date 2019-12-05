@@ -26,7 +26,7 @@ gem 'redis-rails'
 gem 'rubocop', require: false
 
 gem 'sequel'
-gem 'speech_to_text', '0.1.5'
+gem 'speech_to_text', '0.1.6'
 # Use sqlite3 as the database for Active Record
 #gem 'sqlite3'
 gem 'table_print'

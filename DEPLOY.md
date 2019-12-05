@@ -303,7 +303,7 @@ Create private/public key and encrypt on the computer your developing from (NOT 
 ```
 cd /var/docker/text-track-service
 ssh-keygen -f deploy_key
-add the private key inside deploy_key to the authorized keys on the server (This enables travis-ci to ssh into the server for ci cd)
+add the private key inside deploy_key.pub to the authorized keys on the server (This enables travis-ci to ssh into the server for ci cd)
 travis encrypt-file deploy_key --add
 sudo mv deploy_file deploy_file.pub ..
 ```
