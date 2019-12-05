@@ -48,9 +48,9 @@ sudo docker run hello-world
 
 Create appropriate working dir
 ```
-cd /usr
-sudo mkdir local
-sudo chown texttrack:textrack /usr/local
+cd /var
+sudo mkdir docker
+sudo chown texttrack:textrack /var/docker
 cd docker
 git clone https://github.com/bigbluebutton/text-track-service
 cd text-track-service
@@ -59,16 +59,18 @@ cd text-track-service
 don't forget to
 ```
 create your credentials file
-create auth/google_auth_file and add file name to settings.yml
+create auth/google_auth_file and add file name to credentials.yaml (make sure google auth file owner is texttrack)
 ```
 
 Copy systemd file and start service
 ```
+cd /var/docker/text-track-service/systemd
 sudo cp tts-docker.service /etc/systemd/system
 sudo systemctl enable tts-docker
-sudo systemctl start tts-docker
 
 sudo chmod -R a+rX /var/docker/text-track-service/tmp/*
+
+sudo systemctl start tts-docker
 
 sudo journalctl -u tts-docker -f (see tailed logs)
 ```
@@ -77,15 +79,10 @@ Setup db after starting application
 
 ```
 cd /usr/local/text-track-service
-# if you are creating first time then use db:create instead of db:reset
+# if you are creating first time then use db:create otherwise db:reset
 sudo chmod -R a+rX *
-sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:reset
-cd /usr/local/text-track-service/db
-sudo chmod -R a+rX *
-sudo chmod ugo+rwx /usr/local/text-track-service/log/
-cd /usr/local/text-track-service/log/
-mkdir development.log
-sudo chmod ugo+rwx /usr/local/text-track-service/log/development.log
+sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:create
+
 sudo chmod -R a+rX *
 sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:migrate
 
@@ -101,6 +98,10 @@ texttrack ALL = NOPASSWD: /var/docker/text-track-service/deploy.sh
 Add some information to bigbluebutton.yml file on bbb server
 ```
 cd /usr/local/bigbluebutton/core/scripts/
+
+To find your secret: bbb-conf -secret
+To find tts-secret: tts-secret (first run config.sh in /var/docker/text-track-service/commands)
+
 sudo vim bigbluebutton.yml
 
 presentation_dir: /var/bigbluebutton/published/presentation
@@ -108,7 +109,7 @@ shared_secret: secret
 temp_storage: /var/bigbluebutton/captions
 tts_shared_secret: egUE@#IY@&*h82uioh#EN@H$#*orhdo8234hO@HoH$@ORHF#$*r@W
 
-To find your secret: bbb-conf -secret
+
 ```
 
 Everything is up and running. Now change post_publish file on bbb server. 

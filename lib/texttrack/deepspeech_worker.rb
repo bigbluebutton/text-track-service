@@ -35,7 +35,8 @@ module TTS
       job_id = SpeechToText::MozillaDeepspeechS2T.create_job(
         "#{storage_dir}/#{params[:record_id]}.#{audio_type}",
         params[:provider][:auth_file_path],
-        "#{storage_dir}/#{job_name}_jobdetails.json"
+        "#{storage_dir}/#{job_name}_jobdetails.json",
+          params[:provider][:apikey]
       )
       
       ActiveRecord::Base.connection_pool.with_connection do
@@ -71,7 +72,8 @@ module TTS
       auth_file_path = params[:provider][:auth_file_path]
 
       status = SpeechToText::MozillaDeepspeechS2T.checkstatus(job_id,
-                                                              auth_file_path)
+                                                              auth_file_path,
+                                                              params[:provider][:apikey])
       if status != 'completed'
         puts '-------------------'
         puts "status is #{status}"
@@ -94,7 +96,8 @@ module TTS
 
       callback_json =
         SpeechToText::MozillaDeepspeechS2T.order_transcript(job_id,
-                                                            auth_file_path)
+                                                            auth_file_path,
+                                                            params[:provider][:apikey])
 
       myarray =
         SpeechToText::MozillaDeepspeechS2T.create_mozilla_array(callback_json)
