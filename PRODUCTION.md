@@ -125,7 +125,7 @@ copy that value into /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml as 
 ```
 
 Some useful commands 
-before running commands navigate to /var/docker/text-track-service/commands and run ./config.sh
+before running commands navigate to /var/docker/text-track-service/commands and run ./config.sh && gem install table_print
 ```
 tts-all #List all the records from database
 tts-processed #Get all the processed records
