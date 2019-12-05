@@ -12,18 +12,19 @@ class CaptionsController < ApplicationController
     
     record_id = params[:record_id]
     caption_locale = params[:caption_locale]
+    provider = params[:provider]
     token = params[:token]
     props = YAML.load_file('credentials.yaml')
     tts_shared_secret = props['tts_shared_secret']
     decoded_token = JWT.decode token, tts_shared_secret, true, {algorithm: 'HS256'}
-    provider = decoded_token[0]['provider']
+    
     bbb_checksum = decoded_token[0]['bbb_checksum']
     bbb_url = decoded_token[0]['bbb_url']
     kind = decoded_token[0]['kind']
     label = decoded_token[0]['label']
     start_time = decoded_token[0]['start_time']
     end_time = decoded_token[0]['end_time']
-
+    
     if provider.nil?
       provider = "deepspeech"
     end                    
