@@ -16,7 +16,7 @@ Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   end
 end
 
-cmd = "curl http://localhost:3000/status/processed > tts-processed.json"
+cmd = "curl https://localhost:3000/status/processed > tts-processed.json"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
