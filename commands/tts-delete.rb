@@ -4,7 +4,7 @@ require 'open3'
 cmd = ''
 unless ARGV[0].nil?
     record_id = ARGV[0]
-    cmd = "curl https://localhost:3000/caption/delete/#{record_id}"
+    cmd = "curl https://ritz-tts-freddixon.ca:3000/caption/delete/#{record_id}"
 else
   puts "ERROR: no record_id passed"
 end
