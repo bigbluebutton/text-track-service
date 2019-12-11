@@ -68,22 +68,7 @@ services:
     volumes_from: 
       - website
       
-  nginx:
-    image: nginx.image.uri:latest
-    volumes:
-      - certs:/etc/letsencrypt
-      - certs-data:/data/letsencrypt
-    ports:
-     - "80:80"
-     - "443:443"
-    links:  # new
-     - website
-    volumes_from:
-     - website
-
 volumes:
   redis:
   faktory:
-  certs:
-  certs-data:
   #website:
