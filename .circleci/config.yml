@@ -13,4 +13,4 @@ jobs:
       - run: 
           name: Deploy app to Digital Ocean Server via Docker
           command: |
-            ssh -o StrictHostKeyChecking=no tts@ritz-tts6.freddixon.ca sudo /var/docker/text-track-service/deploy.sh
+            ssh -o StrictHostKeyChecking=no texttrack@ritz-tts6.freddixon.ca sudo /var/docker/text-track-service/deploy.sh
