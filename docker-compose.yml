@@ -75,7 +75,6 @@ services:
       - certs-data:/data/letsencrypt
     ports:
      - "80:80"
-     - "3000:3000"
      - "443:443"
     links:  # new
      - website
@@ -85,4 +84,6 @@ services:
 volumes:
   redis:
   faktory:
+  certs:
+  certs-data:
   #website:
