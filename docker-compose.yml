@@ -35,7 +35,6 @@ services:
       - .:/text-track-service
     ports:
       - "3000:3000"
-      - "443:443"
     depends_on:
       - db
   
