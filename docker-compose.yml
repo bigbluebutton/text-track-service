@@ -66,8 +66,8 @@ services:
       FAKTORY_PROVIDER: FAKTORY_URL
       FAKTORY_URL: tcp://:${PASSWORD}@tts_faktory:7419
     volumes_from: 
-      - website 
-
+      - website
+      
 volumes:
   redis:
   faktory:

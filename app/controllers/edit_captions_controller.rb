@@ -53,13 +53,19 @@ class EditCaptionsController < ApplicationController
     end
 
     def upload_vtt
+
       vtt_file = params['file']
       record_id = params[:record_id]
-      bbb_checksum = params[:bbb_checksum]
-      bbb_url = params[:bbb_url]
-      kind = params[:kind]
-      label = params[:label]
-      caption_locale = params[:caption_locale]
+      token = params[:token]
+      decoded_token = JWT.decode token, 'tts-parthik', true, {algorithm: 'HS256'}
+      provider = decoded_token[0]['provider']
+      bbb_checksum = decoded_token[0]['bbb_checksum']
+      bbb_url = decoded_token[0]['bbb_url']
+      kind = decoded_token[0]['kind']
+      label = decoded_token[0]['label']
+      caption_locale = decoded_token[0]['caption_locale']
+      
+      
 
       if vtt_file.nil?
         data = "{\"message\" : \"missing param file\"}"

@@ -35,7 +35,7 @@ module TTS
       SpeechToText::Util.write_to_webvtt(
           vtt_file_path: storage_dir.to_s,
           vtt_file_name: temp_track_vtt.to_s,
-          myarray: myarray,
+          text_array: myarray,
           start_time: start_time
         )
 

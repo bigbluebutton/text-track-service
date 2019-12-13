@@ -138,7 +138,8 @@ module TTS
           'bbb_url' => params[:bbb_url],
           'bbb_checksum' => params[:bbb_checksum],
           'kind' => params[:kind],
-          'label' => params[:label]
+          'label' => params[:label],
+          'id' => id
         }
 
         TTS::CallbackWorker.perform_async(data.to_json)

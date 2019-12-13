@@ -59,6 +59,8 @@ module TTS
       elsif provider_name == 'deepspeech'
         provider[:auth_file_path] =
           props_keys['providers'][provider_name]['url']
+        provider[:apikey] =
+          props_keys['providers'][provider_name]['apikey']
       end
 
       to_audio_params[:provider] = provider
