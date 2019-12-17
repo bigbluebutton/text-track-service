@@ -16,7 +16,7 @@ Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   end
 end
 
-cmd = "curl https://ritz-tts6.freddixon.ca:3000/status/failed > tts-failed.json"
+cmd = "curl https://ritz-tts6.freddixon.ca/tts/status/failed > tts-failed.json"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
