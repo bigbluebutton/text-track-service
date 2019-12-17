@@ -108,8 +108,8 @@ token = JWT.encode payload, "#{tts_secret}", 'HS256'
 #)
 request = RestClient::Request.new(
     method: :get, 
-    url: "http://localhost:3000/caption/#{meeting_id}/en-US",
-    payload: { :file => File.open("#{temp_storage}/#{meeting_id}/audio.wav", 'rb'),
+    url: "https://ritz-tts6.freddixon.ca/tts/caption/#{meeting_id}/en-US",
+    payload: { :file => File.open("#{temp_storage}/#{meeting_id}/#{meeting_id}.wav", 'rb'),
                :token => token }
 )
 response = request.execute

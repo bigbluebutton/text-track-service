@@ -1,3 +1,11 @@
+Create user texttrack
+```
+adduser texttrack
+usermod -aG sudo texttrack
+su texttrack (switch to texttrack user)
+sudo ls -la /root
+```
+
 Check if you have docker installed
 ```
 #command to check docker version
@@ -36,8 +44,6 @@ sudo chmod +x /usr/local/bin/docker-compose
 docker-compose --version
 
 # Create and Add texttrack(user) to docker group
-adduser texttrack
-su texttrack (switch to texttrack user)
 sudo usermod -a -G docker texttrack
 ```
 
@@ -118,7 +124,69 @@ Edit post_publish file(for automatic captions)
 Navigate to /usr/local/bigbluebutton/core/scripts/post_publish 
 
 sudo gem install rest-client
-sudo cp /usr/local/text-track-service/post_publish.rb /usr/local/bigbluebutton/core/scripts/post_publish
+
+Insert the following into your post_publish.rb file just below custom script starts here
+
+temp_storage = bbb_props['temp_storage']
+final_dest_dir = "#{temp_storage}/#{meeting_id}"
+audio_file = "#{meeting_id}.wav"
+
+unless Dir.exist?(final_dest_dir)
+  FileUtils.mkdir_p(final_dest_dir)
+  FileUtils.chmod('u=wrx,g=wrx,o=r', final_dest_dir)
+end
+
+unless File.exist?("#{final_dest_dir}/#{audio_file}")
+SpeechToText::Util.video_to_audio(
+  video_file_path: "#{published_files}/video",
+  video_name: 'webcams',
+  video_content_type: 'webm',
+  audio_file_path: final_dest_dir.to_s,
+  audio_name: meeting_id,
+  audio_content_type: "wav"
+)
+end
+
+site = "http://#{bbb_props['playback_host']}"
+secret = bbb_props['shared_secret']
+kind = "subtitles"
+lang = "en_US"
+label = "English"
+request = "putRecordingTextTrackrecordID=#{meeting_id}&kind=#{kind}&lang=#{lang}&label=#{label}"
+request += secret
+checksum = Digest::SHA1.hexdigest(request)
+
+start_time = nil 
+end_time = nil 
+
+tts_secret = bbb_props['tts_shared_secret']
+
+payload = { :bbb_url => site, 
+            :bbb_checksum => checksum, 
+            :kind => kind,
+            :label => label,
+            :start_time => start_time,
+            :end_time => end_time
+          }   
+
+token = JWT.encode payload, "#{tts_secret}", 'HS256'
+
+request = RestClient::Request.new(
+    method: :get,
+    url: "https://ritz-tts6.freddixon.ca/tts/caption/#{meeting_id}/en-US",
+    payload: { :file => File.open("#{temp_storage}/#{meeting_id}/#{meeting_id}.wav", 'rb'),
+               :token => token }
+)
+
+response = request.execute
+
+
+if(response.code != 200)
+  BigBlueButton.logger.info("#{response.code} error")
+end
+
+exit 0
+
 
 now do bbb-conf secret to find your secret
 copy that value into /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml as shared_secret: whatever_your_secret_is
