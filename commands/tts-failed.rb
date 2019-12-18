@@ -2,7 +2,9 @@ require 'table_print'
 require 'json'
 require 'open3'
 
-cmd = "sudo chmod u+w ."
+working_dir = "/var/docker/text-track-service/commands"
+
+cmd = "sudo chmod u+w #{working_dir}"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
@@ -16,7 +18,7 @@ Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   end
 end
 
-cmd = "curl https://ritz-tts6.freddixon.ca/tts/status/failed > tts-failed.json"
+cmd = "curl https://ritz-tts6.freddixon.ca/tts/status/failed > #{working_dir}/tts-failed.json"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
@@ -30,11 +32,11 @@ Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   end
 end
 
-file = File.open('tts-failed.json', 'r')
+file = File.open("#{working_dir}/tts-failed.json", 'r')
 data = JSON.load file
 file.close
 
-cmd = "rm tts-failed.json"
+cmd = "#{working_dir}/tts-failed.json"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
