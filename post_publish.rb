@@ -4,7 +4,7 @@
 #
 # BigBlueButton open source conferencing system - http://www.bigbluebutton.org/
 #
-# Copyright (c) 2012 BigBlueButton Inc. and by respective authors (see below).
+# Copyright (c) 2013 BigBlueButton Inc. and by respective authors (see below).
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU Lesser General Public License as published by the Free
@@ -21,6 +21,9 @@
 #
 
 require 'trollop'
+require "rest-client"
+require 'yaml'
+require "speech_to_text"
 
 require File.expand_path('../../lib/recordandplayback', __dir__)
 
@@ -30,23 +33,26 @@ end
 
 meeting_id = opts[:meeting_id]
 
-logger = Logger.new('/var/log/bigbluebutton/post_publish.log', 'weekly')
+bbb_props = YAML.load_file('/usr/local/bigbluebutton/core/scripts/bigbluebutton.yml')
+
+log_dir = bbb_props['log_dir']
+logger = Logger.new("#{log_dir}/post_publish.log", 'weekly')
 logger.level = Logger::INFO
 BigBlueButton.logger = logger
 
-published_files = "/var/bigbluebutton/published/presentation/#{meeting_id}"
-archived_files = "/var/bigbluebutton/recording/raw/#{meeting_id}"
-meeting_metadata = BigBlueButton::Events.get_meeting_metadata("/var/bigbluebutton/recording/raw/#{meeting_id}/events.xml")
+presentation_dir = bbb_props['presentation_dir']
+published_files = "#{presentation_dir}/#{meeting_id}"
+
+recording_dir = bbb_props['recording_dir']
+archived_files = "#{recording_dir}/raw/#{meeting_id}"
+meeting_metadata = BigBlueButton::Events.get_meeting_metadata("#{recording_dir}/raw/#{meeting_id}/events.xml")
 events_xml = "#{archived_files}/events.xml"
 audio_dir = "#{archived_files}/audio"
+
 #published_files_video = "/var/bigbluebutton/published/presentation/#{$meeting_id}/video"
 #scripts = "/usr/local/bigbluebutton/core/scripts/post_publish"
 
 ############################CUSTOM SCRIPT STARTS HERE#######################################
-require "rest-client"
-require 'yaml'
-require "speech_to_text"
-require "jwt"
 #[{"localeName": "English (United States)", "locale": "en-US"}]
 
 
@@ -55,27 +61,28 @@ require "jwt"
 # url:    "http://localhost:4000/caption/#{$meeting_id}/en-US",
 # )
 
-temp_storage = "/var/bigbluebutton/captions"
 
+temp_storage = bbb_props['temp_storage']
 final_dest_dir = "#{temp_storage}/#{meeting_id}"
 audio_file = "#{meeting_id}.wav"
+
 unless Dir.exist?(final_dest_dir)
   FileUtils.mkdir_p(final_dest_dir)
   FileUtils.chmod('u=wrx,g=wrx,o=r', final_dest_dir)
 end
 
-unless File.exist?("#{final_dest_dir}/#{audio_file}")
+#unless File.exist?("#{final_dest_dir}/#{audio_file}")
 SpeechToText::Util.video_to_audio(
   video_file_path: "#{published_files}/video",
   video_name: 'webcams',
   video_content_type: 'webm',
   audio_file_path: final_dest_dir.to_s,
-  audio_name: audio,
-  audio_content_type: "wav"
+  audio_name: meeting_id,
+  audio_content_type: "wav",
+  start_time: 0,
+  end_time: 600 
 )
-end
-
-bbb_props = YAML.load_file('/usr/local/bigbluebutton/core/scripts/bigbluebutton.yml')
+#end
 
 site = "http://#{bbb_props['playback_host']}"
 secret = bbb_props['shared_secret']
@@ -86,13 +93,13 @@ request = "putRecordingTextTrackrecordID=#{meeting_id}&kind=#{kind}&lang=#{lang}
 request += secret
 checksum = Digest::SHA1.hexdigest(request)
 
-start_time = nil
-end_time = nil
+start_time = nil 
+end_time = nil 
 
 tts_secret = bbb_props['tts_shared_secret']
 
-payload = { :bbb_url => site, 
-            :bbb_checksum => checksum, 
+payload = { :bbb_url => site,
+            :bbb_checksum => checksum,
             :kind => kind,
             :label => label,
             :start_time => start_time,
@@ -101,18 +108,15 @@ payload = { :bbb_url => site,
 
 token = JWT.encode payload, "#{tts_secret}", 'HS256'
 
-#request = RestClient::Request.new(
-    #method: :get, 
-    #url: "http://localhost:3000/caption/#{meeting_id}/en-US",
-    #payload: { :file => File.open("#{temp_storage}/#{meeting_id}/audio.wav", 'rb'), :bbb_url => "http://#{site}", :bbb_checksum => "#{checksum}", :kind => "#{kind}", :label => "#{label}" }
-#)
 request = RestClient::Request.new(
-    method: :get, 
+    method: :get,
     url: "https://ritz-tts6.freddixon.ca/tts/caption/#{meeting_id}/en-US",
     payload: { :file => File.open("#{temp_storage}/#{meeting_id}/#{meeting_id}.wav", 'rb'),
                :token => token }
 )
+
 response = request.execute
+
 
 if(response.code != 200)
   BigBlueButton.logger.info("#{response.code} error")
