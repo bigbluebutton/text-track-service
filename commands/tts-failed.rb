@@ -36,7 +36,7 @@ file = File.open("#{working_dir}/tts-failed.json", 'r')
 data = JSON.load file
 file.close
 
-cmd = "#{working_dir}/tts-failed.json"
+cmd = "sudo rm #{working_dir}/tts-failed.json"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
