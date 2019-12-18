@@ -1,6 +1,7 @@
 require 'open3'
 require 'yaml'
 
+
 props = YAML.load_file('/var/docker/text-track-service/credentials.yaml')
 #props = YAML.load_file('/home/parthik/tts/final/text-track-service/credentials.yaml')
 tts_shared_secret = props['tts_shared_secret']
