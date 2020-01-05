@@ -43,6 +43,7 @@ module TTS
           props_keys['providers'][provider_name]['bucket']
         provider[:auth_file_path] =
           props_keys['providers'][provider_name]['auth_file_path']
+          
       elsif provider_name == 'ibm'
         #provider[:google_bucket_name] =
           #props_keys['providers'][provider_name]['bucket']
@@ -61,12 +62,9 @@ module TTS
           props_keys['providers'][provider_name]['url']
         provider[:apikey] =
           props_keys['providers'][provider_name]['apikey']
+          to_audio_params[:provider] = provider
+          TTS::DeepspeechWorker.to_audio(to_audio_params.to_json)
       end
-
-      to_audio_params[:provider] = provider
-
-      # puts to_audio_params
-      TTS::ToAudioWorker.perform_async(to_audio_params.to_json)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength

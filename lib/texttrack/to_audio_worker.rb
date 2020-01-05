@@ -22,7 +22,7 @@ module TTS
     # rubocop:disable Metrics/PerceivedComplexity
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
-    def perform(param_json) # rubocop:disable Metrics/CyclomaticComplexity
+    def to_audio(param_json) # rubocop:disable Metrics/CyclomaticComplexity
       params = JSON.parse(param_json, symbolize_names: true)
       u = nil
       # needed as activerecord leaves connection open when worker dies
