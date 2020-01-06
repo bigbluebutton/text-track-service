@@ -11,17 +11,14 @@ rails_environment_path =
 require rails_environment_path
 
 module TTS
-  class DeepspeechWorker # rubocop:disable Style/Documentation
+  class DeepspeechCreateJob # rubocop:disable Style/Documentation
     include Faktory::Job
     faktory_options retry: 0, concurrency: 1
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
-    def perform(param_json) # rubocop:disable Metrics/CyclomaticComplexity
-      TTS::DeepspeechWorker.to_audio(param_json)      
-    end
-
     def self.to_audio(param_json)
+      puts "create job -----------------to audio"
       params = JSON.parse(param_json, symbolize_names: true)
       u = nil
       # needed as activerecord leaves connection open when worker dies
@@ -78,7 +75,7 @@ module TTS
         params[:start_time] = '0'
       end
 
-      TTS::DeepspeechWorker.create_job(params.to_json,
+      TTS::DeepspeechCreateJob.create_job(params.to_json,
                  u.id,
                  audio_type)
     end
@@ -109,81 +106,98 @@ module TTS
         u.update(status: "created job with #{u.service}")
       end
 
-      TTS::DeepspeechWorker.deepspeech_get_job(params.to_json,
-                         u.id,
-                         job_id,
-                         job_name,
-                         start_time)
+      TTS::DeepspeechGetJob.perform_async(params.to_json,
+                                          u.id,
+                                          job_id,
+                                          job_name,
+                                          start_time)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
+  end
 
-  def self.deepspeech_get_job(params_json, id, job_id, job_name, start_time)
-    params = JSON.parse(params_json, symbolize_names: true)
-    u = nil
-      
-    #ActiveRecord::Base.connection_pool.with_connection do
-      #u = Caption.find(id)
-      #u.update(status: "waiting on job from #{u.service}")
-    #end
 
-    auth_file_path = params[:provider][:auth_file_path]
+  class DeepspeechGetJob # rubocop:disable Style/Documentation
+    include Faktory::Job
+    faktory_options retry: 0, concurrency: 1
 
-    status = SpeechToText::MozillaDeepspeechS2T.checkstatus(job_id,
-                                                            auth_file_path,
-                                                            params[:provider][:apikey])
-    while status != 'completed'
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
+    def perform(params_json, id, job_id, job_name, start_time)
+      params = JSON.parse(params_json, symbolize_names: true)
+      u = nil
+
+      auth_file_path = params[:provider][:auth_file_path]
+
       status = SpeechToText::MozillaDeepspeechS2T.checkstatus(job_id,
+                                                              auth_file_path,
+                                                              params[:provider][:apikey])
+      if status != 'completed'
+        puts '-------------------'
+        puts "status is #{status}"
+        puts '-------------------'
+        puts job_id.to_s
+        puts '-------------------'
+        if status['message'] == 'No jobID found'
+          puts 'Job does not exist'
+          ActiveRecord::Base.connection_pool.with_connection do
+            u = Caption.find(id)
+            u.update(status: 'failed')
+          end
+          return
+        end
+
+        # break if status['message'] == 'No jobID found'
+        DeepspeechGetJob.perform_in(30, params.to_json, id, job_id, job_name, start_time)
+        return
+      end
+
+      callback_json =
+        SpeechToText::MozillaDeepspeechS2T.order_transcript(job_id,
                                                             auth_file_path,
                                                             params[:provider][:apikey])
-      sleep(30)
-      puts "status = #{status}"
-    end
 
-    callback_json =
-      SpeechToText::MozillaDeepspeechS2T.order_transcript(job_id,
-                                                          auth_file_path,
-                                                          params[:provider][:apikey])
-
-    myarray =
-      SpeechToText::MozillaDeepspeechS2T.create_mozilla_array(callback_json)
-      
-    end_time = Time.now.getutc.to_i
-    processing_time = end_time - start_time
-    processing_time =  SpeechToText::Util.seconds_to_timestamp(processing_time)
-      
-    ActiveRecord::Base.connection_pool.with_connection do
-      u = Caption.find(id)
-      u.update(processtime: "#{processing_time}")
-    end
-      
-    puts '-------------------'
-    puts "Processing time: #{processing_time} hr:min:sec.millsec"
-    puts '-------------------'
+      myarray =
+        SpeechToText::MozillaDeepspeechS2T.create_mozilla_array(callback_json)
         
-    current_time = (Time.now.to_f * 1000).to_i
+      end_time = Time.now.getutc.to_i
+      processing_time = end_time - start_time
+      processing_time =  SpeechToText::Util.seconds_to_timestamp(processing_time)
+        
+      ActiveRecord::Base.connection_pool.with_connection do
+        u = Caption.find(id)
+        u.update(processtime: "#{processing_time}")
+      end
+        
+      puts '-------------------'
+      puts "Processing time: #{processing_time} hr:min:sec.millsec"
+      puts '-------------------'
+          
+      current_time = (Time.now.to_f * 1000).to_i
 
-    data = {
-      'record_id' => (params[:record_id]).to_s,
-      'storage_dir' => "#{params[:storage_dir]}/#{params[:record_id]}",
-      'temp_track_vtt' => "#{params[:record_id]}-#{current_time}-track.vtt",
-      'temp_track_json' => "#{params[:record_id]}-#{current_time}-track.json",
-      'myarray' => myarray,
-      'current_time' => current_time,
-      'caption_locale' => (params[:caption_locale]).to_s,
-      'database_id' => id.to_s,
-      'bbb_url' => params[:bbb_url],
-      'bbb_checksum' => params[:bbb_checksum],
-      'kind' => params[:kind],
-      'label' => params[:label],
-      'start_time' => params[:start_time],
-      'end_time' => params[:end_time]
-    }
+      data = {
+        'record_id' => (params[:record_id]).to_s,
+        'storage_dir' => "#{params[:storage_dir]}/#{params[:record_id]}",
+        'temp_track_vtt' => "#{params[:record_id]}-#{current_time}-track.vtt",
+        'temp_track_json' => "#{params[:record_id]}-#{current_time}-track.json",
+        'myarray' => myarray,
+        'current_time' => current_time,
+        'caption_locale' => (params[:caption_locale]).to_s,
+        'database_id' => id.to_s,
+        'bbb_url' => params[:bbb_url],
+        'bbb_checksum' => params[:bbb_checksum],
+        'kind' => params[:kind],
+        'label' => params[:label],
+        'start_time' => params[:start_time],
+        'end_time' => params[:end_time]
+      }
 
-    TTS::DeepspeechWorker.create_vtt(data.to_json)
-  end  
+      TTS::DeepspeechGetJob.create_vtt(data.to_json)
 
-  def self.create_vtt(params)
+    end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+    def self.create_vtt(params)
       data = JSON.load params
       record_id = data['record_id']
       storage_dir = data['storage_dir']
@@ -205,7 +219,7 @@ module TTS
         u.update(status: "writing subtitle file from #{u.service}")
       end
 
-      TTS::DeepspeechWorker.delete_files(storage_dir)
+      TTS::DeepspeechGetJob.delete_files(storage_dir)
       SpeechToText::Util.write_to_webvtt(
           vtt_file_path: storage_dir.to_s,
           vtt_file_name: temp_track_vtt.to_s,
@@ -235,53 +249,53 @@ module TTS
         'id' => id
       }
 
-      TTS::DeepspeechWorker.callback(data.to_json)
+      TTS::DeepspeechGetJob.callback(data.to_json)
+    end
+
+    def self.callback(params)
+      data = JSON.load params
+        record_id = data['record_id']
+        storage_dir = data['storage_dir']
+        caption_locale = data['caption_locale']
+        current_time = data['current_time']
+        bbb_url = data['bbb_url']
+        bbb_checksum = data['bbb_checksum']
+        kind = data['kind']
+        label = data['label']
+        id = data['id']
+        caption_locale = caption_locale.sub('-', '_')
+          
+
+        # prepare post data
+        uri = URI("#{bbb_url}/bigbluebutton/api/putRecordingTextTrack?recordID=#{record_id}&kind=#{kind}&lang=#{caption_locale}&label=#{label}&checksum=#{bbb_checksum}")
+        request = Net::HTTP::Post.new(uri)
+        form_data = [['file', File.open("#{storage_dir}/#{record_id}-#{current_time}-track.vtt")]] # or File.open() in case of local file
+        request.set_form form_data, 'multipart/form-data'
+        response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: false) do |http| # pay attention to use_ssl if you need it
+          http.request(request)
+        end
+
+        ActiveRecord::Base.connection_pool.with_connection do
+          u = Caption.find(id)
+          u.update(status: "uploaded to #{u.bbb_url}")
+        end
+        # print response
+        puts response.body.to_s
+    end
+
+    def self.delete_files(recording_dir)
+        if Dir.exist?(recording_dir)
+          vtt_files = Dir["#{recording_dir}/*.vtt"]
+          json_files = Dir["#{recording_dir}/*.json"]
+        end
+
+        unless vtt_files.nil?
+            system("rm #{vtt_files[0]}")
+        end
+
+        unless json_files.nil?
+            system("rm #{json_files[0]}")
+        end
+    end
   end
-
-  def self.callback(params)
-    data = JSON.load params
-      record_id = data['record_id']
-      storage_dir = data['storage_dir']
-      caption_locale = data['caption_locale']
-      current_time = data['current_time']
-      bbb_url = data['bbb_url']
-      bbb_checksum = data['bbb_checksum']
-      kind = data['kind']
-      label = data['label']
-      id = data['id']
-      caption_locale = caption_locale.sub('-', '_')
-        
-
-      # prepare post data
-      uri = URI("#{bbb_url}/bigbluebutton/api/putRecordingTextTrack?recordID=#{record_id}&kind=#{kind}&lang=#{caption_locale}&label=#{label}&checksum=#{bbb_checksum}")
-      request = Net::HTTP::Post.new(uri)
-      form_data = [['file', File.open("#{storage_dir}/#{record_id}-#{current_time}-track.vtt")]] # or File.open() in case of local file
-      request.set_form form_data, 'multipart/form-data'
-      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: false) do |http| # pay attention to use_ssl if you need it
-        http.request(request)
-      end
-
-      ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
-        u.update(status: "uploaded to #{u.bbb_url}")
-      end
-      # print response
-      puts response.body.to_s
-  end
-
-  def self.delete_files(recording_dir)
-      if Dir.exist?(recording_dir)
-        vtt_files = Dir["#{recording_dir}/*.vtt"]
-        json_files = Dir["#{recording_dir}/*.json"]
-      end
-
-      unless vtt_files.nil?
-          system("rm #{vtt_files[0]}")
-      end
-
-      unless json_files.nil?
-          system("rm #{json_files[0]}")
-      end
-  end
-end
 end
