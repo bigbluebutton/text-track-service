@@ -14,6 +14,7 @@ gem 'httparty'
 gem 'jwt'
 # Use Puma as the app server
 gem "pg"
+
 gem 'puma', '~> 3.12'
 
 gem 'rails', '~> 5.2.3'

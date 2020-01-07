@@ -37,36 +37,39 @@ module TTS
                          }
 
       provider = { name: provider_name }
+      to_audio_params[:provider] = provider
 
       if provider_name == 'google'
         provider[:google_bucket_name] =
           props_keys['providers'][provider_name]['bucket']
         provider[:auth_file_path] =
           props_keys['providers'][provider_name]['auth_file_path']
+        TTS::GoogleCreateJob.to_audio(to_audio_params.to_json)  
+
       elsif provider_name == 'ibm'
-        #provider[:google_bucket_name] =
-          #props_keys['providers'][provider_name]['bucket']
         provider[:auth_file_path] =
           props_keys['providers'][provider_name]['auth_file_path']
+          TTS::IbmCreateJob.to_audio(to_audio_params.to_json)
+
       elsif provider_name == 'speechmatics'
         provider[:userID] =
           props_keys['providers'][provider_name]['userID']
         provider[:apikey] =
           props_keys['providers'][provider_name]['apikey']
+        TTS::SpeechmaticsCreateJob.to_audio(to_audio_params.to_json)
+
       elsif provider_name == 'threeplaymedia'
         provider[:auth_file_path] =
           props_keys['providers'][provider_name]['auth_file_path']
+        TTS::ThreeplaymediaCreateJob.to_audio(to_audio_params.to_json)
+
       elsif provider_name == 'deepspeech'
         provider[:auth_file_path] =
           props_keys['providers'][provider_name]['url']
         provider[:apikey] =
           props_keys['providers'][provider_name]['apikey']
+          TTS::DeepspeechCreateJob.to_audio(to_audio_params.to_json)
       end
-
-      to_audio_params[:provider] = provider
-
-      # puts to_audio_params
-      TTS::ToAudioWorker.perform_async(to_audio_params.to_json)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
