@@ -2,7 +2,9 @@ require 'table_print'
 require 'json'
 require 'open3'
 
-cmd = "sudo chmod u+w ."
+working_dir = "/var/docker/text-track-service/commands"
+
+cmd = "sudo chmod u+w #{working_dir}"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
@@ -16,7 +18,7 @@ Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   end
 end
 
-cmd = "curl https://ritz-tts6.freddixon.ca:3000/status/processed > tts-processed.json"
+cmd = "curl https://ritz-tts6.freddixon.ca/tts/status/processed > #{working_dir}/tts-processed.json"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
@@ -30,11 +32,11 @@ Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   end
 end
 
-file = File.open('tts-processed.json', 'r')
+file = File.open("#{working_dir}/tts-processed.json", 'r')
 data = JSON.load file
 file.close
 
-cmd = "rm tts-processed.json"
+cmd = "rm #{working_dir}/tts-processed.json"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
@@ -45,20 +47,6 @@ Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
     puts '---------------------'
     puts "FAILED to execute --> #{cmd}"
     puts '---------------------'
-  end
-end
-
-class String
-  def to_hash(arr_sep=',', key_sep=':')
-    array = self.split(arr_sep)
-    hash = {}
-
-    array.each do |e|
-      key_value = e.split(key_sep)
-      hash[key_value[0]] = key_value[1]
-    end
-
-    return hash
   end
 end
 

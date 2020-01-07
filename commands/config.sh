@@ -57,3 +57,5 @@ fi
 sudo touch /bin/tts-delete-all
 sudo chmod uog+rwx /bin/tts-delete-all
 echo "ruby $working_dir/commands/tts-delete-all.rb" >> /bin/tts-delete-all
+
+sudo chmod uog-w /bin

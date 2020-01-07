@@ -19,10 +19,10 @@ require 'texttrack/ibm_worker'
 require 'texttrack/deepspeech_worker'
 require 'texttrack/speechmatics_worker'
 require 'texttrack/threeplaymedia_worker'
-require 'texttrack/to_audio_worker'
-require 'texttrack/util_worker'
+#require 'texttrack/to_audio_worker'
+#require 'texttrack/util_worker'
 require 'texttrack/callback_worker'
-require 'texttrack/playback_worker'
+#require 'texttrack/playback_worker'
 require 'texttrack/repair_worker'
 
 module TextTrack # rubocop:disable Style/Documentation

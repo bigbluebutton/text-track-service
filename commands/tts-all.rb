@@ -3,7 +3,9 @@ require 'json'
 require 'open3'
 require 'yaml'
 
-cmd = "sudo chmod uog+wrx ."
+working_dir = "/var/docker/text-track-service/commands"
+
+cmd = "sudo chmod u+rxw #{working_dir}"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
@@ -17,10 +19,10 @@ Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   end
 end
 
-props = YAML.load_file('/var/docker/text-track-service/credentials.yaml')
+props = YAML.load_file("/var/docker/text-track-service/credentials.yaml")
 #props = YAML.load_file('/home/parthik/tts/final/text-track-service/credentials.yaml')
 tts_shared_secret = props['tts_shared_secret']
-cmd = "curl -X POST https://ritz-tts6.freddixon.ca:3000/status/all/'#{tts_shared_secret}' > tts-all.json"
+cmd = "curl -X POST https://ritz-tts6.freddixon.ca/tts/status/all/'#{tts_shared_secret}' > #{working_dir}/tts-all.json"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"
@@ -34,7 +36,7 @@ Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   end
 end
 
-file = File.open('tts-all.json', 'r')
+file = File.open("#{working_dir}/tts-all.json", 'r')
 data = JSON.load file
 file.close
 
@@ -57,7 +59,7 @@ unless data.nil?
   end
 end
 
-cmd = "sudo rm tts-all.json"
+cmd = "sudo rm #{working_dir}/tts-all.json"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"

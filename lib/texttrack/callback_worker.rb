@@ -35,7 +35,11 @@ module TTS
       end
 
       ActiveRecord::Base.connection_pool.with_connection do
-        u = Caption.find(id)
+        if id.nil?
+          u = Caption.find_by(record_id: record_id)
+        else 
+          u = Caption.find(id)
+        end
         u.update(status: "uploaded to #{u.bbb_url}")
       end
       # print response
