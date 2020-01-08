@@ -57,21 +57,22 @@ class EditCaptionsController < ApplicationController
       vtt_file = params['file']
       record_id = params[:record_id]
       token = params[:token]
-      decoded_token = JWT.decode token, 'tts-parthik', true, {algorithm: 'HS256'}
-      provider = decoded_token[0]['provider']
+      props = YAML.load_file('credentials.yaml')      
+      tts_shared_secret = props['tts_shared_secret']
+      decoded_token = JWT.decode token, tts_shared_secret, true, {algorithm: 'HS256'}
+
       bbb_checksum = decoded_token[0]['bbb_checksum']
       bbb_url = decoded_token[0]['bbb_url']
       kind = decoded_token[0]['kind']
       label = decoded_token[0]['label']
       caption_locale = decoded_token[0]['caption_locale']
-      
-      
 
       if vtt_file.nil?
         data = "{\"message\" : \"missing param file\"}"
         render :json=>data
         return
       end
+
       props = YAML.load_file('settings.yaml')
       storage_dir = props['storage_dir']
       recording_dir = "#{storage_dir}/#{record_id}"
