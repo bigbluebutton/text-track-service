@@ -30,7 +30,6 @@ class CaptionsController < ApplicationController
     end                    
     
     props = YAML.load_file('settings.yaml')
-    storage_dir = props['storage_dir']
     storage_dir = "#{Rails.root}/storage"
     record_dir = "#{storage_dir}/#{record_id}"
     system(" /data")
