@@ -19,6 +19,6 @@ playback_jobs_list_key: "bbb_playback:playback_job"
 
 default_provider: "deepspeech"
 
-storage_dir: "/text-track-service/storage"
-#storage_dir: "/D/innovation/text-track-service/captions_test"
+#storage_dir: "/text-track-service/storage"
+storage_dir: "/var/recording_dir"
 #storage_dir: "/var/texttrackservice"
