@@ -1,61 +1,61 @@
-sudo chmod uog+rwx /bin
+sudo chmod uog+rwx /usr/bin
 working_dir=/var/docker/text-track-service
-#working_dir=/home/parthik/tts/final/text-track-service
+#working_dir=/home/test2/tts/resque/text-track-service
 
-FILE=/bin/tts-all
+FILE=/usr/bin/tts-all
 if test -f "$FILE"; then
     sudo rm "$FILE"
 fi
-sudo touch /bin/tts-all
-sudo chmod uog+rwx /bin/tts-all
-echo "ruby $working_dir/commands/tts-all.rb" >> /bin/tts-all
+sudo touch $FILE
+sudo chmod uog+rwx $FILE
+echo "ruby $working_dir/commands/tts-all.rb" >> $FILE
 
-FILE=/bin/tts-delete
+FILE=/usr/bin/tts-delete
 if test -f "$FILE"; then
     sudo rm "$FILE"
 fi
-sudo touch /bin/tts-delete
-sudo chmod uog+rwx /bin/tts-delete
-echo "ruby $working_dir/commands/tts-delete.rb \$1" >> /bin/tts-delete
+sudo touch $FILE
+sudo chmod uog+rwx $FILE
+echo "ruby $working_dir/commands/tts-delete.rb \$1" >> $FILE
 
-FILE=/bin/tts-failed
+FILE=/usr/bin/tts-failed
 if test -f "$FILE"; then
     sudo rm "$FILE"
 fi
-sudo touch /bin/tts-failed
-sudo chmod uog+rwx /bin/tts-failed
-echo "ruby $working_dir/commands/tts-failed.rb" >> /bin/tts-failed
+sudo touch $FILE
+sudo chmod uog+rwx $FILE
+echo "ruby $working_dir/commands/tts-failed.rb" >> $FILE
 
-FILE=/bin/tts-processed
+FILE=/usr/bin/tts-processed
 if test -f "$FILE"; then
     sudo rm "$FILE"
 fi
-sudo touch /bin/tts-processed
-sudo chmod uog+rwx /bin/tts-processed
-echo "ruby $working_dir/commands/tts-processed.rb" >> /bin/tts-processed
+sudo touch $FILE
+sudo chmod uog+rwx $FILE
+echo "ruby $working_dir/commands/tts-processed.rb" >> $FILE
 
-FILE=/bin/tts-record
+FILE=/usr/bin/tts-record
 if test -f "$FILE"; then
     sudo rm "$FILE"
 fi
-sudo touch /bin/tts-record
-sudo chmod uog+rwx /bin/tts-record
-echo "ruby $working_dir/commands/tts-record.rb \$1" >> /bin/tts-record
+sudo touch $FILE
+sudo chmod uog+rwx $FILE
+echo "ruby $working_dir/commands/tts-record.rb \$1" >> $FILE
 
-FILE=/bin/tts-secret
+FILE=/usr/bin/tts-secret
 if test -f "$FILE"; then
     sudo rm "$FILE"
 fi
-sudo touch /bin/tts-secret
-sudo chmod uog+rwx /bin/tts-secret
-echo "ruby $working_dir/commands/tts-secret.rb" >> /bin/tts-secret
+sudo touch $FILE
+sudo chmod uog+rwx $FILE
+echo "ruby $working_dir/commands/tts-secret.rb" >> $FILE
 
-FILE=/bin/tts-delete--all
+FILE=/usr/bin/tts-delete-all
 if test -f "$FILE"; then
     sudo rm "$FILE"
 fi
-sudo touch /bin/tts-delete-all
-sudo chmod uog+rwx /bin/tts-delete-all
-echo "ruby $working_dir/commands/tts-delete-all.rb" >> /bin/tts-delete-all
+sudo touch $FILE
+sudo chmod uog+rwx $FILE
+echo "ruby $working_dir/commands/tts-delete-all.rb" >> $FILE
 
-sudo chmod uog-w /bin
+sudo chmod uog-w /usr/bin

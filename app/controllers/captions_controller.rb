@@ -18,6 +18,9 @@ class CaptionsController < ApplicationController
     tts_shared_secret = props['tts_shared_secret']
     decoded_token = JWT.decode token, tts_shared_secret, true, {algorithm: 'HS256'}
     
+    data = "{\"message\" : \"SUCCESS !! request for record_id: #{record_id} has been recieved by text track service\"}"
+    render json: data
+
     bbb_checksum = decoded_token[0]['bbb_checksum']
     bbb_url = decoded_token[0]['bbb_url']
     kind = decoded_token[0]['kind']
