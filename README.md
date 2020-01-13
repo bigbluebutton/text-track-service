@@ -188,12 +188,12 @@ you can now use the commands from anywhere in the terminal as long as you are ss
 
 * Api usage
 ```
-| Command  | Result |
-| ------------- | ------------- |
-| tts-all  | shows list of all record-ids sent to the text-track-service |
-| tts-processed  | list of all successfully processed record-ids  |
-| tts-failed  | list of all failed to process record-ids  |
-| tts-record <record_id>  | get data for specific record_id  |
-| tts-delete <record_id> | delete data about a specific recording from text-track-service  |
-| tts-delete-all | delete all data about recordings from text-track-service  |
+| Command                 | Result                                                          |
+| ----------------------- | --------------------------------------------------------------- |
+| tts-all                 | shows list of all record-ids sent to the text-track-service     |
+| tts-processed           | list of all successfully processed record-ids                   |
+| tts-failed              | list of all failed to process record-ids                        |
+| tts-record <record_id>  | get data for specific record_id                                 |
+| tts-delete <record_id>  | delete data about a specific recording from text-track-service  |
+| tts-delete-all          | delete all data about recordings from text-track-service        |
 ```
