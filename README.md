@@ -158,7 +158,14 @@ sudo cp post_publish.rb root@your_server:/usr/local/bigbluebutton/core/scripts/p
 ```
 ---
 
-### 11. Troubleshooting
+### 11. Record a meeting and check for vtt
+* Finally make a recording/meeting on your server
+* Look at the logs to make sure it processes successfully(sudo journalctl -u tts-docker -f)
+* Check the presentation folder of the record_id to see if a vtt file was generated
+    * This can be found at (/var/bigbluebutton/published/presentation/<record_id>)
+* If there is a vtt file you have successfully transcribed your first meeting using IBM.
+
+### 12. Troubleshooting
 If you followed Step 7 your should be able to see tailed logs with the following command
 ```
 sudo journalctl -u tts-docker -f
@@ -167,7 +174,7 @@ fix any errors shown and then re-deploy by running deploy.sh in the root folder
 ```
 ---
 
-### 12. Other services
+### 13. Other services
 * To use other services you need to edit credentials.yaml file with the details required
 * reference example-credentials.yaml for needed information
 * Finally edit post_publish.rb to use the new selected service
@@ -177,7 +184,7 @@ On line 113 replace ibm with the service you want or delete ibm without replacin
 save & exit
 ```
 
-### 13. Install & use api commands for information
+### 14. Install & use api commands for information
 
 * Install api commands
 ```
