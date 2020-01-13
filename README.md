@@ -1,4 +1,4 @@
-## Instructions to set up Text-track-service with IBM (just edit credentials.yaml for other services accordingly - look at example.credentials for reference)
+## Instructions to set up Text-track-service with IBM (just edit credentials.yaml for other services accordingly - look at example.credentials for reference also Step12.)
 ---
 
 ### 1. Set up texttrack user on the server
@@ -70,7 +70,10 @@ cd text-track-service
 ```
 ---
 
-### 5. Set up credentials & db
+### 5. Set up credentials(IBM)
+
+* sign up IBM
+`-`-`-`-`-`-`-`-`
 
 * create & edit credentials.yaml (reference example-credentials.yaml)
 ```
@@ -81,3 +84,97 @@ touch credentials.yaml
 ```
 create auth/google_auth_file and add file name to credentials.yaml (make sure google auth file owner is texttrack)
 ```
+---
+
+### 6. Test your IBM credentials
+
+under captions_test dir there is a test audio file called abc.wav
+
+`-`-`-`-`-`-`
+---
+
+### 7. Set up systemd files
+```
+cd /var/docker/text-track-service/systemd
+sudo cp tts-docker.service /etc/systemd/system
+sudo systemctl enable tts-docker
+
+sudo chmod -R a+rX /var/docker/text-track-service/tmp/*
+
+sudo systemctl start tts-docker
+
+sudo journalctl -u tts-docker -f (see tailed logs)
+```
+---
+
+### 8. Open new terminal to set up new db
+```
+cd /usr/local/text-track-service
+sudo rm -R tmp/db
+
+sudo chmod -R a+rX *
+sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:create
+
+sudo chmod -R a+rX *
+sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:migrate
+
+
+* sudo visudo
+* Add the following line to the end of the file:
+texttrack ALL = NOPASSWD: /var/docker/text-track-service/deploy.sh
+* ./deploy.sh
+```
+---
+
+### 9. Add info to bigbluebutton.yml file on bbb server
+```
+cd /usr/local/bigbluebutton/core/scripts/
+
+To find your secret: bbb-conf -secret
+To find tts-secret: tts-secret (first run config.sh in /var/docker/text-track-service/commands)
+
+sudo vim bigbluebutton.yml
+
+presentation_dir: /var/bigbluebutton/published/presentation
+shared_secret: secret
+temp_storage: /var/bigbluebutton/captions
+tts_shared_secret: egUE@IY@&*h82uiohEN@H$*orhdo8234hO@HoH$@ORHF$*r@W
+
+
+```
+---
+
+### 10. Edit post_publish.rb
+```
+cd /usr/local/bigbluebutton/core/scripts/post_publish/
+
+sudo gem install rest-client
+sudo gem install speech_to_text
+sudo gem install jwt
+
+(Replace your post_publish.rb with the one in /var/docker/text-track-service)
+sudo cp post_publish.rb root@your_server:/usr/local/bigbluebutton/core/scripts/post_publish
+
+```
+---
+
+### 11. Troubleshooting
+If you followed Step 7 your should be able to see tailed logs with the following command
+```
+sudo journalctl -u tts-docker -f
+
+fix any errors shown and then re-deploy by running deploy.sh in the root folder
+```
+---
+
+### 12. Other services
+* To use other services you need to edit credentials.yaml file with the details required
+* reference example-credentials.yaml for needed information
+* Finally edit post_publish.rb to use the new selected service
+```
+sudo vim /usr/local/bigbluebutton/core/scripts/post_publish/post_publish.rb
+On line 113 replace ibm with the service you want or delete ibm without replacing for deepspeech as that is default
+save & exit
+```
+
+

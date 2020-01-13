@@ -130,8 +130,6 @@ sudo gem install jwt
 (Replace your post_publish.rb with the one in /var/docker/text-track-service)
 sudo cp post_publish.rb root@your_server:/usr/local/bigbluebutton/core/scripts/post_publish
 
-now do bbb-conf secret to find your secret
-copy that value into /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml as shared_secret: whatever_your_secret_is
 ```
 
 Some useful commands 
