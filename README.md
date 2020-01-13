@@ -177,4 +177,23 @@ On line 113 replace ibm with the service you want or delete ibm without replacin
 save & exit
 ```
 
+### 13. Install & use api commands for information
 
+* Install api commands
+```
+cd /var/docker/text-track-service/commands
+./config.sh (run api config file)
+you can now use the commands from anywhere in the terminal as long as you are ssh into the server
+```
+
+* Api usage
+```
+| Command  | Result |
+| ------------- | ------------- |
+| tts-all  | shows list of all record-ids sent to the text-track-service |
+| tts-processed  | list of all successfully processed record-ids  |
+| tts-failed  | list of all failed to process record-ids  |
+| tts-record <record_id>  | get data for specific record_id  |
+| tts-delete <record_id> | delete data about a specific recording from text-track-service  |
+| tts-delete-all | delete all data about recordings from text-track-service  |
+```
