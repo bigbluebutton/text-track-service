@@ -88,7 +88,7 @@ create auth/google_auth_file and add file name to credentials.yaml (make sure go
 
 ### 6. Test your IBM credentials
 
-under captions_test dir there is a test audio file called abc.wav
+under test_dir there is a test audio_temp.wav to test your  credentials with.
 
 `-`-`-`-`-`-`
 ---
@@ -164,6 +164,7 @@ sudo cp post_publish.rb root@your_server:/usr/local/bigbluebutton/core/scripts/p
 * Check the presentation folder of the record_id to see if a vtt file was generated
     * This can be found at (/var/bigbluebutton/published/presentation/<record_id>)
 * If there is a vtt file you have successfully transcribed your first meeting using IBM.
+---
 
 ### 12. Troubleshooting
 If you followed Step 7 your should be able to see tailed logs with the following command
