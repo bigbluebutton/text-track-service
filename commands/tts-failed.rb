@@ -1,3 +1,4 @@
+#!/usr/bin/ruby
 require 'table_print'
 require 'json'
 require 'open3'

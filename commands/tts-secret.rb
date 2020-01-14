@@ -1,3 +1,4 @@
+#!/usr/bin/ruby
 require 'yaml'
 
 props = YAML.load_file('/var/docker/text-track-service/credentials.yaml')

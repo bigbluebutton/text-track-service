@@ -1,3 +1,4 @@
+#!/usr/bin/ruby
 require 'json'
 require 'open3'
 

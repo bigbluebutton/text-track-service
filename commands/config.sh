@@ -1,3 +1,4 @@
+#!/bin/bash
 sudo chmod uog+rwx /usr/bin
 working_dir=/var/docker/text-track-service
 #working_dir=/home/test2/tts/resque/text-track-service

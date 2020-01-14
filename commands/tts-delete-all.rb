@@ -1,3 +1,4 @@
+#!/usr/bin/ruby
 require 'open3'
 require 'yaml'
 
