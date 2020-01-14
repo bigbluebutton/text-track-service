@@ -97,7 +97,7 @@ cd /var/docker/text-track-service/test_dir
 
 curl -X POST -u "apikey:{apikey}" \
 --header "Content-Type: audio/flac" \
---data-binary @{path_to_file}audio-file.flac \
+--data-binary @{path_to_file}/audio_temp.flac \
 "{url}/v1/recognize"
 ```
 ---
@@ -185,6 +185,7 @@ fix any errors shown and then re-deploy by running deploy.sh in the root folder
 ---
 
 ### 13. Other services
+* here is a link to a google docs for signing up to the services: https://docs.google.com/document/d/e/2PACX-1vQu9o5q1tdf84cPo8kn6vt8QvhyuYJKdhLBVNIeuIHBwpxdRqWu0bmIgHsm8z5dU6YIjoZeDHxwSHu2/pub
 * To use other services you need to edit credentials.yaml file with the details required
 * reference example-credentials.yaml for needed information
 * Finally edit post_publish.rb to use the new selected service
