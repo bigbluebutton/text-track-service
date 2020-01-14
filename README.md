@@ -82,25 +82,7 @@ touch credentials.yaml
 
 ### Add your service credentials in credentials.yaml file
 
-* sample credentials.yaml file
-```
----
-providers:
-  'ibm':
-    auth_file_path: {apikey}
-  'google':
-    bucket: {bucket-name}
-    auth_file_path: ./auth/{google-credentials.json}
-  'speechmatics':
-    apikey: {apikey}
-    userID: {usrid}
-  'threeplaymedia':
-    auth_file_path: {apikey}
-  'deepspeech':
-    url: {deepspeech-url}
-    apikey: {apikey}
-tts_shared_secret: {tts-secret}
-```
+* you can refer example-credentials.yaml file in /var/docker/text-track-service
 
 * extra step for google account
 ```
