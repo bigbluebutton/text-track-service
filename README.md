@@ -73,7 +73,7 @@ cd text-track-service
 ### 5. Set up credentials(IBM)
 
 * sign up IBM
-`-`-`-`-`-`-`-`-`
+    * here is a link to a google docs for signing up to the services: https://docs.google.com/document/d/e/2PACX-1vQu9o5q1tdf84cPo8kn6vt8QvhyuYJKdhLBVNIeuIHBwpxdRqWu0bmIgHsm8z5dU6YIjoZeDHxwSHu2/pub
 
 * create & edit credentials.yaml (reference example-credentials.yaml)
 ```
@@ -82,15 +82,24 @@ touch credentials.yaml
 
 * extra step for google account
 ```
-create auth/google_auth_file and add file name to credentials.yaml (make sure google auth file owner is texttrack)
+create auth/google_auth_file.json and add file name to credentials.yaml (make sure google auth file owner is texttrack)
 ```
 ---
 
 ### 6. Test your IBM credentials
 
-under test_dir there is a test audio_temp.wav to test your  credentials with.
+under test_dir there is a test audio_temp.flac to test your  credentials with.
 
-`-`-`-`-`-`-`
+once you have your IBM api_key & url open terminal and do the following:
+(make sure to replace {apikey} & {url} with your credentials)
+```
+cd /var/docker/text-track-service/test_dir
+
+curl -X POST -u "apikey:{apikey}" \
+--header "Content-Type: audio/flac" \
+--data-binary @{path_to_file}audio-file.flac \
+"{url}/v1/recognize"
+```
 ---
 
 ### 7. Set up systemd files
