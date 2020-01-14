@@ -80,6 +80,28 @@ cd text-track-service
 touch credentials.yaml
 ```
 
+### Add your service credentials in credentials.yaml file
+
+* sample credentials.yaml file
+```
+---
+providers:
+  'ibm':
+    auth_file_path: {apikey}
+  'google':
+    bucket: {bucket-name}
+    auth_file_path: ./auth/{google-credentials.json}
+  'speechmatics':
+    apikey: {apikey}
+    userID: {usrid}
+  'threeplaymedia':
+    auth_file_path: {apikey}
+  'deepspeech':
+    url: {deepspeech-url}
+    apikey: {apikey}
+tts_shared_secret: {tts-secret}
+```
+
 * extra step for google account
 ```
 create auth/google_auth_file.json and add file name to credentials.yaml (make sure google auth file owner is texttrack)
@@ -97,7 +119,7 @@ cd /var/docker/text-track-service/test_dir
 
 curl -X POST -u "apikey:{apikey}" \
 --header "Content-Type: audio/flac" \
---data-binary @{path_to_file}/audio_temp.flac \
+--data-binary @audio_temp.flac \
 "{url}/v1/recognize"
 ```
 ---
@@ -112,26 +134,30 @@ sudo chmod -R a+rX /var/docker/text-track-service/tmp/*
 
 sudo systemctl start tts-docker
 
-sudo journalctl -u tts-docker -f (see tailed logs)
+sudo journalctl -u tts-docker -f (see tailed logs) (if you are doing it very first time, you will get an error because there is no database. Don't worry about databse error)
 ```
 ---
 
 ### 8. Open new terminal to set up new db
 ```
-cd /usr/local/text-track-service
+cd /var/docker/text-track-service
 sudo rm -R tmp/db
 
+sudo chmod -R a+rX tmp/*
 sudo chmod -R a+rX *
 sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:create
 
+sudo chmod -R a+rX tmp/*
 sudo chmod -R a+rX *
 sudo docker-compose exec --user "$(id -u):$(id -g)" website rails db:migrate
 
 
-* sudo visudo
+sudo visudo
 * Add the following line to the end of the file:
 texttrack ALL = NOPASSWD: /var/docker/text-track-service/deploy.sh
-* ./deploy.sh
+* save and close the file
+
+ ./deploy.sh
 ```
 ---
 
@@ -147,8 +173,7 @@ sudo vim bigbluebutton.yml
 presentation_dir: /var/bigbluebutton/published/presentation
 shared_secret: secret
 temp_storage: /var/bigbluebutton/captions
-tts_shared_secret: egUE@IY@&*h82uiohEN@H$*orhdo8234hO@HoH$@ORHF$*r@W
-
+tts_shared_secret: {tts-secret}
 
 ```
 ---
@@ -162,8 +187,8 @@ sudo gem install speech_to_text
 sudo gem install jwt
 
 (Replace your post_publish.rb with the one in /var/docker/text-track-service)
-sudo cp post_publish.rb root@your_server:/usr/local/bigbluebutton/core/scripts/post_publish
-
+sudo cp /var/docker/text-track-service/post_publish.rb root@your_server:/usr/local/bigbluebutton/core/scripts/post_publish  (use if bbb and text-track-service are running on different server)
+sudo cp /var/docker/text-track-service/post_publish.rb /usr/local/bigbluebutton/core/scripts/post_publish  (use if bbb and text-track-service are running on same server)
 ```
 ---
 

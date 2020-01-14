@@ -6,7 +6,7 @@ cmd = ''
 unless ARGV[0].nil?
     record_id = ARGV[0]
     puts 
-    cmd = "curl http://localhost:3000/caption/record_id/#{record_id}"
+    cmd = "curl http://localhost:4000/caption/record_id/#{record_id}"
 else
   puts "ERROR: no record_id passed"
 end
