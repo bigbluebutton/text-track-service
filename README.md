@@ -1,7 +1,8 @@
-#### Text-Track-Service is a project to help bigbluebutton auto-generate captions for their videos using multiple paid and free services. This was done to make bigbluebutton more accessible to students and teachers alike.
-#### We approached this by giving the user access to multiple services both paid & free to use according to their choosing. Also it is using the faktory queuing system to ensure efficient usage of server resources.
-#### The documentation is for BigBlueButton admins that want to set up the text-track-service on a server already running with bigbluebutton to generate captions.
+Bigbluebutton already has live captioning for its meetings but Text-Track-Service is a project to help bigbluebutton auto-generate captions for their videos using multiple paid and free services. This project aims to make the software more accessible to students/users with hearing disabilities. This makes it easier for students/users that want to go back to a class/meeting and see the video again with captions.
+The documentation is for BigBlueButton admins that want to set up the text-track-service on a server already running with bigbluebutton to generate captions.
+
 ###### You can try it out here:- https://demo.bigbluebutton.org/
+The video player will have a cc button. Click it and you should see captions for your video.
 
 Here is a simple diagram of how it works:-
 ![Text-Track-Service Diagram](diagram-tts.png)
