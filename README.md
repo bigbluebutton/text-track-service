@@ -1,62 +1,65 @@
 #### Text-Track-Service is a project to help bigbluebutton auto-generate captions for their videos using multiple paid and free services. This was done to make bigbluebutton more accessible to students and teachers alike.
 #### We approached this by giving the user access to multiple services both paid & free to use according to their choosing. Also it is using the faktory queuing system to ensure efficient usage of server resources.
-#### The documentation below will cover how to set up the text-track-service on a server already running with bigbluebutton version 2.3
-###### You can try it out here:- https://demo.bigbluebutton.org/demo/demo10.jsp
+#### The documentation is for BigBlueButton admins that want to set up the text-track-service on a server already running with bigbluebutton to generate captions.
+###### You can try it out here:- https://demo.bigbluebutton.org/
 
 Here is a simple diagram of how it works:-
 ![Text-Track-Service Diagram](diagram-tts.png)
+
+## Before install
+Set up rap-caption-inbox
+```
+sudo cp rap-caption-inbox.rb /var/bigbluebutton/captions/inbox/rap-caption-inbox.rb (copy file from repo)
+cd /var/bigbluebutton/captions/inbox
+
+sudo chown root:root /usr/local/bigbluebutton/core/scripts/rap-caption-inbox.rb
+sudo chmod ugo+x /usr/local/bigbluebutton/core/scripts/rap-caption-inbox.rb
+sudo systemctl start bbb-rap-caption-inbox.service
+```
+
+Steps to test
+```
+sudo systemctl status bbb-rap-caption-inbox.service
+```
 
 ## Instructions to set up Text-track-service with IBM (just edit credentials.yaml for other services accordingly - look at example.credentials for reference also Step13.)
 ---
 
 ### 1. Set up texttrack user on the server
+Steps to set up
 ```
 adduser texttrack
 usermod -aG sudo texttrack
 su texttrack (switch to texttrack user)
+```
+Steps to test
+```
 sudo ls -la /root
 ```
 ---
 
 ### 2. Set up docker on the server
-* Check if you have docker installed
+Check if you have docker installed
 ```
 docker --version
 ```
-* If you don't have docker installed please follow the steps given below or go to https://docs.docker.com/install/linux/docker-ce/ubuntu/ for more information.
+
+If you don't have docker installed please follow the steps given at https://docs.docker.com/install/linux/docker-ce/ubuntu/ for more information.
+
+Steps to test
 ```
-sudo apt-get remove docker docker-engine docker.io containerd runc
-
-sudo apt-get update
-
-sudo apt-get install \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg-agent \
-    software-properties-common
-
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-
-sudo apt-key fingerprint 0EBFCD88
-
-sudo add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable"
-
-sudo apt-get update
-
-sudo apt-get install docker-ce docker-ce-cli containerd.io
-
 sudo docker run hello-world
 ```
 ---
 
 ### 3. Set up docker-compose on the server
+Steps to set up
 ```
-sudo curl -L "https://github.com/docker/compose/releases/download/1.23.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+Follow instructions at:- https://docs.docker.com/compose/install/
+```
+
+Steps to test
+```
 docker-compose --version
 ```
 ---
@@ -68,6 +71,18 @@ sudo usermod -a -G docker texttrack
 ---
 
 ### 4. Create dir & clone github repo
+Steps to set up
+```
+sudo apt update
+sudo apt install git
+```
+
+Steps to test
+```
+git --version
+```
+
+Clone repo
 ```
 cd /var
 sudo mkdir docker
@@ -78,43 +93,57 @@ cd text-track-service
 ```
 ---
 
-### 5. Set up credentials(IBM)
+### 5. Set up credentials(IBM) & test
 
-* sign up IBM
-    * here is a link to a google docs for signing up to the services: https://docs.google.com/document/d/e/2PACX-1vQu9o5q1tdf84cPo8kn6vt8QvhyuYJKdhLBVNIeuIHBwpxdRqWu0bmIgHsm8z5dU6YIjoZeDHxwSHu2/pub
+The installation instructions are for IBM if you want to use another service visit this link: https://docs.google.com/document/d/e/2PACX-1vQu9o5q1tdf84cPo8kn6vt8QvhyuYJKdhLBVNIeuIHBwpxdRqWu0bmIgHsm8z5dU6YIjoZeDHxwSHu2/pub
+Follow instructions for setting up the service you want.
 
-* create & edit credentials.yaml (reference example-credentials.yaml)
+steps to set up:
 ```
-touch credentials.yaml
+sign up to IBM at: https://dataplatform.cloud.ibm.com/docs/content/wsj/getting-started/signup-wdp.html
+After signing in you should be able to see the dashboard.  Click on Watson in the left menu.
+Click on get started (convert audio into text) then you can give service name and/or tag name here. And select the blue create button in the right panel.
+You can give the service name of your choice. Then click create.
+Click on manage in the left panel and you will be able to see your credentials.
+
+Save your apikey & url given.
+
 ```
 
-### Add your service credentials in credentials.yaml file
-
-* you can refer example-credentials.yaml file in /var/docker/text-track-service
-
-* extra step for google account
+Steps to test (under test_dir there is a test audio_temp.flac to test your credentials with.)
 ```
-create auth/google_auth_file.json and add file name to credentials.yaml (make sure google auth file owner is texttrack)
-```
----
-
-### 6. Test your IBM credentials
-
-under test_dir there is a test audio_temp.flac to test your  credentials with.
-
 once you have your IBM api_key & url open terminal and do the following:
 (make sure to replace {apikey} & {url} with your credentials)
-```
+
 cd /var/docker/text-track-service/test_dir
 
 curl -X POST -u "apikey:{apikey}" \
 --header "Content-Type: audio/flac" \
 --data-binary @audio_temp.flac \
 "{url}/v1/recognize"
+
+```
+---
+
+* create & edit credentials.yaml (reference example-credentials.yaml)
+```
+touch credentials.yaml
+```
+
+### 6. Add your service credentials in credentials.yaml file
+
+Steps to set up
+```
+cp example-credentials.yaml credentials.yaml
+Now edit your information in credentials.yaml (you can refer example-credentials.yaml file in /var/docker/text-track-service)
+
+(extra step for google account)
+create auth/google_auth_file.json and add file name to credentials.yaml (make sure google auth file owner is texttrack)
 ```
 ---
 
 ### 7. Set up systemd files
+Steps to set up
 ```
 cd /var/docker/text-track-service/systemd
 sudo cp tts-docker.service /etc/systemd/system
@@ -123,12 +152,16 @@ sudo systemctl enable tts-docker
 sudo chmod -R a+rX /var/docker/text-track-service/tmp/*
 
 sudo systemctl start tts-docker
+```
 
-sudo journalctl -u tts-docker -f (see tailed logs) (if you are doing it very first time, you will get an error because there is no database. Don't worry about databse error)
+Steps to test
+```
+sudo journalctl -u tts-docker -f (see tailed logs) (if you are doing it very first time, you will get an error because there is no database. We will set it up in the next step.)
 ```
 ---
 
 ### 8. Open new terminal to set up new db
+Steps to set up
 ```
 cd /var/docker/text-track-service
 sudo rm -R tmp/db
@@ -147,7 +180,13 @@ sudo visudo
 texttrack ALL = NOPASSWD: /var/docker/text-track-service/deploy.sh
 * save and close the file
 
- ./deploy.sh
+./deploy.sh
+```
+
+Steps to test
+```
+sudo journalctl -u tts-docker -f 
+You should no longer get a no db error
 ```
 ---
 
@@ -200,7 +239,7 @@ eg. http://localhost:4000/caption/#{meeting_id}/en-US/threeplaymedia
 eg. http://localhost:4000/caption/#{meeting_id}/en-US/deepspeech or http://localhost:4000/caption/#{meeting_id}/en-US/ (deepspeech is default)
 ```
 
-As we discussed text-track-service only drops the files in the inbox folder at /var/bigbluebutton/captions/inbox
+Text-Track-Service only drops the files in the inbox folder at /var/bigbluebutton/captions/inbox
 Now the rap-caption-inbox.rb should move it to the presentation dir(/var/bigbluebutton/published/presentation/<record-id>) to start it run the foll command:
 ```
 sudo systemctl start bbb-rap-caption-inbox.service
@@ -209,11 +248,10 @@ sudo systemctl status bbb-rap-caption-inbox.service (Status should be running)
 ---
 
 ### 11. Record a meeting and check for vtt
-* Finally make a recording/meeting on your server
-* Look at the logs to make sure it processes successfully(sudo journalctl -u tts-docker -f)
-* Check the presentation folder of the record_id to see if a vtt file was generated
-    * This can be found at (/var/bigbluebutton/published/presentation/<record_id>)
-* If there is a vtt file you have successfully transcribed your first meeting using IBM.
+Finally make a recording/meeting on your server
+Look at the logs to make sure it processes successfully(sudo journalctl -u tts-docker -f)
+Check the presentation folder of the record_id to see if a vtt file was generated. This can be found at (/var/bigbluebutton/published/presentation/<record_id>)
+If there is a vtt file you have successfully transcribed your first meeting using IBM.
 ---
 
 ### 12. Troubleshooting
@@ -235,13 +273,13 @@ sudo systemctl start bbb-rap-caption-inbox.service
 ---
 
 ### 13. Other services
-* here is a link to a google docs for signing up to the services: https://docs.google.com/document/d/e/2PACX-1vQu9o5q1tdf84cPo8kn6vt8QvhyuYJKdhLBVNIeuIHBwpxdRqWu0bmIgHsm8z5dU6YIjoZeDHxwSHu2/pub
-* To use other services you need to edit credentials.yaml file with the details required
-* reference example-credentials.yaml for needed information
-* Finally edit post_publish.rb to use the new selected service
+Here is a link to a google docs for signing up to the services: https://docs.google.com/document/d/e/2PACX-1vQu9o5q1tdf84cPo8kn6vt8QvhyuYJKdhLBVNIeuIHBwpxdRqWu0bmIgHsm8z5dU6YIjoZeDHxwSHu2/pub
+To use other services you need to edit credentials.yaml file with the details required
+Reference example-credentials.yaml for needed information
+Finally edit post_publish.rb to use the new selected service as discussed in Step 10.
 ```
 sudo vim /usr/local/bigbluebutton/core/scripts/post_publish/post_publish.rb
-On line 113 replace ibm with the service you want or delete ibm without replacing for deepspeech as that is default
+On line 113 add ibm or the service you want to (http://localhost:4000/caption/#{meeting_id}/en-US/) to the end of the line eg. http://localhost:4000/caption/#{meeting_id}/en-US/ibm
 save & exit
 ```
 * To set up your own deepspeech server follow instructions at: https://github.com/bigbluebutton/deepspeech-web
