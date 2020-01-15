@@ -19,7 +19,7 @@ module TTS
     # rubocop:disable Metrics/AbcSize
 
     def self.to_audio(param_json)
-      puts "ibm create job -----------------to audio"
+      puts "speechmatics create job -----------------to audio"
       params = JSON.parse(param_json, symbolize_names: true)
       u = nil
       # needed as activerecord leaves connection open when worker dies

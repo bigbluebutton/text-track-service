@@ -1,9 +1,11 @@
+#!/usr/bin/ruby
 require 'table_print'
 require 'json'
 require 'open3'
 require 'yaml'
 
 working_dir = "/var/docker/text-track-service/commands"
+#working_dir = "/home/test2/tts/resque/text-track-service/commands"
 
 cmd = "sudo chmod u+rxw #{working_dir}"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
@@ -20,9 +22,9 @@ Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
 end
 
 props = YAML.load_file("/var/docker/text-track-service/credentials.yaml")
-#props = YAML.load_file('/home/parthik/tts/final/text-track-service/credentials.yaml')
+#props = YAML.load_file('/home/test2/tts/resque/text-track-service/credentials.yaml')
 tts_shared_secret = props['tts_shared_secret']
-cmd = "curl -X POST https://ritz-tts6.freddixon.ca/tts/status/all/'#{tts_shared_secret}' > #{working_dir}/tts-all.json"
+cmd = "curl -X POST http://localhost:4000/status/all/'#{tts_shared_secret}' > #{working_dir}/tts-all.json"
 Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
   while line = stdout_err.gets
     puts "#{line}"

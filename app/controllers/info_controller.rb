@@ -2,7 +2,7 @@ class InfoController < ApplicationController
 
   def caption_status
     record_id = params[:record_id]
-    caption_locale = params[:caption_locale]
+    #caption_locale = params[:caption_locale]
     caption_job = { record_id: record_id,
                     caption_locale: caption_locale }
     caption = Caption.where(record_id: record_id)
@@ -26,15 +26,31 @@ class InfoController < ApplicationController
   end
     
   def caption_processed_status
-    processed_jobs = Caption.where('status LIKE ?', 'uploaded%')
-    processed_jobs = processed_jobs.as_json
-    render json: JSON.pretty_generate(processed_jobs)
+    password = params[:password]
+    props = YAML.load_file('credentials.yaml')
+    tts_shared_secret = props['tts_shared_secret']
+    if (password == tts_shared_secret)
+      processed_jobs = Caption.where('status LIKE ?', 'uploaded%')
+      processed_jobs = processed_jobs.as_json
+      render json: JSON.pretty_generate(processed_jobs)
+    else
+      data = '{"message" : "incorrect password"}'
+      render :json=>data
+    end   
   end
     
   def caption_failed_status
-    failed_jobs = Caption.where.not('status LIKE ?', 'uploaded%')
-    failed_jobs = failed_jobs.as_json
-    render json: JSON.pretty_generate(failed_jobs)
+    password = params[:password]
+    props = YAML.load_file('credentials.yaml')
+    tts_shared_secret = props['tts_shared_secret']
+    if (password == tts_shared_secret)
+      failed_jobs = Caption.where.not('status LIKE ?', 'uploaded%')
+      failed_jobs = failed_jobs.as_json
+      render json: JSON.pretty_generate(failed_jobs)
+    else
+      data = '{"message" : "incorrect password"}'
+      render :json=>data
+    end
   end
 
   def caption_find_record

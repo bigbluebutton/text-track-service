@@ -18,7 +18,7 @@ module TTS
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def self.to_audio(param_json)
-      puts "create job -----------------to audio"
+      puts "Deepspeech worker --> to audio method"
       params = JSON.parse(param_json, symbolize_names: true)
       u = nil
       # needed as activerecord leaves connection open when worker dies
@@ -81,6 +81,7 @@ module TTS
     end
 
     def self.create_job(params_json, id, audio_type)
+      puts "Deepspeech worker --> create_job method"
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
       
@@ -124,6 +125,7 @@ module TTS
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def perform(params_json, id, job_id, job_name, start_time)
+      puts "DeepspeechGetJob worker --> perform method"
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
 
@@ -198,6 +200,7 @@ module TTS
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     def self.create_vtt(params)
+      puts "DeepspeechCreateJob worker --> create_vtt method"
       data = JSON.load params
       record_id = data['record_id']
       storage_dir = data['storage_dir']
@@ -253,6 +256,7 @@ module TTS
     end
 
     def self.callback(params)
+      puts "DeepspeechCreateJob worker --> callback method"
       data = JSON.load params
         record_id = data['record_id']
         storage_dir = data['storage_dir']

@@ -1,3 +1,4 @@
+#!/usr/bin/ruby
 require 'json'
 require 'open3'
 
@@ -5,7 +6,7 @@ cmd = ''
 unless ARGV[0].nil?
     record_id = ARGV[0]
     puts 
-    cmd = "curl https://ritz-tts6.freddixon.ca/tts/caption/record_id/#{record_id}"
+    cmd = "curl http://localhost:4000/caption/record_id/#{record_id}"
 else
   puts "ERROR: no record_id passed"
 end
