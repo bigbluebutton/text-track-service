@@ -158,7 +158,7 @@ module TTS
       end
 
       callback = SpeechToText::GoogleS2T.get_words(operation_name)
-      puts "#{callback['results']}.........."
+      #puts "#{callback['results']}.........."
       myarray = SpeechToText::GoogleS2T.create_array_google(callback['results'])
         
       end_time = Time.now.getutc.to_i

@@ -110,13 +110,15 @@ token = JWT.encode payload, "#{tts_secret}", 'HS256'
 
 request = RestClient::Request.new(
     method: :get,
-    url: "http://localhost:3000/caption/#{meeting_id}/en-US/ibm",
+    url: "http://localhost:4000/caption/#{meeting_id}/en-US/",
     payload: { :file => File.open("#{temp_storage}/#{meeting_id}/#{meeting_id}.wav", 'rb'),
                :token => token }
 )
 
 response = request.execute
 
+data = JSON.load response.body
+puts data['message']
 
 if(response.code != 200)
   BigBlueButton.logger.info("#{response.code} error")

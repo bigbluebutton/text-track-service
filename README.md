@@ -160,9 +160,12 @@ tts_shared_secret: {tts-secret}
 ```
 ---
 
-### 10. Edit post_publish.rb
+### 10. Edit post_publish.rb & start rap-caption-inbox worker
 ```
 cd /usr/local/bigbluebutton/core/scripts/post_publish/
+
+Make sure you have ffmpeg installed:
+
 
 sudo gem install rest-client
 sudo gem install speech_to_text
@@ -171,6 +174,29 @@ sudo gem install jwt
 (Replace your post_publish.rb with the one in /var/docker/text-track-service)
 sudo cp /var/docker/text-track-service/post_publish.rb root@your_server:/usr/local/bigbluebutton/core/scripts/post_publish  (use if bbb and text-track-service are running on different server)
 sudo cp /var/docker/text-track-service/post_publish.rb /usr/local/bigbluebutton/core/scripts/post_publish  (use if bbb and text-track-service are running on same server)
+```
+
+To change the service you are using in post_publish.rb just add service name to the end of the request url(deepspeech is default)
+```
+request = RestClient::Request.new(
+    method: :get,
+    url: "http://localhost:4000/caption/#{meeting_id}/en-US/",
+    payload: { :file => File.open("#{temp_storage}/#{meeting_id}/#{meeting_id}.wav", 'rb'),
+               :token => token }
+)
+
+eg. http://localhost:4000/caption/#{meeting_id}/en-US/google
+eg. http://localhost:4000/caption/#{meeting_id}/en-US/ibm
+eg. http://localhost:4000/caption/#{meeting_id}/en-US/speechmatics
+eg. http://localhost:4000/caption/#{meeting_id}/en-US/threeplaymedia
+eg. http://localhost:4000/caption/#{meeting_id}/en-US/deepspeech or http://localhost:4000/caption/#{meeting_id}/en-US/ (deepspeech is default)
+```
+
+As we discussed text-track-service only drops the files in the inbox folder at /var/bigbluebutton/captions/inbox
+Now the rap-caption-inbox.rb should move it to the presentation dir(/var/bigbluebutton/published/presentation/<record-id>) to start it run the foll command:
+```
+sudo systemctl start bbb-rap-caption-inbox.service
+sudo systemctl status bbb-rap-caption-inbox.service (Status should be running)
 ```
 ---
 
@@ -189,6 +215,15 @@ sudo journalctl -u tts-docker -f
 
 fix any errors shown and then re-deploy by running deploy.sh in the root folder
 ```
+
+* If the logs do not show any errors but you are missing the vtt file in the presentation folder check the inbox folder at /var/bigbluebutton/captions/inbox/ (You should see a json and txt file.)
+* This means that the text track has done its job and the rap caption worker is not moving the files to the right location.
+* To fix this you can copy the rap-caption-inbox.rb file from the repo to your bbb server at /usr/local/bigbluebutton/core/scripts/ & make sure the owner is root.
+* Last step is make sure the rap-caption-work.rb has correct execute permissions if not just run the following command:
+```
+sudo chmod ugo+x /usr/local/bigbluebutton/core/scripts/rap-caption-inbox.rb
+sudo systemctl start bbb-rap-caption-inbox.service
+```
 ---
 
 ### 13. Other services
@@ -201,6 +236,7 @@ sudo vim /usr/local/bigbluebutton/core/scripts/post_publish/post_publish.rb
 On line 113 replace ibm with the service you want or delete ibm without replacing for deepspeech as that is default
 save & exit
 ```
+* To set up your own deepspeech server follow instructions at: https://github.com/bigbluebutton/deepspeech-web
 
 ### 14. Install & use api commands for information
 
