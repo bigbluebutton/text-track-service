@@ -1,7 +1,7 @@
-## Text-Track-Service is a project to help bigbluebutton auto-generate captions for their videos using multiple paid and free services. This was done to make bigbluebutton more accessible to students and teachers alike.
-## We approached this by giving the user access to multiple services both paid & free to use according to their choosing. Also it is using the faktory queuing system to ensure efficient usage of server resources.
-## The documentation below will cover how to set up the text-track-service on a server already running with bigbluebutton version 2.3
-## You can try it out here:- https://demo.bigbluebutton.org/demo/demo10.jsp
+#### Text-Track-Service is a project to help bigbluebutton auto-generate captions for their videos using multiple paid and free services. This was done to make bigbluebutton more accessible to students and teachers alike.
+#### We approached this by giving the user access to multiple services both paid & free to use according to their choosing. Also it is using the faktory queuing system to ensure efficient usage of server resources.
+#### The documentation below will cover how to set up the text-track-service on a server already running with bigbluebutton version 2.3
+###### You can try it out here:- https://demo.bigbluebutton.org/demo/demo10.jsp
 
 Here is a simple diagram of how it works:-
 ![Text-Track-Service Diagram](diagram-tts.png)
