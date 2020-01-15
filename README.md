@@ -7,6 +7,8 @@ The video player will have a cc button. Click it and you should see captions for
 Here is a simple diagram of how it works:-
 ![Text-Track-Service Diagram](diagram-tts.png)
 
+In this installation we will show you how to set up the Text-Track application piece of the puzzle & also how to create and use your account for the services you want.
+
 ## Before install
 You should have ssh access to a server with BigBlueButton already installed.
 
