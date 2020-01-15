@@ -3,6 +3,9 @@ We approached this by giving the user access to multiple services both paid & fr
 The documentation below will cover how to set up the text-track-service on a server already running with bigbluebutton version 2.3
 You can try it out here:- https://demo.bigbluebutton.org/demo/demo10.jsp
 
+Here is a simple diagram of how it works:-
+![Text-Track-Service Diagram](diagram-tts.png)
+
 ## Instructions to set up Text-track-service with IBM (just edit credentials.yaml for other services accordingly - look at example.credentials for reference also Step13.)
 ---
 
