@@ -125,11 +125,6 @@ curl -X POST -u "apikey:{apikey}" \
 ```
 ---
 
-* create & edit credentials.yaml (reference example-credentials.yaml)
-```
-touch credentials.yaml
-```
-
 ### 6. Add your service credentials in credentials.yaml file
 
 Steps to set up
@@ -185,8 +180,7 @@ texttrack ALL = NOPASSWD: /var/docker/text-track-service/deploy.sh
 
 Steps to test
 ```
-sudo journalctl -u tts-docker -f 
-You should no longer get a no db error
+sudo journalctl -u tts-docker -f (You should no longer get a no db error)
 ```
 ---
 
@@ -194,8 +188,8 @@ You should no longer get a no db error
 ```
 cd /usr/local/bigbluebutton/core/scripts/
 
-To find your secret: bbb-conf -secret
-To find tts-secret: tts-secret (first run config.sh in /var/docker/text-track-service/commands)
+To find your secret: bbb-conf -secret (shared secret)
+Set up tts-secret in credentials.yaml and then enter that in /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
 
 sudo vim bigbluebutton.yml
 
@@ -212,7 +206,7 @@ tts_shared_secret: {tts-secret}
 cd /usr/local/bigbluebutton/core/scripts/post_publish/
 
 Make sure you have ffmpeg installed:
-
+sudo apt-get install ffmpeg
 
 sudo gem install rest-client
 sudo gem install speech_to_text
@@ -282,18 +276,18 @@ sudo vim /usr/local/bigbluebutton/core/scripts/post_publish/post_publish.rb
 On line 113 add ibm or the service you want to (http://localhost:4000/caption/#{meeting_id}/en-US/) to the end of the line eg. http://localhost:4000/caption/#{meeting_id}/en-US/ibm
 save & exit
 ```
-* To set up your own deepspeech server follow instructions at: https://github.com/bigbluebutton/deepspeech-web
+To set up your own deepspeech server follow instructions at: https://github.com/bigbluebutton/deepspeech-web
 
 ### 14. Install & use api commands for information
 
-* Install api commands
+Install api commands
 ```
 cd /var/docker/text-track-service/commands
 ./config.sh (run api config file)
 you can now use the commands from anywhere in the terminal as long as you are ssh into the server
 ```
 
-* Api usage
+Api usage
 ```
 | Command                 | Result                                                          |
 | ----------------------- | --------------------------------------------------------------- |
