@@ -7,7 +7,7 @@ Here is a simple diagram of how it works:-
 ![Text-Track-Service Diagram](diagram-tts.png)
 
 ## Before install
-Set up rap-caption-inbox
+Set up rap-caption-inbox (skip set up if you have BigBlueButton 2.3 or later just `sudo systemctl start bbb-rap-caption-inbox.service`)
 ```
 sudo cp rap-caption-inbox.rb /var/bigbluebutton/captions/inbox/rap-caption-inbox.rb (copy file from repo)
 cd /var/bigbluebutton/captions/inbox
