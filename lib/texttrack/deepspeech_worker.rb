@@ -153,12 +153,12 @@ module TTS
         DeepspeechGetJob.perform_in(30, params.to_json, id, job_id, job_name, start_time)
         return
       end
-
+        
       callback_json =
         SpeechToText::MozillaDeepspeechS2T.order_transcript(job_id,
                                                             auth_file_path,
                                                             params[:provider][:apikey])
-
+      
       myarray =
         SpeechToText::MozillaDeepspeechS2T.create_mozilla_array(callback_json)
         
