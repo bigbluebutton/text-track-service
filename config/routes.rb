@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   #info controller
   post '/status/all/:password', to: 'info#caption_all_status', as: :caption_all_status
   get '/status/processed/:password', to: 'info#caption_processed_status', as: :caption_processed_status
+  get '/status/progress/:password', to: 'info#caption_progress_status', as: :caption_progress_status
   get '/status/failed/:password', to: 'info#caption_failed_status', as: :caption_failed_status
   get '/status/:record_id/:caption_locale', to: 'info#caption_status', as: :caption_status
 

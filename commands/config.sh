@@ -35,6 +35,14 @@ sudo touch $FILE
 sudo chmod uog+rwx $FILE
 echo "ruby $working_dir/commands/tts-processed.rb" >> $FILE
 
+FILE=/usr/bin/tts-progress
+if test -f "$FILE"; then
+    sudo rm "$FILE"
+fi
+sudo touch $FILE
+sudo chmod uog+rwx $FILE
+echo "ruby $working_dir/commands/tts-progress.rb" >> $FILE
+
 FILE=/usr/bin/tts-record
 if test -f "$FILE"; then
     sudo rm "$FILE"
