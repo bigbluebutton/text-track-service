@@ -276,6 +276,10 @@ module TTS
         end
         # print response
         puts response.body.to_s
+        puts "storage => #{storage_dir}"
+        if Dir.exist?(storage_dir)
+          FileUtils.rm_rf(storage_dir)
+        end
     end
 
     def self.delete_files(recording_dir)

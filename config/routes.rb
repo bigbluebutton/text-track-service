@@ -20,7 +20,7 @@ Rails.application.routes.draw do
   get '/caption/:record_id/:caption_locale(/:provider)', to: 'captions#caption_recording', as: :caption_recording
   
   #edit_captions controller
-  get 'tts/downloadvtt/:record_id', to: 'edit_captions#download_vtt'
+  post 'edit/downloadvtt/:record_id/:bbb_secret', to: 'edit_captions#download_vtt'
   get 'tts/downloadaudio/:record_id', to: 'edit_captions#download_audio'
   post 'tts/uploadvtt/:record_id', to: 'edit_captions#upload_vtt'
 
