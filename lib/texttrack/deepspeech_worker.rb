@@ -40,7 +40,7 @@ module TTS
       end
 
       audio_type = 'wav'
-
+        
       final_dest_dir = "#{params[:storage_dir]}/#{params[:record_id]}"
       audio_file = "#{params[:record_id]}.#{audio_type}"
       

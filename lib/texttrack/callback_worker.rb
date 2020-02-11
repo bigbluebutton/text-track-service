@@ -43,6 +43,7 @@ module TTS
         u.update(status: "uploaded to #{u.bbb_url}")
       end
       # print response
+        
       puts response.body.to_s
     end
     # rubocop:enable Metrics/AbcSize
