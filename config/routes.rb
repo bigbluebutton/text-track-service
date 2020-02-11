@@ -21,7 +21,7 @@ Rails.application.routes.draw do
   
   #edit_captions controller
   post 'edit/downloadvtt/:record_id/:bbb_secret', to: 'edit_captions#download_vtt'
-  get 'tts/downloadaudio/:record_id', to: 'edit_captions#download_audio'
+  post 'edit/downloadaudio/:record_id/:bbb_secret', to: 'edit_captions#download_audio'
   post 'tts/uploadvtt/:record_id', to: 'edit_captions#upload_vtt'
 
 end

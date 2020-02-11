@@ -56,28 +56,45 @@ class EditCaptionsController < ApplicationController
 
     def download_audio
       record_id = params[:record_id]
+      secret = params[:bbb_secret]
+      request = "getRecordingsrecordID=#{record_id}"
+      request = request + secret
+      checksum = Digest::SHA1.hexdigest("#{request}")
+
+      record = Caption.find_by(record_id: record_id)
+      site = record.bbb_url
+      if site.nil?
+        puts "*** no bbb url found for record_id = #{record_id} ***"
+        data = "{\"message\" : \"vtt file not found\"}"
+        render :json=>data
+        return
+      end
       props = YAML.load_file('settings.yaml')
       storage_dir = props['storage_dir']
-      current_time = (Time.now.to_f * 1000).to_i
+      recording_dir = "#{storage_dir}/#{record_id}"
 
-      if Dir.exist?("#{storage_dir}/#{record_id}")
-        audio = "#{storage_dir}/#{record_id}/audio_temp.wav"
-      else
-        data = "{\"message\" : \"record_id not found\"}"
-        render :json=>data
-        return
+      req = "#{site}/bigbluebutton/api/getRecordings?recordID=#{record_id}&checksum=#{checksum}"
+      response = HTTParty.get(req)
+      doc = Nokogiri::XML(response.body)
+
+      audio_url = doc.root.xpath("recordings/recording/playback/format/url").first.text
+
+      unless Dir.exist?(recording_dir)
+        system("mkdir #{recording_dir}")
       end
 
-      unless File.exist?(audio)
-        data = "{\"message\" : \"audio not found\"}"
-        render :json=>data
-        return
+      open("#{recording_dir}/audio.wav", 'wb') do |file|
+          file << open(audio_url).read
       end
 
-      send_file(audio,
-      filename: "#{record_id}_#{current_time}.wav",
+      send_file("#{recording_dir}/audio.wav",
+      filename: "#{record_id}.wav",
       type: "audio/wav"
       )
+
+      if Dir.exist?(recording_dir)
+        #FileUtils.rm_rf(recording_dir)
+      end
     end
 
     def upload_vtt
