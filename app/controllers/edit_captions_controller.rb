@@ -1,29 +1,57 @@
+require 'fileutils'
+
 class EditCaptionsController < ApplicationController
 
     def download_vtt
       record_id = params[:record_id]
-      current_time = (Time.now.to_f * 1000).to_i
+      bbb_secret = params[:bbb_secret]
+      request = "getRecordingTextTracksrecordID=#{record_id}#{bbb_secret}"
+      checksum = Digest::SHA1.hexdigest("#{request}")
       props = YAML.load_file('settings.yaml')
       storage_dir = props['storage_dir']
-
-      if Dir.exist?("#{storage_dir}/#{record_id}")
-        vtt_files = Dir["#{storage_dir}/#{record_id}/*.vtt"]
-      else
-        data = "{\"message\" : \"record_id not found\"}"
-        render :json=>data
+      recording_dir = "#{storage_dir}/#{record_id}"
+      record = Caption.find_by(record_id: record_id)
+      site = record.bbb_url
+      if site.nil?
+        puts "----------------------------------------------------------"
+        puts "BBB URL not found for record_id = #{record_id}"
+        puts "----------------------------------------------------------"
         return
       end
 
-      if vtt_files[0].nil?
+      req = "#{site}/bigbluebutton/api/getRecordingTextTracks?recordID=#{record_id}&checksum=#{checksum}"
+      response = HTTParty.get(req)
+      res = JSON.load(response.body)
+      url = res["response"]["tracks"][0]["href"]
+      if url.nil?
+        render json: {"message": "no url found as a response from BBB"}
+        return
+      else
+        unless Dir.exist?(recording_dir)
+          system("mkdir #{recording_dir}")
+        end
+        open("#{recording_dir}/captions_en-US.vtt", 'wb') do |file|
+          file << open(url).read
+        end
+      end
+
+      current_time = (Time.now.to_f * 1000).to_i
+      vtt_file = "#{recording_dir}/captions_en-US.vtt"
+      if File.exist?(vtt_file)
+          send_file(vtt_file,
+                    filename: "#{record_id}_#{current_time}.vtt",
+                    type: "application/vtt"
+                    )        
+      else
+        puts "*** VTT file ===> not found ***"
         data = "{\"message\" : \"vtt file not found\"}"
         render :json=>data
         return
       end
 
-      send_file(vtt_files[0],
-      filename: "#{record_id}_#{current_time}.vtt",
-      type: "application/vtt"
-      )
+      if Dir.exist?(recording_dir)
+        #FileUtils.rm_rf(recording_dir)
+      end
     end
 
     def download_audio
