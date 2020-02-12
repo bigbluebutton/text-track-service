@@ -38,13 +38,27 @@ class InfoController < ApplicationController
       render :json=>data
     end   
   end
+
+  def caption_progress_status
+    password = params[:password]
+    props = YAML.load_file('credentials.yaml')
+    tts_shared_secret = props['tts_shared_secret']
+    if (password == tts_shared_secret)
+      progress_jobs = Caption.where.not('status LIKE ?', 'uploaded%')
+      progress_jobs = progress_jobs.as_json
+      render json: JSON.pretty_generate(progress_jobs)
+    else
+      data = '{"message" : "incorrect password"}'
+      render :json=>data
+    end   
+  end
     
   def caption_failed_status
     password = params[:password]
     props = YAML.load_file('credentials.yaml')
     tts_shared_secret = props['tts_shared_secret']
     if (password == tts_shared_secret)
-      failed_jobs = Caption.where.not('status LIKE ?', 'uploaded%')
+      failed_jobs = Caption.where("status = 'failed'")
       failed_jobs = failed_jobs.as_json
       render json: JSON.pretty_generate(failed_jobs)
     else

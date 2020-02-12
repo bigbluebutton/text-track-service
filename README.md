@@ -374,7 +374,7 @@ cd /var/docker/text-track-service/commands
 you can now use the commands from anywhere in the terminal as long as you are ssh into the server
 
 
-Api usage:
+Info-Api usage:
 
 | Command                 | Result                                                          |
 | ----------------------- | --------------------------------------------------------------- |
@@ -385,3 +385,161 @@ Api usage:
 | tts-delete <record_id>  | delete data about a specific recording from text-track-service  |
 | tts-delete-all          | delete all data about recordings from text-track-service        |
 
+
+### Edit api
+We have also have an api endpoint that makes it possible to download a vtt file, audio file for a specific recording.
+After this you can edit the vtt(caption) file and reupload to the server with the api, thus updating the captions.
+
+We need the following information for all the api's
+| Heading                 | Description                                                         |
+| ----------------------- | ------------------------------------------------------------------- |
+| record_id               | Which recording are you trying to access                            |
+| site                    | Address of the bigbluebutton server with your recording             |
+| checksum                | every api request requires a checksum for authentication            |
+| bbb_secret              | your bigbluebutton server secret you are trying to access           |
+| tts_secret              | your tts application secret as the api endpoint is from tts         |
+| request                 | which request do you want (download_vtt/download_audio/upload_vtt)  |
+
+Below are some examples of how to send a request in ruby. 
+Note we are using the JWT gem to encrypt the additional info. Also we are using the RestClient gem to send the request.
+```
+gem install "rest-client"
+gem install "jwt"
+```
+
+Edit-Api usage:
+
+remember to include the gems you are using
+```
+require "rest-client"
+require "jwt"
+```
+
+download_vtt api
+```
+def download_vtt
+  puts "downloading vtt..."
+  record_id = 'your_record_id'
+  bbb_secret = 'bigbluebutton_secret'
+  request = "getRecordingTextTracksrecordID=#{record_id}#{bbb_secret}"
+  checksum = Digest::SHA1.hexdigest("#{request}")
+  site = 'http://my_bigbluebutton_server.ca'   <--- example (put the address of your bigbluebutton server)
+  tts_secret = 'text_track_application_secret' <--- find in your credentials.yaml in tts
+	payload = { :bbb_url => site, 
+	            :bbb_checksum => checksum
+	          }
+	token = JWT.encode payload, tts_secret, 'HS256' <--- JWT gem encoding information
+
+	request = RestClient::Request.new(
+	    method: :post,
+	    url: "http://localhost:4000/edit/downloadvtt/#{record_id}", <--- request being sent to tts (could be on localhost or a different server enter address appropriately)
+	    payload: {:token => token}
+	)
+	response = request.execute
+    
+	puts response
+end
+
+```
+
+download_audio api
+```
+def download_audio
+  puts "downloading audio..."
+  record_id = 'your_record_id'
+  bbb_secret = 'bigbluebutton_secret'
+  request = "getRecordingsrecordID=#{record_id}"
+  request = request + bbb_secret
+  checksum = Digest::SHA1.hexdigest("#{request}")
+  site = 'http://my_bigbluebutton_server.ca' <--- example (put the address of your bigbluebutton server)
+  tts_secret = 'text_track_application_secret' <--- find in your credentials.yaml in tts
+	payload = { :bbb_url => site, 
+	            :bbb_checksum => checksum
+	          }
+	token = JWT.encode payload, tts_secret, 'HS256' <--- JWT gem encoding information
+    
+	request = RestClient::Request.new(
+	    method: :post,
+	    url: "http://localhost:4000/edit/downloadaudio/#{record_id}", <--- request being sent to tts (could be on localhost or a different server enter address appropriately)
+	    payload: {:token => token}
+	)
+	response = request.execute
+	File.open("absolute_path/folder_where_you_want_to_save_audio_file/downloaded_audio.wav", 'wb') do |f|
+      f.write response.body
+    end
+end
+```
+
+once you have edited your vtt(caption) file and are ready to put the new file on the server
+upload_vtt api
+```
+def upload_vtt
+	puts "uploading vtt..."
+	record_id = 'your_record_id'
+	site = 'http://my_bigbluebutton_server.ca' <--- example (put the address of your bigbluebutton server)
+	bbb_secret = 'bigbluebutton_secret'
+	kind = 'subtitles'
+	lang = 'en_US'
+	label = 'English'
+	request = "putRecordingTextTrackrecordID=#{record_id}&kind=#{kind}&lang=#{lang}&label=#{label}"
+	request += bbb_secret
+	checksum = Digest::SHA1.hexdigest(request)
+	tts_secret = 'text_track_application_secret' <--- find in your credentials.yaml in tts
+	payload = { :bbb_url => site, 
+	            :bbb_checksum => checksum, 
+	            :kind => kind,
+	            :label => label,
+	            :caption_locale => lang
+	          }
+	token = JWT.encode payload, tts_secret, 'HS256' <--- JWT gem encoding information
+	
+	request = RestClient::Request.new(
+	    method: :post,
+	    url: "http://localhost:4000/edit/uploadvtt/#{record_id}", <--- request being sent to tts (could be on localhost or a different server enter address appropriately)
+	    payload: { :file => File.open('/folder_with_updated_vtt_file/captions_en-US.vtt', 'rb'), <--- make sure the vtt file you send is named captions_en-US.vtt
+	    :token => token}
+	)
+	response = request.execute
+end
+```
+
+#### Trouble with edit-api:
+
+##### General trouble
+Make sure the record_id being requested exist on the bbb server it is requested from.
+Make sure to name the parameters sent as shown in the table above.
+
+##### bbb_secret or tts-secret trouble
+To find bbb_secret on bbb server type `bbb-conf --secret`
+To find tts_secret on tts server(could be same as bbb) type `tts-secret` or open credentials.yaml in the tts application
+
+##### Download audio specific trouble
+For the download audio make sure you provide a path to an existing folder so it can save the audio file. Also make sure the folder has correct permissions.
+
+##### Upload audio specific trouble
+Make sure the path to the given vtt file to upload is correct. Also make sure the file has correct permissions.
+Make sure the file that you upload is named captions_en-US.vtt, if not the file will be uploaded but bbb will not display captions.
+
+## How to update the application
+You will have to configure git on the server prior to this
+```
+git config --global user.email example@bbb.com
+git config --global user.name example_username
+```
+
+The application has a deploy.sh file in the root.
+Edit it based on where the application path is on your server.
+Add this sh filer to your sudoers file as shown below
+```
+sudo visudo
+```
+After this just add the following line to the file and save and exit
+```
+texttrack ALL = NOPASSWD: /var/docker/text-track-service/deploy.sh
+```
+(in the given example texttrack is our tts user & we have entered the path the the deploy.sh in our application)
+
+Now anytime you execute this deploy.sh file your application should update and restart itself
+```
+./deploy.sh
+```

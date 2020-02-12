@@ -4,6 +4,7 @@ require 'connection_pool'
 require 'faktory'
 require 'httparty'
 require 'json'
+require 'fileutils'
 
 module TTS
   class CallbackWorker # rubocop:disable Style/Documentation
@@ -43,7 +44,12 @@ module TTS
         u.update(status: "uploaded to #{u.bbb_url}")
       end
       # print response
+        
       puts response.body.to_s
+      puts "storage => #{storage_dir}"
+      if Dir.exist?(storage_dir)
+        FileUtils.rm_rf(storage_dir)
+      end
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength

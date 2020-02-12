@@ -26,7 +26,7 @@ module TTS
       ActiveRecord::Base.connection_pool.with_connection do
         if Caption.exists?(record_id: (params[:record_id]).to_s)
           u = Caption.find_by(record_id: (params[:record_id]).to_s)
-          u.update(status: 'start_audio_conversion',
+          u.update(status: 'failed',
                    service: (params[:provider][:name]).to_s,
                    caption_locale: (params[:caption_locale]).to_s)
         else
@@ -40,7 +40,7 @@ module TTS
       end
 
       audio_type = 'wav'
-
+        
       final_dest_dir = "#{params[:storage_dir]}/#{params[:record_id]}"
       audio_file = "#{params[:record_id]}.#{audio_type}"
       
@@ -285,6 +285,10 @@ module TTS
         end
         # print response
         puts response.body.to_s
+        puts "storage => #{storage_dir}"
+        if Dir.exist?(storage_dir)
+          FileUtils.rm_rf(storage_dir)
+        end
     end
 
     def self.delete_files(recording_dir)
