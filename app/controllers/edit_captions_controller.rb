@@ -1,25 +1,23 @@
 require 'fileutils'
+require 'jwt'
 
 class EditCaptionsController < ApplicationController
 
     def download_vtt
       record_id = params[:record_id]
-      bbb_secret = params[:bbb_secret]
-      request = "getRecordingTextTracksrecordID=#{record_id}#{bbb_secret}"
-      checksum = Digest::SHA1.hexdigest("#{request}")
+      token = params[:token]
+      props = YAML.load_file('credentials.yaml')      
+      tts_shared_secret = props['tts_shared_secret']
+      decoded_token = JWT.decode token, tts_shared_secret, true, {algorithm: 'HS256'}
+
+      bbb_checksum = decoded_token[0]['bbb_checksum']
+      bbb_url = decoded_token[0]['bbb_url']
+
       props = YAML.load_file('settings.yaml')
       storage_dir = props['storage_dir']
       recording_dir = "#{storage_dir}/#{record_id}"
-      record = Caption.find_by(record_id: record_id)
-      site = record.bbb_url
-      if site.nil?
-        puts "----------------------------------------------------------"
-        puts "BBB URL not found for record_id = #{record_id}"
-        puts "----------------------------------------------------------"
-        return
-      end
 
-      req = "#{site}/bigbluebutton/api/getRecordingTextTracks?recordID=#{record_id}&checksum=#{checksum}"
+      req = "#{bbb_url}/bigbluebutton/api/getRecordingTextTracks?recordID=#{record_id}&checksum=#{bbb_checksum}"
       response = HTTParty.get(req)
       res = JSON.load(response.body)
       url = res["response"]["tracks"][0]["href"]
@@ -38,10 +36,10 @@ class EditCaptionsController < ApplicationController
       current_time = (Time.now.to_f * 1000).to_i
       vtt_file = "#{recording_dir}/captions_en-US.vtt"
       if File.exist?(vtt_file)
-          send_file(vtt_file,
-                    filename: "#{record_id}_#{current_time}.vtt",
-                    type: "application/vtt"
-                    )        
+          File.open(vtt_file, 'r') do |f|
+            send_data f.read, type: "application/vtt"
+          end
+          File.delete(vtt_file)
       else
         puts "*** VTT file ===> not found ***"
         data = "{\"message\" : \"vtt file not found\"}"
@@ -50,30 +48,25 @@ class EditCaptionsController < ApplicationController
       end
 
       if Dir.exist?(recording_dir)
-        #FileUtils.rm_rf(recording_dir)
+        FileUtils.rm_rf(recording_dir)
       end
     end
 
     def download_audio
       record_id = params[:record_id]
-      secret = params[:bbb_secret]
-      request = "getRecordingsrecordID=#{record_id}"
-      request = request + secret
-      checksum = Digest::SHA1.hexdigest("#{request}")
+      token = params[:token]
+      props = YAML.load_file('credentials.yaml')      
+      tts_shared_secret = props['tts_shared_secret']
+      decoded_token = JWT.decode token, tts_shared_secret, true, {algorithm: 'HS256'}
 
-      record = Caption.find_by(record_id: record_id)
-      site = record.bbb_url
-      if site.nil?
-        puts "*** no bbb url found for record_id = #{record_id} ***"
-        data = "{\"message\" : \"vtt file not found\"}"
-        render :json=>data
-        return
-      end
+      bbb_checksum = decoded_token[0]['bbb_checksum']
+      bbb_url = decoded_token[0]['bbb_url']
+            
       props = YAML.load_file('settings.yaml')
       storage_dir = props['storage_dir']
       recording_dir = "#{storage_dir}/#{record_id}"
 
-      req = "#{site}/bigbluebutton/api/getRecordings?recordID=#{record_id}&checksum=#{checksum}"
+      req = "#{bbb_url}/bigbluebutton/api/getRecordings?recordID=#{record_id}&checksum=#{bbb_checksum}"
       response = HTTParty.get(req)
       doc = Nokogiri::XML(response.body)
 
@@ -87,13 +80,13 @@ class EditCaptionsController < ApplicationController
           file << open(audio_url).read
       end
 
-      send_file("#{recording_dir}/audio.wav",
-      filename: "#{record_id}.wav",
-      type: "audio/wav"
-      )
+      File.open("#{recording_dir}/audio.wav", 'r') do |f|
+        send_data f.read, type: "audio/wav"
+      end
+      File.delete("#{recording_dir}/audio.wav")
 
       if Dir.exist?(recording_dir)
-        #FileUtils.rm_rf(recording_dir)
+        FileUtils.rm_rf(recording_dir)
       end
     end
 
