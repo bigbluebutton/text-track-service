@@ -28,7 +28,7 @@ module TTS
       ActiveRecord::Base.connection_pool.with_connection do
         if Caption.exists?(record_id: (params[:record_id]).to_s)
           u = Caption.find_by(record_id: (params[:record_id]).to_s)
-          u.update(status: 'start_audio_conversion',
+          u.update(status: 'failed',
                    service: (params[:provider][:name]).to_s,
                    caption_locale: (params[:caption_locale]).to_s)
         else
