@@ -44,6 +44,7 @@ module TTS
         u.update(status: "uploaded to #{u.bbb_url}")
       end
       # print response
+        
       puts response.body.to_s
       puts "storage => #{storage_dir}"
       if Dir.exist?(storage_dir)
