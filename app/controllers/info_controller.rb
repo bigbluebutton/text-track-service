@@ -44,7 +44,7 @@ class InfoController < ApplicationController
     props = YAML.load_file('credentials.yaml')
     tts_shared_secret = props['tts_shared_secret']
     if (password == tts_shared_secret)
-      progress_jobs = Caption.where.not('status LIKE ?', 'uploaded%')
+      progress_jobs = Caption.where.not('status LIKE ? OR status = ?', 'uploaded%', 'failed')
       progress_jobs = progress_jobs.as_json
       render json: JSON.pretty_generate(progress_jobs)
     else
