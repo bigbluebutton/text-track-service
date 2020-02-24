@@ -58,6 +58,17 @@ module TTS
           props_keys['providers'][provider_name]['apikey']
         TTS::SpeechmaticsCreateJob.to_audio(to_audio_params.to_json)
 
+      elsif provider_name == 'amazon'
+        provider[:bucket] =
+          props_keys['providers'][provider_name]['bucket']
+        provider[:region] =
+          props_keys['providers'][provider_name]['region']
+        provider[:key] =
+          props_keys['providers'][provider_name]['key']  
+        provider[:secret] =
+          props_keys['providers'][provider_name]['secret']  
+        TTS::AmazonCreateJob.to_audio(to_audio_params.to_json)        
+
       elsif provider_name == 'threeplaymedia'
         provider[:auth_file_path] =
           props_keys['providers'][provider_name]['auth_file_path']

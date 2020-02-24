@@ -10,6 +10,9 @@ gem 'activerecord'
 gem 'faktory_worker_ruby'
 gem 'google-cloud-speech'
 gem 'google-cloud-storage'
+gem 'aws-sdk'
+gem 'aws-sdk-transcribestreamingservice'
+
 gem 'httparty'
 gem 'jwt'
 # Use Puma as the app server
@@ -27,7 +30,7 @@ gem 'redis-rails'
 gem 'rubocop', require: false
 
 gem 'sequel'
-gem 'speech_to_text', '0.1.7'
+gem 'speech_to_text', '0.1.8'
 # Use sqlite3 as the database for Active Record
 #gem 'sqlite3'
 gem 'table_print'
