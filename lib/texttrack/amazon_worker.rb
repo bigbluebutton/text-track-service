@@ -8,6 +8,7 @@ require 'aws-sdk-transcribestreamingservice'
 require 'aws-sdk'
 require 'json'
 require 'open-uri'
+require 'securerandom'
 
 rails_environment_path =
   File.expand_path(File.join(__dir__, '..', '..', 'config', 'environment'))
@@ -88,41 +89,26 @@ module TTS
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
 
+      audio_file = "#{params[:storage_dir]}/#{params[:record_id]}/#{params[:record_id]}.#{audio_type}"
       key = params[:provider][:key]
       secret = params[:provider][:secret]
       bucket = params[:provider][:bucket]
       region = params[:provider][:region]
       s3_audio_name = params[:record_id]
-      audio_file = "#{params[:storage_dir]}/#{params[:record_id]}/#{params[:record_id]}.#{audio_type}"
-      puts "key -------- #{key}"
-      puts "secret -------- #{secret}"
-      puts "bucket ------ #{bucket}"
-      puts "region -- -- -- #{region}"
-      puts "s3 name = #{s3_audio_name}"
-      puts "audio_file = #{audio_file}"
-      SpeechToText::AmazonS2T.set_credentials(key, secret)
-      
-      SpeechToText::AmazonS2T.upload_audio(bucket_name, s3_audio_name, audio_file)
-      puts "check s3 bucket"
-      return
+      s3_audio_uri = "https://#{bucket}.s3.#{region}.amazonaws.com/#{s3_audio_name}"
+      job_id = "#{SecureRandom.hex(10)}_#{(Time.now.to_f * 1000).to_i}"
       start_time = Time.now.getutc.to_i
-      
 
-
-      job_id = SpeechToText::IbmWatsonS2T.create_job(
-        audio_file_path: "#{params[:storage_dir]}/#{params[:record_id]}",
-        apikey: params[:provider][:auth_file_path],
-        audio: params[:record_id],
-        content_type: audio_type,
-        language_code: params[:caption_locale]
-      )
+      SpeechToText::AmazonS2T.set_credentials(key, secret)
+      SpeechToText::AmazonS2T.upload_audio(bucket, s3_audio_name, audio_file)
+      SpeechToText::AmazonS2T.create_job(job_id, params[:caption_locale], audio_type, s3_audio_uri)
 
       ActiveRecord::Base.connection_pool.with_connection do
         u = Caption.find(id)
         u.update(status: "created job with #{u.service}")
       end
 
-      TTS::IbmGetJob.perform_async(params.to_json,
+      TTS::AmazonGetJob.perform_async(params.to_json,
                                    u.id,
                                    job_id,
                                    start_time)
@@ -133,7 +119,7 @@ module TTS
   # rubocop:enable Style/Documentation
 
   # rubocop:disable Style/Documentation
-  class IbmGetJob
+  class AmazonGetJob
     include Faktory::Job
     faktory_options retry: 0, concurrency: 1
 
@@ -141,13 +127,9 @@ module TTS
     def perform(params_json, id, job_id, start_time) # rubocop:disable Metrics/AbcSize
       params = JSON.parse(params_json, symbolize_names: true)
       u = nil
-
-      callback =
-        SpeechToText::IbmWatsonS2T.check_job(job_id,
-                                             params[:provider][:auth_file_path])
-      status = callback['status']
+      status = SpeechToText::AmazonS2T.checkstatus(job_id)
       status_msg = "status is #{status}"
-      if status == 'failed'
+      if status == 'FAILED'
         puts '-------------------'
         puts status_msg
         puts '-------------------'
@@ -156,22 +138,33 @@ module TTS
           u.update(status: 'failed')
         end
         return
-      elsif status != 'completed'
+      elsif status == 'QUEUED'
         puts '-------------------'
         puts status_msg
         puts '-------------------'
-        IbmGetJob.perform_in(30, params.to_json, id, job_id, start_time)
+        AmazonGetJob.perform_in(60, params.to_json, id, job_id, start_time)
+        return
+      elsif status == 'IN_PROGRESS'
+        puts '-------------------'
+        puts status_msg
+        puts '-------------------'
+        AmazonGetJob.perform_in(30, params.to_json, id, job_id, start_time)
         return
       end
-
+      
+      json_file = "#{params[:storage_dir]}/#{params[:record_id]}/words.json"
+      data = SpeechToText::AmazonS2T.get_words(job_id, json_file)
       # u = nil
       myarray =
-        SpeechToText::IbmWatsonS2T.create_array_watson(callback['results'][0])
+        SpeechToText::AmazonS2T.create_amazon_array(data)
         
       end_time = Time.now.getutc.to_i
       processing_time = end_time - start_time
       processing_time =  SpeechToText::Util.seconds_to_timestamp(processing_time)
-        
+      s3_audio_name = params[:record_id]
+      bucket = params[:provider][:bucket]
+      SpeechToText::AmazonS2T.delete_audio(bucket, s3_audio_name, job_id)
+
       ActiveRecord::Base.connection_pool.with_connection do
         u = Caption.find(id)
         u.update(processtime: "#{processing_time}")
@@ -200,7 +193,7 @@ module TTS
         'end_time' => params[:end_time]
       }
 
-      TTS::IbmGetJob.create_vtt(data.to_json)
+      TTS::AmazonGetJob.create_vtt(data.to_json)
       
     end
     # rubocop:enable Metrics/MethodLength
@@ -228,7 +221,8 @@ module TTS
       end
 
       puts "storage= #{storage_dir}"
-      TTS::IbmGetJob.delete_files(storage_dir)
+      
+      TTS::AmazonGetJob.delete_files(storage_dir)
       SpeechToText::Util.write_to_webvtt(
           vtt_file_path: storage_dir.to_s,
           vtt_file_name: temp_track_vtt.to_s,
@@ -252,7 +246,7 @@ module TTS
         'id' => id
       }
 
-      TTS::IbmGetJob.callback(data.to_json)
+      TTS::AmazonGetJob.callback(data.to_json)
     end
 
     def self.callback(params)

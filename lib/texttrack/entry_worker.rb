@@ -59,7 +59,7 @@ module TTS
         TTS::SpeechmaticsCreateJob.to_audio(to_audio_params.to_json)
 
       elsif provider_name == 'amazon'
-        provider[:bucket_name] =
+        provider[:bucket] =
           props_keys['providers'][provider_name]['bucket']
         provider[:region] =
           props_keys['providers'][provider_name]['region']

@@ -35,7 +35,6 @@ gem 'speech_to_text', '0.1.8'
 #gem 'sqlite3'
 gem 'table_print'
 gem 'open3'
-gem 'open-uri'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
