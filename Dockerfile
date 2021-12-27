@@ -1,4 +1,4 @@
-FROM ruby:2.5
+FROM ruby:2.5.7
 RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
 RUN apt-get install -y ffmpeg
 RUN mkdir /text-track-service
