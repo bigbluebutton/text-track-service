@@ -16,7 +16,7 @@ services:
       - 'redis:/text-track-service/tmp/redis'
 
   tts_faktory:
-    image: contribsys/faktory:latest
+    image: contribsys/faktory:1.5.0
     command: /faktory -b :7419 -w :7420
     ports:
       - "7419:7419"
